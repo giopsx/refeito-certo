@@ -1,8 +1,4 @@
 flask
-pandas
 openpyxl
-twilio
 gunicorn
-flask-sqlalchemy
-flask-login
 python-dotenv
