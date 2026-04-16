@@ -664,11 +664,11 @@
 
             <!-- Gráfico simplificado -->
             <div class="card" style="margin-bottom: 20px;">
-                <div class="card-header">📈 Performance por Funcionários</div>
+                <div class="card-header">📈 Performance por Funcionário</div>
                 <table>
                     <thead>
                         <tr>
-                            <th>Responsável</th>
+                            <th>Funcionário</th>
                             <th>Total</th>
                             <th>Cumpridos</th>
                             <th>Taxa</th>
@@ -849,85 +849,48 @@
             <p style="color: #64748b; margin-bottom: 30px;">Cadastre membros da equipe e seus contatos WhatsApp.</p>
 
             <div class="card" style="max-width: 500px; margin-bottom: 30px;">
-                <h3 style="margin-bottom: 20px;">➕ Novo Membro</h3>
-                <form>
+                <h3 style="margin-bottom: 20px;" id="equipe-form-titulo">➕ Novo Membro</h3>
+                <div>
+                    <input type="hidden" id="equipe-edit-id" value="">
                     <div class="form-group">
-                        <label for="nome">Nome</label>
-                        <input type="text" id="nome" placeholder="Ex: Jefferson" required>
+                        <label>Nome</label>
+                        <input type="text" id="eq-nome" placeholder="Ex: Jefferson" required>
                     </div>
-
                     <div class="form-group">
-                        <label for="funcao">Função</label>
-                        <select id="funcao" required>
+                        <label>Função</label>
+                        <select id="eq-funcao">
                             <option>Procurador(a)</option>
                             <option>Procurador(a)-Adjunto(a)</option>
                             <option>Assessor(a) Jurídico(a)</option>
                             <option>Estagiário(a)</option>
                         </select>
                     </div>
-
                     <div class="form-group">
-                        <label for="email">E-mail</label>
-                        <input type="email" id="email" placeholder="jefferson@pgm.porto-velho.br" required>
+                        <label>E-mail</label>
+                        <input type="email" id="eq-email" placeholder="jefferson@pgm.porto-velho.br">
                     </div>
-
                     <div class="form-group">
-                        <label for="whatsapp">WhatsApp</label>
-                        <input type="tel" id="whatsapp" placeholder="+5569999999999" required>
-                        <small style="display: block; margin-top: 8px; color: #64748b;">
-                            ℹ️ Formato: +55 + DDD + número (Exemplo: +5569987654321)
+                        <label>WhatsApp</label>
+                        <input type="tel" id="eq-whatsapp" placeholder="+5569999999999">
+                        <small style="display:block;margin-top:8px;color:#64748b;">
+                            ℹ️ Formato: +55 + DDD + número (Ex: +5569987654321)
                         </small>
                     </div>
-
-                    <button type="submit" class="btn btn-success" style="width: 100%;">
-                        ➕ Adicionar Membro
-                    </button>
-                </form>
+                    <div style="display:flex;gap:10px;">
+                        <button class="btn btn-success" style="flex:1;" onclick="equipe_salvar()">
+                            ➕ Salvar Membro
+                        </button>
+                        <button class="btn" id="equipe-btn-cancelar" style="display:none;background:#e2e8f0;color:#475569;" onclick="equipe_cancelarEdicao()">
+                            ✕ Cancelar
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <div class="card">
                 <h3 style="margin-bottom: 20px;">👥 Membros Cadastrados</h3>
-                <ul class="list-group">
-                    <li class="list-group-item">
-                        <div>
-                            <strong>Jefferson</strong><br>
-                            <small style="color: #64748b;">Procurador | +5569987654321</small>
-                        </div>
-                        <div>
-                            <button class="btn-icon" title="Editar">✏️</button>
-                            <button class="btn-icon" title="Remover">🗑️</button>
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div>
-                            <strong>Mariana</strong><br>
-                            <small style="color: #64748b;">Procuradora | +5569987654322</small>
-                        </div>
-                        <div>
-                            <button class="btn-icon" title="Editar">✏️</button>
-                            <button class="btn-icon" title="Remover">🗑️</button>
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div>
-                            <strong>Carlos</strong><br>
-                            <small style="color: #64748b;">Procurador-Adjunto | +5569987654323</small>
-                        </div>
-                        <div>
-                            <button class="btn-icon" title="Editar">✏️</button>
-                            <button class="btn-icon" title="Remover">🗑️</button>
-                        </div>
-                    </li>
-                    <li class="list-group-item">
-                        <div>
-                            <strong>Ana</strong><br>
-                            <small style="color: #64748b;">Assessora Jurídica | +5569987654324</small>
-                        </div>
-                        <div>
-                            <button class="btn-icon" title="Editar">✏️</button>
-                            <button class="btn-icon" title="Remover">🗑️</button>
-                        </div>
-                    </li>
+                <ul class="list-group" id="equipe-lista">
+                    <li style="color:#94a3b8;padding:16px;">Nenhum membro cadastrado ainda.</li>
                 </ul>
             </div>
         </div>
@@ -1061,7 +1024,7 @@
                 pdf.setFont('helvetica', 'bold');
                 pdf.setFontSize(10);
                 pdf.setTextColor(30, 27, 46);
-                pdf.text('Performance por Procurador', margin, y);
+                pdf.text('Performance por Funcionário', margin, y);
                 y += 4;
 
                 // Cabeçalho da tabela
@@ -1374,6 +1337,103 @@
                 btn.disabled = false;
             }
         });
+
+        // ─── EQUIPE — CRUD com localStorage ──────────────────────────────
+        const EQUIPE_KEY = 'pgm_equipe_v1';
+
+        function equipe_carregar() {
+            try { return JSON.parse(localStorage.getItem(EQUIPE_KEY)) || []; }
+            catch { return []; }
+        }
+
+        function equipe_salvar_storage(lista) {
+            localStorage.setItem(EQUIPE_KEY, JSON.stringify(lista));
+        }
+
+        function equipe_renderizar() {
+            const lista = equipe_carregar();
+            const ul = document.getElementById('equipe-lista');
+            if (!ul) return;
+            if (lista.length === 0) {
+                ul.innerHTML = '<li style="color:#94a3b8;padding:16px;">Nenhum membro cadastrado ainda.</li>';
+                return;
+            }
+            ul.innerHTML = lista.map((m, i) => `
+                <li class="list-group-item">
+                    <div>
+                        <strong>${m.nome}</strong><br>
+                        <small style="color:#64748b;">${m.funcao}${m.email ? ' | ' + m.email : ''}${m.whatsapp ? ' | ' + m.whatsapp : ''}</small>
+                    </div>
+                    <div style="display:flex;gap:6px;">
+                        <button class="btn-icon" title="Editar" onclick="equipe_editar(${i})">✏️</button>
+                        <button class="btn-icon" title="Remover" onclick="equipe_excluir(${i})">🗑️</button>
+                    </div>
+                </li>`).join('');
+        }
+
+        function equipe_salvar() {
+            const nome     = document.getElementById('eq-nome').value.trim();
+            const funcao   = document.getElementById('eq-funcao').value;
+            const email    = document.getElementById('eq-email').value.trim();
+            const whatsapp = document.getElementById('eq-whatsapp').value.trim();
+            const editId   = document.getElementById('equipe-edit-id').value;
+
+            if (!nome) { alert('Informe o nome do membro.'); return; }
+
+            const lista = equipe_carregar();
+            const membro = { nome, funcao, email, whatsapp };
+
+            if (editId !== '') {
+                lista[parseInt(editId)] = membro;
+            } else {
+                lista.push(membro);
+            }
+
+            equipe_salvar_storage(lista);
+            equipe_renderizar();
+            equipe_limparForm();
+            alert(`✅ Membro "${nome}" salvo com sucesso!`);
+        }
+
+        function equipe_editar(i) {
+            const lista = equipe_carregar();
+            const m = lista[i];
+            document.getElementById('eq-nome').value      = m.nome;
+            document.getElementById('eq-funcao').value    = m.funcao;
+            document.getElementById('eq-email').value     = m.email || '';
+            document.getElementById('eq-whatsapp').value  = m.whatsapp || '';
+            document.getElementById('equipe-edit-id').value = i;
+            document.getElementById('equipe-form-titulo').textContent = '✏️ Editar Membro';
+            document.getElementById('equipe-btn-cancelar').style.display = 'inline-flex';
+            document.getElementById('eq-nome').focus();
+            // Scroll até o formulário
+            document.getElementById('equipe-form-titulo').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function equipe_excluir(i) {
+            const lista = equipe_carregar();
+            if (!confirm(`Remover "${lista[i].nome}" da equipe?`)) return;
+            lista.splice(i, 1);
+            equipe_salvar_storage(lista);
+            equipe_renderizar();
+        }
+
+        function equipe_cancelarEdicao() {
+            equipe_limparForm();
+        }
+
+        function equipe_limparForm() {
+            document.getElementById('eq-nome').value      = '';
+            document.getElementById('eq-email').value     = '';
+            document.getElementById('eq-whatsapp').value  = '';
+            document.getElementById('equipe-edit-id').value = '';
+            document.getElementById('equipe-form-titulo').textContent = '➕ Novo Membro';
+            document.getElementById('equipe-btn-cancelar').style.display = 'none';
+        }
+
+        // Carrega a equipe ao abrir a página
+        equipe_renderizar();
+
     </script>
 </body>
 </html>
