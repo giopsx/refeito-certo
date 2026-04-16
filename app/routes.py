@@ -111,14 +111,17 @@ def _parse_xlsx(file_obj):
                 'prazo': prazo_str, 'dias': dias,
                 'assunto': assunto, 'vara': vara,
             })
-        elif status in ('VENCE HOJE', 'URGENTE'):
-            proximos_count += 1
-            diff = (prazo_d - today).days if prazo_d else 0
-            proximos_lista.append({
-                'processo': num_proc, 'responsavel': responsavel,
-                'prazo': prazo_str, 'dias': diff,
-                'assunto': assunto, 'vara': vara,
-            })
+
+        # Próximos: olha direto no PRAZO — entre hoje e +7 dias, não cumpridos e não vencidos
+        if prazo_d and cumprido_val != 'SIM' and status != 'VENCIDO':
+            diff = (prazo_d - today).days
+            if 0 <= diff <= 7:
+                proximos_count += 1
+                proximos_lista.append({
+                    'processo': num_proc, 'responsavel': responsavel,
+                    'prazo': prazo_str, 'dias': diff,
+                    'assunto': assunto, 'vara': vara,
+                })
 
         if responsavel not in performance:
             performance[responsavel] = {'total': 0, 'cumpridos': 0, 'criticos': 0}
@@ -174,92 +177,4 @@ def index():
 
 
 @bp.route('/painel', methods=['GET'])
-@token_required
-def painel():
-    return render_template('dashboard.html')
-
-
-@bp.route('/api/upload', methods=['POST'])
-@token_required
-def upload_file():
-    if 'file' not in request.files:
-        return jsonify({'error': 'Arquivo não fornecido'}), 400
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({'error': 'Arquivo vazio'}), 400
-    if not file.filename.lower().endswith('.xlsx'):
-        return jsonify({'error': 'Apenas arquivos XLSX são permitidos'}), 400
-    try:
-        data = _parse_xlsx(file)
-        _cache.update(data)
-        _cache['filename'] = file.filename
-        _save_cache()
-        return jsonify({
-            'success': True,
-            'message': 'Planilha importada com sucesso',
-            'stats': data['stats'],
-            'filename': file.filename,
-        }), 200
-    except KeyError as e:
-        return jsonify({'error': f'Aba não encontrada: {e}. A aba deve se chamar "Prazos 2026".'}), 422
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-
-@bp.route('/api/dashboard', methods=['GET'])
-@token_required
-def get_dashboard():
-    if not _cache:
-        return jsonify({'sem_dados': True}), 200
-    return jsonify({
-        'stats': _cache.get('stats', {}),
-        'performance': _cache.get('performance', []),
-        'filename': _cache.get('filename', ''),
-    })
-
-
-@bp.route('/api/criticos', methods=['GET'])
-@token_required
-def get_criticos():
-    if not _cache:
-        return jsonify({'sem_dados': True}), 200
-    return jsonify({
-        'vencidos': _cache.get('vencidos', []),
-        'proximos': _cache.get('proximos', []),
-    })
-
-
-@bp.route('/api/relatorios/<tipo>', methods=['POST'])
-@token_required
-def gerar_relatorio(tipo):
-    if tipo not in ['semanal', 'mensal', 'individual']:
-        return jsonify({'error': 'Tipo inválido'}), 400
-    return jsonify({'success': True, 'message': f'Relatório {tipo} gerado', 'url': '/r/abc123'}), 200
-
-
-@bp.route('/api/equipe', methods=['GET'])
-@token_required
-def get_equipe():
-    return jsonify({'membros': []})
-
-
-@bp.route('/api/equipe', methods=['POST'])
-@token_required
-def add_membro():
-    data = request.json
-    if not all(f in data for f in ['nome', 'funcao', 'email', 'whatsapp']):
-        return jsonify({'error': 'Campos obrigatórios faltando'}), 400
-    return jsonify({'success': True, 'message': 'Membro adicionado'}), 201
-
-
-@bp.route('/robots.txt', methods=['GET'])
-def robots():
-    return 'User-agent: *\nDisallow: /', 200, {'Content-Type': 'text/plain'}
-
-
-@bp.after_request
-def add_security_headers(response):
-    response.headers['X-Robots-Tag'] = 'noindex, nofollow'
-    response.headers['X-Content-Type-Options'] = 'nosniff'
-    response.headers['X-Frame-Options'] = 'DENY'
-    return response
+@token_requir
