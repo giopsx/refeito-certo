@@ -81,8 +81,6 @@ def _parse_xlsx(file_obj):
         if row[0] is None and row[1] is None and row[2] is None:
             continue
 
-        total += 1
-
         prazo_raw    = row[1]
         responsavel  = _normalizar(str(row[2]).strip() if row[2] else '')
         if not responsavel:
@@ -100,20 +98,26 @@ def _parse_xlsx(file_obj):
             prazo_d = prazo_raw
         prazo_str = prazo_d.strftime('%d/%m/%Y') if prazo_d else ''
 
+        # Total = linhas com PRAZO preenchido
+        if not prazo_d:
+            continue
+        total += 1
+
+        # Cumpridos = CUMPRIDO? == SIM
         if cumprido_val == 'SIM':
             cumpridos += 1
 
-        if status == 'VENCIDO':
+        # Vencidos = CUMPRIDO? em branco ou NÃO
+        if cumprido_val in ('', 'NÃO', 'NAO'):
             vencidos_nc += 1
-            dias = (today - prazo_d).days if prazo_d else 0
             vencidos_lista.append({
                 'processo': num_proc, 'responsavel': responsavel,
-                'prazo': prazo_str, 'dias': dias,
+                'prazo': prazo_str, 'dias': (today - prazo_d).days,
                 'assunto': assunto, 'vara': vara,
             })
 
-        # Próximos: olha direto no PRAZO — entre hoje e +7 dias, não cumpridos e não vencidos
-        if prazo_d and cumprido_val != 'SIM' and status != 'VENCIDO':
+        # Próximos = PRAZO entre hoje e +7 dias, não cumpridos
+        if cumprido_val != 'SIM':
             diff = (prazo_d - today).days
             if 0 <= diff <= 7:
                 proximos_count += 1
@@ -123,12 +127,13 @@ def _parse_xlsx(file_obj):
                     'assunto': assunto, 'vara': vara,
                 })
 
+        # Performance por responsável
         if responsavel not in performance:
             performance[responsavel] = {'total': 0, 'cumpridos': 0, 'criticos': 0}
         performance[responsavel]['total'] += 1
         if cumprido_val == 'SIM':
             performance[responsavel]['cumpridos'] += 1
-        if status == 'VENCIDO':
+        if cumprido_val in ('', 'NÃO', 'NAO'):
             performance[responsavel]['criticos'] += 1
 
     taxa = round(cumpridos / total * 100, 1) if total > 0 else 0
@@ -177,4 +182,92 @@ def index():
 
 
 @bp.route('/painel', methods=['GET'])
-@token_requir
+@token_required
+def painel():
+    return render_template('dashboard.html')
+
+
+@bp.route('/api/upload', methods=['POST'])
+@token_required
+def upload_file():
+    if 'file' not in request.files:
+        return jsonify({'error': 'Arquivo não fornecido'}), 400
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'Arquivo vazio'}), 400
+    if not file.filename.lower().endswith('.xlsx'):
+        return jsonify({'error': 'Apenas arquivos XLSX são permitidos'}), 400
+    try:
+        data = _parse_xlsx(file)
+        _cache.update(data)
+        _cache['filename'] = file.filename
+        _save_cache()
+        return jsonify({
+            'success': True,
+            'message': 'Planilha importada com sucesso',
+            'stats': data['stats'],
+            'filename': file.filename,
+        }), 200
+    except KeyError as e:
+        return jsonify({'error': f'Aba não encontrada: {e}. A aba deve se chamar "Prazos 2026".'}), 422
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@bp.route('/api/dashboard', methods=['GET'])
+@token_required
+def get_dashboard():
+    if not _cache:
+        return jsonify({'sem_dados': True}), 200
+    return jsonify({
+        'stats': _cache.get('stats', {}),
+        'performance': _cache.get('performance', []),
+        'filename': _cache.get('filename', ''),
+    })
+
+
+@bp.route('/api/criticos', methods=['GET'])
+@token_required
+def get_criticos():
+    if not _cache:
+        return jsonify({'sem_dados': True}), 200
+    return jsonify({
+        'vencidos': _cache.get('vencidos', []),
+        'proximos': _cache.get('proximos', []),
+    })
+
+
+@bp.route('/api/relatorios/<tipo>', methods=['POST'])
+@token_required
+def gerar_relatorio(tipo):
+    if tipo not in ['semanal', 'mensal', 'individual']:
+        return jsonify({'error': 'Tipo inválido'}), 400
+    return jsonify({'success': True, 'message': f'Relatório {tipo} gerado', 'url': '/r/abc123'}), 200
+
+
+@bp.route('/api/equipe', methods=['GET'])
+@token_required
+def get_equipe():
+    return jsonify({'membros': []})
+
+
+@bp.route('/api/equipe', methods=['POST'])
+@token_required
+def add_membro():
+    data = request.json
+    if not all(f in data for f in ['nome', 'funcao', 'email', 'whatsapp']):
+        return jsonify({'error': 'Campos obrigatórios faltando'}), 400
+    return jsonify({'success': True, 'message': 'Membro adicionado'}), 201
+
+
+@bp.route('/robots.txt', methods=['GET'])
+def robots():
+    return 'User-agent: *\nDisallow: /', 200, {'Content-Type': 'text/plain'}
+
+
+@bp.after_request
+def add_security_headers(response):
+    response.headers['X-Robots-Tag'] = 'noindex, nofollow'
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-Frame-Options'] = 'DENY'
+    return response
