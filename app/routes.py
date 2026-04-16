@@ -8,7 +8,7 @@ from datetime import datetime, date
 bp = Blueprint('main', __name__)
 
 # ─── Cache em memória (persistido em JSON entre restarts) ──────────────────────
-_CACHE_FILE = os.path.join(os.path.dirname(__file__), 'data_cache.json')
+_CACHE_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data_cache.json')
 _cache = {}
 
 
