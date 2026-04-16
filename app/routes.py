@@ -29,9 +29,20 @@ _load_cache()
 
 _NAO_PESSOAS = {
     'SPF', 'SPJ', 'SPMA', 'GEC', 'AMBIENTAL', 'FISCAL', 'COMCEP',
-    'VERIFICAR', '-', 'Sem responsável', 'GABINETE ACOMPANHANDO', 'CARTORIO/GABINETE',
+    'VERIFICAR', '-', 'Sem responsável', 'GABINETE ACOMPANHANDO',
+    'CARTORIO/GABINETE', 'DISTRIBUIR', 'MANIFESTAÇÃO DESNECESSÁRIA',
+    'PREJUDICADO', '',
 }
 _NAO_PESSOAS_PREFIXOS = ('DEVOLVIDO', 'ESCRITORIO', 'GABINETE', 'F704')
+
+_NORMALIZAR = {
+    'ÉRICA': 'ERICA',
+    'JEFERSON': 'JEFFERSON',
+}
+
+
+def _normalizar(nome):
+    return _NORMALIZAR.get(nome.upper(), nome.upper()) if nome else ''
 
 
 def _eh_pessoa(nome):
@@ -65,7 +76,6 @@ def _parse_xlsx(file_obj):
     cumpridos = 0
 
     for row in ws_p.iter_rows(min_row=2, values_only=True):
-        # Ignora linhas completamente vazias
         if all(v is None for v in row):
             continue
         if row[0] is None and row[1] is None and row[2] is None:
@@ -74,7 +84,9 @@ def _parse_xlsx(file_obj):
         total += 1
 
         prazo_raw    = row[1]
-        responsavel  = str(row[2]).strip() if row[2] else 'Sem responsável'
+        responsavel  = _normalizar(str(row[2]).strip() if row[2] else '')
+        if not responsavel:
+            responsavel = 'Sem responsável'
         num_proc     = str(row[4]).strip() if row[4] else ''
         vara         = str(row[6]).strip() if row[6] else ''
         assunto      = str(row[7]).strip()[:80] if row[7] else ''
@@ -88,11 +100,9 @@ def _parse_xlsx(file_obj):
             prazo_d = prazo_raw
         prazo_str = prazo_d.strftime('%d/%m/%Y') if prazo_d else ''
 
-        # Cumpridos = CUMPRIDO? == SIM
         if cumprido_val == 'SIM':
             cumpridos += 1
 
-        # Vencidos = STATUS == VENCIDO
         if status == 'VENCIDO':
             vencidos_nc += 1
             dias = (today - prazo_d).days if prazo_d else 0
@@ -101,8 +111,6 @@ def _parse_xlsx(file_obj):
                 'prazo': prazo_str, 'dias': dias,
                 'assunto': assunto, 'vara': vara,
             })
-
-        # Próximos = STATUS == VENCE HOJE ou URGENTE
         elif status in ('VENCE HOJE', 'URGENTE'):
             proximos_count += 1
             diff = (prazo_d - today).days if prazo_d else 0
@@ -112,7 +120,6 @@ def _parse_xlsx(file_obj):
                 'assunto': assunto, 'vara': vara,
             })
 
-        # Performance por responsável
         if responsavel not in performance:
             performance[responsavel] = {'total': 0, 'cumpridos': 0, 'criticos': 0}
         performance[responsavel]['total'] += 1
