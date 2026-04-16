@@ -10,7 +10,7 @@ def token_required(f):
     """Decorator para validar token de acesso."""
     @wraps(f)
     def decorated(*args, **kwargs):
-        from . import current_app
+        from flask import current_app
         token = request.args.get('token') or request.headers.get('Authorization', '').replace('Bearer ', '')
         
         if not token or token != current_app.config['ACCESS_TOKEN']:
@@ -23,8 +23,8 @@ def token_required(f):
 # APAGUE ISSO:
 @bp.route('/', methods=['GET'])
 def index():
-    """Rota raiz redireciona com 404."""
-    return {'error': 'Not Found'}, 404
+    from flask import redirect, url_for, current_app
+    return redirect(url_for('main.painel', token=current_app.config['ACCESS_TOKEN']))
 
 
 @bp.route('/painel', methods=['GET'])

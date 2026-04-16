@@ -30,7 +30,7 @@ def create_app():
     db.init_app(app)
 
     # Registrar blueprints e rotas
-    import app_routes as routes
+    from . import routes
     app.register_blueprint(routes.bp)
 
     # Criar tabelas
@@ -38,19 +38,3 @@ def create_app():
         db.create_all()
 
     return app
-
-    # Esse é o botão de ligar!
-# Esse bloco deve ficar logo abaixo de app = create_app()
-app = create_app()
-
-app = create_app()
-
-@app.route('/')
-def check_alive():
-    from flask import redirect, url_for
-    # Isso vai te mandar direto para o dashboard
-    return redirect(url_for('main.painel', token=app.config['ACCESS_TOKEN']))
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
