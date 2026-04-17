@@ -744,24 +744,50 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
                 + 'Por favor, tome as providencias necessarias.';
         }
 
-        async function enviarAlerta(processo, responsavel, prazo, tipo) {
-            var contatos = await carregarContatos();
-            var numero   = contatos[responsavel.toUpperCase()] || null;
+        function enviarAlerta(processo, responsavel, prazo, tipo) {
+            // Busca sincrona do numero (sem await para nao bloquear o window.open)
+            var numero = null;
 
+            // 1. Tentar do cache em memoria
+            if (_contatosCache && _contatosCache[responsavel.toUpperCase()]) {
+                numero = _contatosCache[responsavel.toUpperCase()];
+            }
+
+            // 2. Tentar do localStorage sincronamente
+            if (!numero) {
+                try {
+                    var lista = JSON.parse(localStorage.getItem('pgm_equipe_v1') || '[]');
+                    var membro = lista.find(function(m) {
+                        return m.nome && m.nome.toUpperCase() === responsavel.toUpperCase();
+                    });
+                    if (membro && membro.whatsapp) {
+                        numero = membro.whatsapp;
+                        // Atualizar cache
+                        if (!_contatosCache) _contatosCache = {};
+                        _contatosCache[responsavel.toUpperCase()] = numero;
+                    }
+                } catch(e) {}
+            }
+
+            // 3. Se nao encontrou, pedir ao usuario
             if (!numero) {
                 numero = prompt(
-                    'Numero nao cadastrado para: ' + responsavel + '\n\n' +
-                    'Digite o WhatsApp (ex: 5569987654321):\n' +
-                    'Dica: cadastre na aba Equipe para salvar.'
+                    'Numero nao cadastrado para: ' + responsavel + '\n' +
+                    'Digite o WhatsApp com DDI+DDD (ex: 5569987654321):\n' +
+                    '(Cadastre na aba Equipe para nao precisar digitar sempre)'
                 );
                 if (!numero || !numero.trim()) return;
                 numero = numero.trim();
-                // Salvar temporariamente no cache
-                contatos[responsavel.toUpperCase()] = numero;
+                if (!_contatosCache) _contatosCache = {};
+                _contatosCache[responsavel.toUpperCase()] = numero;
             }
 
+            // 4. Abrir WhatsApp DIRETAMENTE — sem await, sem delay
             var mensagem = montarMensagem(processo, responsavel, prazo, tipo);
             abrirWhatsApp(numero, mensagem);
+
+            // 5. Em background, atualizar cache da API (nao bloqueia o envio)
+            carregarContatos().catch(function(){});
         }
 
         async function alertarTodosProximos() {
