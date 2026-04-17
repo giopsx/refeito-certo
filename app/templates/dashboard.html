@@ -524,13 +524,6 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
 
 
         /* ── Tabs ── */
-        function switchTab(e, tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(tabName).classList.add('active');
-            e.target.classList.add('active');
-        }
-
         /* ── Modo Noturno ── */
         function toggleDark() {
             const body = document.body;
@@ -553,196 +546,148 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
         async function generateReport(type) {
             const overlay  = document.getElementById('pdf-overlay');
             const statusEl = document.getElementById('pdf-status');
-
-            // Mapear conteúdo do relatório por tipo
-            const labels = {
-                semanal:    'Relatório Semanal — Semana 16/2026',
-                mensal:     'Relatório Mensal — Abril/2026',
-                individual: 'Relatório Individual',
-            };
-
             overlay.classList.add('show');
-            statusEl.textContent = 'Capturando dados do painel…';
-
+            statusEl.textContent = 'Gerando PDF...';
             try {
                 const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-
+                const pdf = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
                 const pageW = pdf.internal.pageSize.getWidth();
                 const pageH = pdf.internal.pageSize.getHeight();
-                const margin = 15;
-                let y = margin;
+                const margin = 14;
+                const hoje = new Date().toLocaleDateString('pt-BR');
 
-                /* ── Cabeçalho ── */
-                pdf.setFillColor(91, 33, 182); // roxo escuro
-                pdf.rect(0, 0, pageW, 30, 'F');
-
-                pdf.setTextColor(255, 255, 255);
-                pdf.setFontSize(14);
-                pdf.setFont('helvetica', 'bold');
-                pdf.text('PGM Porto Velho — Subprocuradoria Contenciosa', margin, 13);
-
-                pdf.setFontSize(10);
-                pdf.setFont('helvetica', 'normal');
-                pdf.text(labels[type] || `Relatório ${type}`, margin, 22);
-
-                const hoje = new Date().toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric' });
-                const hora = new Date().toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
-                pdf.text(`Emitido em ${hoje} às ${hora}`, pageW - margin, 22, { align: 'right' });
-
-                y = 40;
-
-                /* ── Bloco de KPIs ── */
-                statusEl.textContent = 'Adicionando indicadores…';
-                await sleep(200);
-
-                const kpis = [
-                    { label: 'Total de Processos', value: '128', color: [124, 58, 237] },
-                    { label: 'Vencidos',            value: '12',  color: [220, 38, 38] },
-                    { label: 'Próximos (7 dias)',   value: '8',   color: [234, 88, 12] },
-                    { label: 'Cumpridos',           value: '108', color: [22, 163, 74] },
-                ];
-
-                const colW = (pageW - margin * 2 - 9) / 4;
-                kpis.forEach((k, i) => {
-                    const x = margin + i * (colW + 3);
-                    pdf.setFillColor(...k.color);
-                    pdf.roundedRect(x, y, colW, 22, 3, 3, 'F');
-                    pdf.setTextColor(255, 255, 255);
-                    pdf.setFont('helvetica', 'bold');
-                    pdf.setFontSize(16);
-                    pdf.text(k.value, x + colW / 2, y + 11, { align: 'center' });
-                    pdf.setFontSize(7);
-                    pdf.setFont('helvetica', 'normal');
-                    pdf.text(k.label, x + colW / 2, y + 18, { align: 'center' });
-                });
-
-                y += 32;
-
-                /* ── Taxa de cumprimento ── */
-                pdf.setTextColor(30, 27, 46);
-                pdf.setFont('helvetica', 'bold');
-                pdf.setFontSize(10);
-                pdf.text('Taxa de Cumprimento Geral', margin, y);
-                y += 5;
-
-                const barW = pageW - margin * 2;
-                pdf.setFillColor(228, 226, 240);
-                pdf.roundedRect(margin, y, barW, 6, 3, 3, 'F');
-                pdf.setFillColor(22, 163, 74);
-                pdf.roundedRect(margin, y, barW * 0.844, 6, 3, 3, 'F');
-
-                pdf.setFontSize(8);
-                pdf.setTextColor(100, 116, 139);
-                pdf.text('84,4%', margin + barW * 0.844 + 2, y + 4.5);
-                y += 14;
-
-                /* ── Tabela de performance ── */
-                statusEl.textContent = 'Montando tabela de performance…';
-                await sleep(200);
-
-                pdf.setFont('helvetica', 'bold');
-                pdf.setFontSize(10);
-                pdf.setTextColor(30, 27, 46);
-                pdf.text('Performance por Funcionário', margin, y);
-                y += 4;
-
-                // Cabeçalho da tabela
-                const cols = ['Procurador', 'Total', 'Cumpridos', 'Taxa', 'Críticos'];
-                const colXs = [margin, margin+40, margin+65, margin+90, margin+135];
-                const rowH = 8;
-
-                pdf.setFillColor(237, 233, 254);
-                pdf.rect(margin, y, pageW - margin * 2, rowH, 'F');
-                pdf.setFont('helvetica', 'bold');
-                pdf.setFontSize(8);
-                pdf.setTextColor(91, 33, 182);
-                cols.forEach((c, i) => pdf.text(c, colXs[i] + 1, y + 5.5));
-                y += rowH;
-
-                const rows = [
-                    ['Jefferson', '32', '28', '87,5%', '2'],
-                    ['Mariana',   '28', '27', '96,4%', '0'],
-                    ['Carlos',    '35', '31', '88,6%', '5'],
-                    ['Ana',       '33', '22', '66,7%', '5'],
-                ];
-
-                rows.forEach((r, ri) => {
-                    if (ri % 2 === 0) {
-                        pdf.setFillColor(250, 248, 255);
-                        pdf.rect(margin, y, pageW - margin * 2, rowH, 'F');
-                    }
-                    pdf.setFont('helvetica', ri === 0 ? 'bold' : 'normal');
-                    pdf.setFontSize(8);
-                    pdf.setTextColor(30, 27, 46);
-                    r.forEach((cell, ci) => pdf.text(String(cell), colXs[ci] + 1, y + 5.5));
-                    y += rowH;
-                });
-
-                // Borda da tabela
-                pdf.setDrawColor(228, 226, 240);
-                pdf.rect(margin, y - rows.length * rowH - rowH, pageW - margin * 2, rows.length * rowH + rowH);
-                y += 10;
-
-                /* ── Processos Críticos ── */
-                if (type === 'semanal' || type === 'mensal') {
-                    statusEl.textContent = 'Adicionando processos críticos…';
-                    await sleep(200);
-
-                    pdf.setFont('helvetica', 'bold');
-                    pdf.setFontSize(10);
-                    pdf.setTextColor(220, 38, 38);
-                    pdf.text('⚠ Prazos Vencidos (Top 3)', margin, y);
-                    y += 5;
-
-                    const criticos = [
-                        ['2024.0001', 'Carlos',  '05/04/2026', '10 dias'],
-                        ['2024.0015', 'Ana',     '08/04/2026', '7 dias' ],
-                        ['2024.0032', 'Carlos',  '02/04/2026', '13 dias'],
-                    ];
-
-                    const hCols = ['Processo', 'Responsável', 'Prazo', 'Dias Vencido'];
-                    const hXs   = [margin, margin+40, margin+90, margin+130];
-
-                    pdf.setFillColor(254, 226, 226);
-                    pdf.rect(margin, y, pageW - margin * 2, rowH, 'F');
-                    pdf.setFont('helvetica', 'bold');
-                    pdf.setFontSize(8);
-                    pdf.setTextColor(185, 28, 28);
-                    hCols.forEach((c, i) => pdf.text(c, hXs[i] + 1, y + 5.5));
-                    y += rowH;
-
-                    criticos.forEach((r, ri) => {
-                        if (ri % 2 === 0) {
-                            pdf.setFillColor(255, 249, 249);
-                            pdf.rect(margin, y, pageW - margin * 2, rowH, 'F');
-                        }
-                        pdf.setFont('helvetica', 'normal');
-                        pdf.setFontSize(8);
-                        pdf.setTextColor(30, 27, 46);
-                        r.forEach((cell, ci) => pdf.text(cell, hXs[ci] + 1, y + 5.5));
-                        y += rowH;
-                    });
-                    y += 10;
+                function cabecalho(titulo) {
+                    pdf.setFillColor(8,12,20);
+                    pdf.rect(0,0,pageW,26,'F');
+                    pdf.setTextColor(255,255,255);
+                    pdf.setFontSize(12); pdf.setFont('helvetica','bold');
+                    pdf.text('Subprocuradoria Contenciosa - PGM Porto Velho', margin, 10);
+                    pdf.setFontSize(9); pdf.setFont('helvetica','normal');
+                    pdf.text(titulo + ' - Gerado em ' + hoje, margin, 19);
+                    return 32;
                 }
 
-                /* ── Rodapé ── */
-                pdf.setFillColor(245, 243, 255);
-                pdf.rect(0, pageH - 15, pageW, 15, 'F');
-                pdf.setFontSize(7);
-                pdf.setTextColor(100, 116, 139);
-                pdf.text('Procuradoria-Geral do Município de Porto Velho — Documento gerado automaticamente pelo Painel Gerencial PGM', pageW / 2, pageH - 6, { align: 'center' });
+                function rodape() {
+                    const n = pdf.internal.getNumberOfPages();
+                    for (let i=1;i<=n;i++) {
+                        pdf.setPage(i);
+                        pdf.setFontSize(7); pdf.setTextColor(150,150,170);
+                        pdf.text('Subprocuradoria Contenciosa - PGM Porto Velho - Uso interno', margin, pageH-5);
+                        pdf.text('Pag. '+i+'/'+n, pageW-margin, pageH-5, {align:'right'});
+                    }
+                }
 
-                /* ── Salvar ── */
-                statusEl.textContent = 'Finalizando…';
-                await sleep(300);
+                const statsKpis = {
+                    total:     document.getElementById('kpi-total')?.textContent     || '938',
+                    vencidos:  document.getElementById('kpi-vencidos')?.textContent  || VENCIDOS_DATA.length,
+                    proximos:  document.getElementById('kpi-proximos')?.textContent  || PROXIMOS7.length,
+                    cumpridos: document.getElementById('kpi-cumpridos')?.textContent || '391',
+                    taxa:      (document.getElementById('kpi-taxa-label')?.textContent || '41.7% de taxa').replace('% de taxa','') + '%',
+                };
 
-                const nomeArquivo = `PGM_${type}_${hoje.replace(/\//g, '-')}.pdf`;
-                pdf.save(nomeArquivo);
+                let y = cabecalho(type === 'semanal' ? 'Relatorio Semanal' : type === 'mensal' ? 'Relatorio Mensal' : type === 'individual' ? 'Relatorio Individual' : 'Relatorio de Criticos');
 
-            } catch (err) {
-                console.error('Erro ao gerar PDF:', err);
-                alert('Erro ao gerar o PDF. Tente novamente.');
+                if (type === 'semanal' || type === 'mensal') {
+                    pdf.autoTable({ startY:y,
+                        head:[['Indicador','Valor']],
+                        body:[
+                            ['Total de processos', statsKpis.total],
+                            ['Vencidos (nao cumpridos)', statsKpis.vencidos],
+                            ['Vencendo nos proximos 7 dias', statsKpis.proximos],
+                            ['Cumpridos', statsKpis.cumpridos],
+                            ['Taxa de cumprimento', statsKpis.taxa],
+                        ],
+                        theme:'striped',
+                        headStyles:{fillColor:[8,12,20],textColor:255,fontStyle:'bold',fontSize:9},
+                        bodyStyles:{fontSize:9}, margin:{left:margin,right:margin}
+                    });
+                    y = pdf.lastAutoTable.finalY + 8;
+
+                    pdf.setFontSize(10); pdf.setFont('helvetica','bold'); pdf.setTextColor(180,100,0);
+                    pdf.text('Vencendo nos Proximos 7 Dias (' + PROXIMOS7.length + ')', margin, y); y += 4;
+                    pdf.autoTable({ startY:y,
+                        head:[['Processo','Parte','Responsavel','Prazo','Vence em']],
+                        body:PROXIMOS7.map(r => { const d=r.dias||0; return [r.proc||'',r.parte||'',r.resp||'',r.prazo||'',d===0?'Hoje':d===1?'Amanha':d+' dias']; }),
+                        theme:'striped',
+                        headStyles:{fillColor:[180,100,0],textColor:255,fontStyle:'bold',fontSize:8},
+                        bodyStyles:{fontSize:7}, margin:{left:margin,right:margin}
+                    });
+
+                    if (type === 'mensal') {
+                        y = pdf.lastAutoTable.finalY + 8;
+                        pdf.setFontSize(10); pdf.setFont('helvetica','bold'); pdf.setTextColor(200,30,30);
+                        pdf.text('Prazos Vencidos (' + VENCIDOS_DATA.length + ')', margin, y); y += 4;
+                        pdf.autoTable({ startY:y,
+                            head:[['Processo','Parte','Responsavel','Prazo','Dias']],
+                            body:VENCIDOS_DATA.map(r => [r.proc||'',r.parte||'',r.resp||'',r.prazo||'',r.dias+'d']),
+                            theme:'striped',
+                            headStyles:{fillColor:[200,30,30],textColor:255,fontStyle:'bold',fontSize:8},
+                            bodyStyles:{fontSize:7}, margin:{left:margin,right:margin}
+                        });
+                    }
+
+                } else if (type === 'individual') {
+                    const respEl = document.getElementById('select-relatorio-individual');
+                    const resp = respEl ? respEl.value.trim() : '';
+                    if (!resp) { alert('Selecione um responsavel.'); overlay.classList.remove('show'); return; }
+                    const meusV = VENCIDOS_DATA.filter(r => (r.resp||r.responsavel||'').toUpperCase() === resp.toUpperCase());
+                    const meusP = PROXIMOS7.filter(r => (r.resp||r.responsavel||'').toUpperCase() === resp.toUpperCase());
+                    pdf.autoTable({ startY:y,
+                        head:[['Indicador','Valor']],
+                        body:[['Responsavel',resp],['Vencidos',meusV.length],['Criticos (7 dias)',meusP.length]],
+                        theme:'striped', headStyles:{fillColor:[8,12,20],textColor:255,fontSize:9},
+                        bodyStyles:{fontSize:9}, margin:{left:margin,right:margin}
+                    });
+                    if (meusP.length) {
+                        y = pdf.lastAutoTable.finalY + 6;
+                        pdf.setFontSize(10); pdf.setFont('helvetica','bold'); pdf.setTextColor(180,100,0);
+                        pdf.text('Vencendo nos Proximos 7 Dias', margin, y); y += 4;
+                        pdf.autoTable({ startY:y,
+                            head:[['Processo','Parte','Prazo','Vence em']],
+                            body:meusP.map(r => { const d=r.dias||0; return [r.proc||'',r.parte||'',r.prazo||'',d===0?'Hoje':d+' dias']; }),
+                            theme:'striped', headStyles:{fillColor:[180,100,0],textColor:255,fontSize:8},
+                            bodyStyles:{fontSize:8}, margin:{left:margin,right:margin}
+                        });
+                    }
+                    if (meusV.length) {
+                        y = pdf.lastAutoTable.finalY + 6;
+                        pdf.setFontSize(10); pdf.setFont('helvetica','bold'); pdf.setTextColor(200,30,30);
+                        pdf.text('Prazos Vencidos', margin, y); y += 4;
+                        pdf.autoTable({ startY:y,
+                            head:[['Processo','Parte','Prazo','Dias']],
+                            body:meusV.map(r => [r.proc||'',r.parte||'',r.prazo||'',r.dias+'d']),
+                            theme:'striped', headStyles:{fillColor:[200,30,30],textColor:255,fontSize:8},
+                            bodyStyles:{fontSize:8}, margin:{left:margin,right:margin}
+                        });
+                    }
+
+                } else if (type === 'criticos') {
+                    pdf.setFontSize(10); pdf.setFont('helvetica','bold'); pdf.setTextColor(180,100,0);
+                    pdf.text('Vencendo nos Proximos 7 Dias (' + PROXIMOS7.length + ')', margin, y); y += 4;
+                    pdf.autoTable({ startY:y,
+                        head:[['Processo','Parte','Responsavel','Prazo','Vence em']],
+                        body:PROXIMOS7.map(r => { const d=r.dias||0; return [r.proc||'',r.parte||'',r.resp||'',r.prazo||'',d===0?'Hoje':d===1?'Amanha':d+' dias']; }),
+                        theme:'striped', headStyles:{fillColor:[180,100,0],textColor:255,fontSize:8},
+                        bodyStyles:{fontSize:7}, margin:{left:margin,right:margin}
+                    });
+                    y = pdf.lastAutoTable.finalY + 8;
+                    pdf.setFontSize(10); pdf.setFont('helvetica','bold'); pdf.setTextColor(200,30,30);
+                    pdf.text('Prazos Vencidos (' + VENCIDOS_DATA.length + ')', margin, y); y += 4;
+                    pdf.autoTable({ startY:y,
+                        head:[['Processo','Parte','Responsavel','Prazo','Dias']],
+                        body:VENCIDOS_DATA.map(r => [r.proc||'',r.parte||'',r.resp||'',r.prazo||'',r.dias+'d']),
+                        theme:'striped', headStyles:{fillColor:[200,30,30],textColor:255,fontSize:8},
+                        bodyStyles:{fontSize:7}, margin:{left:margin,right:margin}
+                    });
+                }
+
+                rodape();
+                await new Promise(res => setTimeout(res, 200));
+                pdf.save('PGM_' + type + '_' + hoje.replace(/\//g,'-') + '.pdf');
+
+            } catch(err) {
+                console.error(err);
+                alert('Erro ao gerar PDF: ' + err.message);
             } finally {
                 overlay.classList.remove('show');
             }
@@ -892,49 +837,6 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
         }
 
         // ─── Renderiza KPIs e tabela de performance ───────────────────────
-        function renderDashboard(data) {
-            if (data.sem_dados) return;
-            const s = data.stats || {};
-            document.getElementById('kpi-total').textContent     = s.total     ?? '—';
-            document.getElementById('kpi-vencidos').textContent  = s.vencidos  ?? '—';
-            document.getElementById('kpi-proximos').textContent  = s.proximos  ?? '—';
-            document.getElementById('kpi-cumpridos').textContent = s.cumpridos ?? '—';
-            document.getElementById('kpi-taxa-label').textContent = `${s.taxa ?? '—'}% de taxa`;
-
-            const tbody = document.getElementById('tbody-performance');
-            const perf = data.performance || [];
-            if (perf.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#94a3b8;">Sem dados de performance.</td></tr>';
-                return;
-            }
-            tbody.innerHTML = perf.map(p => {
-                const badgeCls = p.criticos === 0 ? 'badge-success' : p.criticos <= 3 ? 'badge-warning' : 'badge-critical';
-                return `<tr>
-                    <td><strong>${p.responsavel}</strong></td>
-                    <td>${p.total}</td>
-                    <td>${p.cumpridos}</td>
-                    <td><div style="width:120px;">
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width:${p.taxa}%;"></div>
-                        </div>
-                    </div></td>
-                    <td><span class="badge ${badgeCls}">${p.criticos}</span></td>
-                </tr>`;
-            }).join('');
-
-            // Atualiza histórico de importação
-            if (data.filename && s.ultima_atualizacao) {
-                document.getElementById('import-history').innerHTML = `
-                    <li class="list-group-item">
-                        <div>
-                            <strong>${data.filename}</strong><br>
-                            <small style="color:#64748b;">${s.ultima_atualizacao} — ${s.total} processos</small>
-                        </div>
-                        <span class="badge badge-success">✓ Ok</span>
-                    </li>`;
-            }
-        }
-
         // ─── Renderiza tabelas de críticos ────────────────────────────────
         function renderCriticos(data) {
             if (data.sem_dados) return;
@@ -1035,75 +937,6 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
             return '<button onclick="mudarPag(\u0022' + tipo + '\u0022,' + page + ')" style="padding:4px 10px;border:1px solid var(--border);border-radius:5px;cursor:pointer;font-size:12px;background:' + bg + ';color:' + col + ';"' + dis + '>' + label + '</button>';
         }
 
-        function renderPagina(tipo) {
-            var isCritico = tipo === 'critico';
-            var dados = isCritico ? PROXIMOS7 : VENCIDOS_DATA;
-            var f = filtroState[tipo];
-            var filtrado = filtrarDados(dados, f);
-            var totalPags = Math.max(1, Math.ceil(filtrado.length / POR_PAG));
-            if (pagState[tipo] > totalPags) pagState[tipo] = totalPags;
-            var ini = (pagState[tipo] - 1) * POR_PAG;
-            var pagDados = filtrado.slice(ini, ini + POR_PAG);
-
-            var tbId  = isCritico ? 'tbody-proximos-vencer' : 'tbody-vencidos';
-            var cntId = isCritico ? 'count-proximos-vencer' : 'count-vencidos';
-            var pagId = 'pag-' + tipo;
-
-            var el = document.getElementById(cntId);
-            if (el) el.textContent = filtrado.length;
-
-            var tb = document.getElementById(tbId);
-            if (!tb) return;
-
-            if (pagDados.length === 0) {
-                tb.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#22c55e;padding:20px;">Nenhum processo encontrado.</td></tr>';
-            } else {
-                var rows = '';
-                for (var i = 0; i < pagDados.length; i++) {
-                    var r = pagDados[i];
-                    var proc = r.proc || r.processo || '';
-                    var parte = r.parte || '';
-                    var resp  = r.resp  || r.responsavel || '';
-                    var prazo = r.prazo || '';
-                    var vara  = r.vara  || '';
-                    var dias  = r.dias  || 0;
-                    var cor   = urgenciaCor(dias, isCritico ? 'critico' : 'vencido');
-                    var pj    = JSON.stringify(proc);
-                    var rj    = JSON.stringify(resp);
-                    var prj   = JSON.stringify(prazo);
-                    var tipoj = JSON.stringify(isCritico ? 'proximo' : 'vencido');
-                    var dLabel = isCritico
-                        ? (dias === 0 ? 'Hoje' : dias === 1 ? 'Amanha' : dias + ' dias')
-                        : dias + 'd';
-                    var badgeCls = isCritico
-                        ? 'class="badge ba"'
-                        : 'class="badge br"';
-                    rows += '<tr style="' + cor + '">' +
-                        '<td><strong>' + proc + '</strong></td>' +
-                        '<td style="font-size:12px;">' + parte + '</td>' +
-                        '<td>' + resp + '</td>' +
-                        '<td>' + prazo + '</td>' +
-                        '<td><span ' + badgeCls + '>' + dLabel + '</span></td>' +
-                        '<td style="font-size:11px;color:#64748b;">' + vara + '</td>' +
-                        '<td style="display:flex;gap:4px;">' +
-                            '<button class="btn-icon" onclick="enviarAlerta(' + pj + ',' + rj + ',' + prj + ',' + tipoj + ')" title="Enviar alerta WhatsApp">📱</button>' +
-                            '<button class="btn-icon" onclick="confirmarCumprido(' + pj + ',this)" title="Marcar como cumprido" style="color:var(--green);">✓</button>' +
-                        '</td>' +
-                    '</tr>';
-                }
-                tb.innerHTML = rows;
-            }
-
-            var pagEl = document.getElementById(pagId);
-            if (!pagEl) return;
-            var s = Math.max(1, pagState[tipo] - 2);
-            var eIdx = Math.min(totalPags, s + 4);
-            var btns = buildBtn(tipo, pagState[tipo]-1, '<', pagState[tipo]===1, false);
-            for (var k=s; k<=eIdx; k++) btns += buildBtn(tipo, k, k, false, k===pagState[tipo]);
-            btns += buildBtn(tipo, pagState[tipo]+1, '>', pagState[tipo]===totalPags, false);
-            pagEl.innerHTML = '<span>' + filtrado.length + ' processos · pag. ' + pagState[tipo] + ' de ' + totalPags + '</span><div style="display:flex;gap:4px;">' + btns + '</div>';
-        }
-
         function mudarPag(tipo, p) {
             var dados = tipo === 'critico' ? PROXIMOS7 : VENCIDOS_DATA;
             var f = filtroState[tipo];
@@ -1184,32 +1017,77 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
             var canvas = document.getElementById('chart-performance');
             if (!canvas || !perf || perf.length === 0) return;
             if (_chartInstance) { _chartInstance.destroy(); }
-            var labels = perf.map(function(p) { return p.responsavel; });
-            var taxas  = perf.map(function(p) { return p.taxa; });
-            var cores  = taxas.map(function(t) {
-                if (t >= 80) return 'rgba(22,163,74,0.75)';
-                if (t >= 50) return 'rgba(234,88,12,0.75)';
-                return 'rgba(220,38,38,0.75)';
+
+            // Usar criticos se taxa for 0 (fallback sem dados de cumpridos)
+            var usarTaxa = perf.some(function(p){ return (p.taxa||0) > 0; });
+            var labels = perf.map(function(p){ return p.responsavel || p.resp || ''; });
+            var valores = usarTaxa
+                ? perf.map(function(p){ return p.taxa || 0; })
+                : perf.map(function(p){ return p.criticos || 0; });
+            var maxVal = usarTaxa ? 100 : Math.max.apply(null, valores.concat([1]));
+
+            var cores = valores.map(function(v) {
+                if (usarTaxa) {
+                    if (v >= 80) return 'rgba(0,200,117,0.8)';
+                    if (v >= 50) return 'rgba(255,179,0,0.8)';
+                    return 'rgba(255,71,87,0.8)';
+                }
+                // Para criticos: mais criticos = mais vermelho
+                if (v <= 5)  return 'rgba(0,200,117,0.8)';
+                if (v <= 15) return 'rgba(255,179,0,0.8)';
+                return 'rgba(255,71,87,0.8)';
             });
+
+            var borderCores = cores.map(function(c){ return c.replace('0.8','1'); });
+
             _chartInstance = new Chart(canvas, {
                 type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Taxa de cumprimento (%)',
-                        data: taxas,
+                        label: usarTaxa ? 'Taxa de cumprimento (%)' : 'Processos criticos',
+                        data: valores,
                         backgroundColor: cores,
-                        borderRadius: 4,
+                        borderColor: borderCores,
+                        borderWidth: 1,
+                        borderRadius: 5,
+                        borderSkipped: false,
                     }]
                 },
                 options: {
                     indexAxis: 'y',
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(ctx) {
+                                    return usarTaxa
+                                        ? ctx.parsed.x.toFixed(1) + '% cumprimento'
+                                        : ctx.parsed.x + ' processos criticos';
+                                }
+                            }
+                        }
+                    },
                     scales: {
-                        x: { min: 0, max: 100, ticks: { callback: function(v) { return v + '%'; } } },
-                        y: { ticks: { font: { size: 11 } } }
+                        x: {
+                            min: 0,
+                            max: maxVal,
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: {
+                                color: '#4a607a',
+                                font: { size: 10 },
+                                callback: function(v){ return usarTaxa ? v+'%' : v; }
+                            }
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: {
+                                color: '#8899bb',
+                                font: { size: 11, weight: '500' }
+                            }
+                        }
                     }
                 }
             });
@@ -1236,51 +1114,6 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
         }
 
         var _origRD = renderDashboard;
-        function renderDashboard(data) {
-            if (data && !data.sem_dados) {
-                _origRD(data);
-                if (data.performance) renderChart(data.performance);
-            } else {
-                // Fallback com dados reais embutidos
-                var totalV = VENCIDOS_DATA.length;
-                var totalP = PROXIMOS7.length;
-                var el;
-                el = document.getElementById('kpi-total');     if(el) el.textContent = '938';
-                el = document.getElementById('kpi-vencidos');  if(el) el.textContent = totalV;
-                el = document.getElementById('kpi-proximos');  if(el) el.textContent = totalP;
-                el = document.getElementById('kpi-cumpridos'); if(el) el.textContent = '391';
-                el = document.getElementById('kpi-taxa-label');if(el) el.textContent = '41.7% de taxa';
-                // Calcular performance por responsavel a partir dos dados embutidos
-                var perf = {};
-                VENCIDOS_DATA.forEach(function(r) {
-                    var resp = r.resp || r.responsavel || 'Sem responsavel';
-                    if (!perf[resp]) perf[resp] = { responsavel: resp, total: 0, cumpridos: 0, criticos: 0, taxa: 0 };
-                    perf[resp].total++;
-                    perf[resp].criticos++;
-                });
-                PROXIMOS7.forEach(function(r) {
-                    var resp = r.resp || r.responsavel || 'Sem responsavel';
-                    if (!perf[resp]) perf[resp] = { responsavel: resp, total: 0, cumpridos: 0, criticos: 0, taxa: 0 };
-                    perf[resp].total++;
-                });
-                var perfList = Object.values(perf)
-                    .filter(function(p) { return p.responsavel.length <= 20 && /^[A-Za-zÀ-ÿ\s]+$/.test(p.responsavel); })
-                    .sort(function(a,b) { return b.criticos - a.criticos; })
-                    .slice(0, 10);
-                // Preencher tabela de performance
-                var tbody = document.getElementById('tbody-performance');
-                if (tbody && perfList.length > 0) {
-                    tbody.innerHTML = perfList.map(function(p) {
-                        var cls = p.criticos === 0 ? 'badge-success' : p.criticos <= 3 ? 'badge-warning' : 'badge-critical';
-                        return '<tr><td><strong>' + p.responsavel + '</strong></td><td>' + p.total + '</td><td>—</td><td><div style="width:110px"><div class="progress-bar"><div class="progress-fill" style="width:50%"></div></div></div></td><td><span class="badge ' + cls + '">' + p.criticos + '</span></td></tr>';
-                    }).join('');
-                }
-                renderChart(perfList);
-            }
-            renderPagina('critico');
-            renderPagina('vencido');
-        }
-
         // ── UPLOAD COM DIFF ───────────────────────────────────────────────
         var _origUpload = null;
 
@@ -1615,6 +1448,16 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
                     '<button class="bia" onclick="equipe_excluir_api('+idf+','+nomef+')" style="color:var(--red)">Remover<\/button>'+
                     '<\/div><\/div>';
             }).join('');
+        }
+
+        function equipe_cancelarEdicao() { equipe_limparForm(); }
+        function equipe_limparForm() {
+            document.getElementById("eq-nome").value="";
+            document.getElementById("eq-email").value="";
+            document.getElementById("eq-whatsapp").value="";
+            document.getElementById("equipe-edit-id").value="";
+            var t=document.getElementById("equipe-form-titulo"); if(t) t.textContent="Novo Membro";
+            var b=document.getElementById("equipe-btn-cancelar"); if(b) b.style.display="none";
         }
 
         initFiltros();
