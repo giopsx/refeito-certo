@@ -618,121 +618,137 @@
             return new Promise(resolve => setTimeout(resolve, ms));
         }
 
-        // ── Busca numero WhatsApp do responsavel na equipe cadastrada ──────
-        async function buscarNumeroWhatsApp(nomeResponsavel) {
-            // 1. Tentar via API (equipe salva no servidor)
+        // ── Cache de contatos da equipe (evita multiplas chamadas API) ────
+        var _contatosCache = null;
+
+        function limparCacheContatos() { _contatosCache = null; }
+
+        async function carregarContatos() {
+            if (_contatosCache) return _contatosCache;
+            var contatos = {};
+            // 1. API do servidor
             try {
-                var token = getToken();
-                var res = await fetch('/api/equipe?token=' + token);
+                var res = await fetch('/api/equipe?token=' + getToken());
                 if (res.ok) {
                     var json = await res.json();
-                    var membros = json.membros || [];
-                    var m = membros.find(function(x) {
-                        return x.nome && x.nome.toUpperCase() === nomeResponsavel.toUpperCase();
+                    (json.membros || []).forEach(function(m) {
+                        if (m.nome && m.whatsapp) contatos[m.nome.toUpperCase()] = m.whatsapp;
                     });
-                    if (m && m.whatsapp) return m.whatsapp;
                 }
             } catch(e) {}
-            // 2. Fallback: localStorage
+            // 2. Complementar com localStorage
             try {
                 var lista = JSON.parse(localStorage.getItem('pgm_equipe_v1')) || [];
-                var m2 = lista.find(function(x) {
-                    return x.nome && x.nome.toUpperCase() === nomeResponsavel.toUpperCase();
+                lista.forEach(function(m) {
+                    if (m.nome && m.whatsapp && !contatos[m.nome.toUpperCase()]) {
+                        contatos[m.nome.toUpperCase()] = m.whatsapp;
+                    }
                 });
-                if (m2 && m2.whatsapp) return m2.whatsapp;
             } catch(e) {}
-            return null;
+            _contatosCache = contatos;
+            return contatos;
         }
 
-        // Formata numero para padrao internacional sem caracteres especiais
-        function formatarNumero(num) {
-            return num.replace(/[^0-9+]/g, '');
-        }
-
-        // Abre WhatsApp com mensagem pre-preenchida
         function abrirWhatsApp(numero, mensagem) {
-            var numFormatado = formatarNumero(numero);
-            // Remover + do inicio para wa.me
-            if (numFormatado.startsWith('+')) numFormatado = numFormatado.slice(1);
-            var url = 'https://wa.me/' + numFormatado + '?text=' + encodeURIComponent(mensagem);
-            window.open(url, '_blank');
+            var num = numero.replace(/[^0-9]/g, '');
+            window.open('https://wa.me/' + num + '?text=' + encodeURIComponent(mensagem), '_blank');
         }
 
-        /**
-         * Envia alerta WhatsApp para o responsavel pelo processo.
-         * Usa wa.me para abrir o WhatsApp com a mensagem pronta.
-         * O numero e buscado da aba Equipe — cadastre os membros la.
-         */
-        async function enviarAlerta(processo, responsavel, prazo, tipo) {
+        function montarMensagem(processo, responsavel, prazo, tipo) {
             var emoji = tipo === 'vencido' ? '🔴' : '🟠';
-            var situacao = tipo === 'vencido'
-                ? 'VENCIDO em ' + prazo
-                : 'vencendo em ' + prazo;
-            var mensagem = emoji + ' *ALERTA DE PRAZO - Subprocuradoria Contenciosa*\n\n'
+            var sit   = tipo === 'vencido' ? 'VENCIDO em ' + prazo : 'vencendo em ' + prazo;
+            return emoji + ' *ALERTA DE PRAZO*\n'
+                + 'Subprocuradoria Contenciosa - PGM Porto Velho\n\n'
                 + 'Ola, ' + responsavel + '!\n\n'
-                + 'O processo *' + processo + '* esta com prazo ' + situacao + '.\n\n'
-                + 'Por favor, tome as providencias necessarias o quanto antes.\n\n'
-                + 'Acesse o painel para mais detalhes.';
+                + 'Processo: *' + processo + '*\n'
+                + 'Situacao: prazo ' + sit + '\n\n'
+                + 'Por favor, tome as providencias necessarias.';
+        }
 
-            var numero = await buscarNumeroWhatsApp(responsavel);
+        async function enviarAlerta(processo, responsavel, prazo, tipo) {
+            var contatos = await carregarContatos();
+            var numero   = contatos[responsavel.toUpperCase()] || null;
 
             if (!numero) {
-                // Sem numero cadastrado: perguntar manualmente
-                var inputNum = prompt(
-                    'Numero de WhatsApp nao encontrado para ' + responsavel + '.\n\n' +
-                    'Digite o numero com DDD e codigo do pais (ex: +5569987654321):\n' +
-                    '(Dica: cadastre o membro na aba Equipe para nao precisar digitar toda vez)'
+                numero = prompt(
+                    'Numero nao cadastrado para: ' + responsavel + '\n\n' +
+                    'Digite o WhatsApp (ex: 5569987654321):\n' +
+                    'Dica: cadastre na aba Equipe para salvar.'
                 );
-                if (!inputNum) return;
-                numero = inputNum.trim();
+                if (!numero || !numero.trim()) return;
+                numero = numero.trim();
+                // Salvar temporariamente no cache
+                contatos[responsavel.toUpperCase()] = numero;
             }
 
-            var confirmado = confirm(
-                'Enviar alerta WhatsApp para ' + responsavel + '?\n\n' +
-                'Numero: ' + numero + '\n' +
-                'Processo: ' + processo + '\n' +
-                'Situacao: prazo ' + situacao
-            );
-            if (confirmado) {
-                abrirWhatsApp(numero, mensagem);
-            }
+            var mensagem = montarMensagem(processo, responsavel, prazo, tipo);
+            abrirWhatsApp(numero, mensagem);
         }
 
-        /**
-         * Alerta todos os proximos — abre WhatsApp sequencialmente com intervalo.
-         */
         async function alertarTodosProximos() {
-            var f = filtroState ? filtroState.critico : { texto: '', resp: '', vara: '' };
-            var dados = typeof PROXIMOS7 !== 'undefined' ? PROXIMOS7 : [];
-            var filtrado = typeof filtrarDados === 'function' ? filtrarDados(dados, f) : dados;
+            var f       = filtroState.critico;
+            var filtrado = filtrarDados(PROXIMOS7, f);
             if (!filtrado.length) { alert('Nenhum processo encontrado.'); return; }
+            if (!confirm('Abrir WhatsApp para os ' + filtrado.length + ' processos criticos?\nSera aberto um por vez.')) return;
 
-            if (!confirm('Enviar alerta para TODOS os ' + filtrado.length + ' processos criticos?\n\nO WhatsApp sera aberto para cada responsavel.')) return;
+            var contatos = await carregarContatos();
+            var semNumero = [];
+            var idx = 0;
 
-            var enviados = 0;
-            for (var i = 0; i < filtrado.length; i++) {
-                var r = filtrado[i];
+            function enviarProximo() {
+                if (idx >= filtrado.length) {
+                    if (semNumero.length) {
+                        alert('Concluido!\n\nSem numero cadastrado para:\n' + semNumero.join(', ') + '\n\nCadastre na aba Equipe.');
+                    }
+                    return;
+                }
+                var r    = filtrado[idx++];
                 var proc = r.proc || r.processo || '';
                 var resp = r.resp || r.responsavel || '';
                 var prazo = r.prazo || '';
-                if (!proc || !resp) continue;
-                var numero = await buscarNumeroWhatsApp(resp);
-                if (numero) {
-                    var msg = '🟠 *ALERTA - Subprocuradoria Contenciosa*\n\nOla, ' + resp + '!\n\nProcesso ' + proc + ' vence em ' + prazo + '. Providencias necessarias.';
-                    // Abre cada um com pequeno intervalo para nao bloquear popups
-                    setTimeout((function(n, m) {
-                        return function() { abrirWhatsApp(n, m); };
-                    })(numero, msg), i * 1200);
-                    enviados++;
+                var num  = resp ? contatos[resp.toUpperCase()] : null;
+                if (num) {
+                    abrirWhatsApp(num, montarMensagem(proc, resp, prazo, 'proximo'));
+                    setTimeout(enviarProximo, 2000);
+                } else {
+                    if (resp && semNumero.indexOf(resp) < 0) semNumero.push(resp);
+                    enviarProximo();
                 }
             }
-            setTimeout(function() {
-                if (enviados > 0) {
-                    alert('✅ ' + enviados + ' alertas abertos no WhatsApp!\n' + (filtrado.length - enviados) + ' nao enviados (sem numero cadastrado).');
-                } else {
-                    alert('Nenhum numero de WhatsApp encontrado.\nCadastre os membros na aba Equipe com o numero de WhatsApp.');
+            enviarProximo();
+        }
+
+        async function alertarTodosVencidos() {
+            var f        = filtroState.vencido;
+            var filtrado = filtrarDados(VENCIDOS_DATA, f);
+            if (!filtrado.length) { alert('Nenhum processo encontrado.'); return; }
+            if (!confirm('Abrir WhatsApp para os ' + filtrado.length + ' processos vencidos?\nSera aberto um por vez.')) return;
+
+            var contatos = await carregarContatos();
+            var semNumero = [];
+            var idx = 0;
+
+            function enviarProximo() {
+                if (idx >= filtrado.length) {
+                    if (semNumero.length) {
+                        alert('Concluido!\n\nSem numero cadastrado para:\n' + semNumero.join(', ') + '\n\nCadastre na aba Equipe.');
+                    }
+                    return;
                 }
-            }, filtrado.length * 1200 + 500);
+                var r    = filtrado[idx++];
+                var proc = r.proc || r.processo || '';
+                var resp = r.resp || r.responsavel || '';
+                var prazo = r.prazo || '';
+                var num  = resp ? contatos[resp.toUpperCase()] : null;
+                if (num) {
+                    abrirWhatsApp(num, montarMensagem(proc, resp, prazo, 'vencido'));
+                    setTimeout(enviarProximo, 2000);
+                } else {
+                    if (resp && semNumero.indexOf(resp) < 0) semNumero.push(resp);
+                    enviarProximo();
+                }
+            }
+            enviarProximo();
         }
 
 
@@ -1033,13 +1049,7 @@
         }
 
         // ── ALERTAS ───────────────────────────────────────────────────────
-        function alertarTodosVencidos() {
-            var filtrado = filtrarDados(VENCIDOS_DATA, filtroState.vencido);
-            if (!filtrado.length) { alert('Nenhum processo encontrado.'); return; }
-            if (confirm('Enviar alerta para TODOS os ' + filtrado.length + ' processos vencidos?')) {
-                alert(filtrado.length + ' alertas enviados! (Em producao, mensagem WhatsApp por responsavel.)');
-            }
-        }
+
 
         // ── CHART DE PERFORMANCE ──────────────────────────────────────────
         var _chartInstance = null;
