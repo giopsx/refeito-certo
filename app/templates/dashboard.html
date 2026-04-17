@@ -166,7 +166,7 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 table{width:100%;border-collapse:collapse}
 thead{background:var(--bg3)}
 th{padding:10px 14px;text-align:left;font-size:10.5px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)}
-td{padding:11px 14px;border-bottom:1px solid rgba(30,45,69,.6);font-size:12.5px;vertical-align:middle}
+td{padding:9px 12px;border-bottom:1px solid rgba(30,45,69,.6);font-size:12px;vertical-align:middle;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}td:last-child{white-space:nowrap;overflow:visible;max-width:none;width:80px}td:nth-child(1){max-width:160px}td:nth-child(2){max-width:150px}td:nth-child(6){max-width:160px}
 tbody tr:last-child td{border-bottom:none}
 tbody tr:hover{background:rgba(26,37,64,.5);transition:background .12s}
 td strong{font-weight:600;color:var(--text);font-size:12px}
@@ -525,14 +525,6 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
 
         /* ── Tabs ── */
         /* ── Modo Noturno ── */
-        function toggleDark() {
-            const body = document.body;
-            const btn  = document.getElementById('darkToggle');
-            body.classList.toggle('dark-mode');
-            const isDark = body.classList.contains('dark-mode');
-            btn.textContent = isDark ? '☀️ Modo Claro' : '🌙 Modo Noturno';
-            localStorage.setItem('pgm-dark', isDark ? '1' : '0');
-        }
         // Restaurar preferência salva
         if (localStorage.getItem('pgm-dark') === '1') {
             document.body.classList.add('dark-mode');
@@ -731,11 +723,15 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
         function abrirWhatsApp(numero, mensagem) {
             var num = numero.replace(/[^0-9]/g, '');
             var url = 'https://wa.me/' + num + '?text=' + encodeURIComponent(mensagem);
-            var w = window.open(url, '_blank', 'noopener,noreferrer');
-            if (!w) {
-                // Se popup bloqueado, abrir na mesma aba
-                window.location.href = url;
-            }
+            // Criar link invisivel e simular clique - unica forma garantida
+            var a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('target', '_blank');
+            a.setAttribute('rel', 'noopener noreferrer');
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(function() { document.body.removeChild(a); }, 500);
         }
 
         function _wppModal(responsavel, mensagem) {
@@ -785,12 +781,6 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
             var resp = (responsavel||'').trim().toUpperCase();
             var msg  = montarMensagem(processo, responsavel, prazo, tipo);
             var numero = null;
-
-            // DEBUG - remover depois
-            console.log('[WPP] responsavel bruto:', responsavel);
-            console.log('[WPP] resp uppercase:', resp);
-            console.log('[WPP] _contatosCache:', JSON.stringify(_contatosCache));
-            try { console.log('[WPP] localStorage:', localStorage.getItem('pgm_equipe_v1')); } catch(e){}
 
             // 1. Cache em memoria (ja carregado pelo equipe_renderizar)
             if (_contatosCache && _contatosCache[resp]) {
@@ -927,51 +917,6 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
 
         // ─── Renderiza KPIs e tabela de performance ───────────────────────
         // ─── Renderiza tabelas de críticos ────────────────────────────────
-        function renderCriticos(data) {
-            if (data.sem_dados) return;
-
-            // Vencidos
-            const venc = data.vencidos || [];
-            document.getElementById('count-vencidos').textContent = venc.length;
-            const tbV = document.getElementById('tbody-vencidos');
-            if (venc.length === 0) {
-                tbV.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#22c55e;">✅ Nenhum prazo vencido!</td></tr>';
-            } else {
-                tbV.innerHTML = venc.map(r => `<tr>
-                    <td><strong>${r.processo}</strong><br><small>${r.assunto || r.vara}</small></td>
-                    <td>${r.responsavel}</td>
-                    <td>${r.prazo}</td>
-                    <td><span class="badge badge-critical">${r.dias} dia${r.dias !== 1 ? 's' : ''}</span></td>
-                    <td>
-                        <button class="btn-icon" title="Enviar alerta WhatsApp" onclick="enviarAlerta('${r.processo}','${r.responsavel}','${r.prazo}','vencido')">📱</button>
-                        <button class="btn-icon" title="Marcar como cumprido">✓</button>
-                    </td>
-                </tr>`).join('');
-            }
-
-            // Próximos
-            const prox = data.proximos || [];
-            document.getElementById('count-proximos-vencer').textContent = prox.length;
-            const tbP = document.getElementById('tbody-proximos-vencer');
-            if (prox.length === 0) {
-                tbP.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#22c55e;">✅ Nenhum prazo vencendo nos próximos 7 dias!</td></tr>';
-            } else {
-                tbP.innerHTML = prox.map(r => {
-                    const label = r.dias === 0 ? 'Hoje' : r.dias === 1 ? 'Amanhã' : `${r.dias} dias`;
-                    return `<tr>
-                        <td><strong>${r.processo}</strong><br><small>${r.assunto || r.vara}</small></td>
-                        <td>${r.responsavel}</td>
-                        <td>${r.prazo}</td>
-                        <td><span class="badge" style="background:#fff7ed;color:#b45309;font-weight:700;">${label}</span></td>
-                        <td>
-                            <button class="btn-icon" title="Enviar alerta WhatsApp" onclick="enviarAlerta('${r.processo}','${r.responsavel}','${r.prazo}','proximo')">📱</button>
-                            <button class="btn-icon" title="Marcar como cumprido">✓</button>
-                        </td>
-                    </tr>`;
-                }).join('');
-            }
-        }
-
         // ─── Carrega dados da API ao abrir o painel ───────────────────────
         async function loadDashboard() {
             var token = getToken();
@@ -1202,25 +1147,7 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
         }
 
         // ── FILTROS ───────────────────────────────────────────────────────
-        function initFiltros() {
-            ['critico','vencido'].forEach(function(tipo) {
-                var ft = document.getElementById('filtro-' + tipo);
-                var rs = document.getElementById('resp-' + tipo);
-                var vs = document.getElementById('vara-' + tipo);
-                if (ft) ft.addEventListener('input', function() { filtroState[tipo].texto = this.value; pagState[tipo]=1; renderPagina(tipo); });
-                if (rs) rs.addEventListener('change', function() { filtroState[tipo].resp  = this.value; pagState[tipo]=1; renderPagina(tipo); });
-                if (vs) vs.addEventListener('change', function() { filtroState[tipo].vara  = this.value; pagState[tipo]=1; renderPagina(tipo); });
-            });
-        }
-
         // ── renderCriticos e renderDashboard (override) ───────────────────
-        function renderCriticos(data) {
-            if (data && data.proximos) PROXIMOS7    = data.proximos.map(function(r) { return { proc:r.processo, parte:r.parte||'', resp:r.responsavel, prazo:r.prazo, vara:r.vara, dias:r.dias }; });
-            if (data && data.vencidos) VENCIDOS_DATA = data.vencidos.map(function(r) { return { proc:r.processo, parte:r.parte||'', resp:r.responsavel, prazo:r.prazo, vara:r.vara, dias:r.dias }; });
-            renderPagina('critico');
-            renderPagina('vencido');
-        }
-
         var _origRD = renderDashboard;
         // ── UPLOAD COM DIFF ───────────────────────────────────────────────
         var _origUpload = null;
@@ -1507,6 +1434,11 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
                     var tipo2=JSON.stringify(ic?'proximo':'vencido');
                     var dl=ic?(dias===0?'Hoje':dias===1?'Amanha':dias+' dias'):dias+'d';
                     var bc=ic?'ba':'br';
+                    // Escapar aspas simples nos dados para nao quebrar HTML
+                    var procE  = proc.replace(/'/g, '&#39;');
+                    var respE  = resp.replace(/'/g, '&#39;');
+                    var prazoE = prazo.replace(/'/g, '&#39;');
+                    var tipoS  = isCritico ? 'proximo' : 'vencido';
                     rows+='<tr>'+
                         '<td><strong>'+proc+'<\/strong><\/td>'+
                         '<td style="font-size:11px">'+parte+'<\/td>'+
@@ -1514,9 +1446,18 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
                         '<td>'+prazo+'<\/td>'+
                         '<td><span class="badge '+bc+'">'+dl+'<\/span><\/td>'+
                         '<td style="font-size:11px;color:var(--text3)">'+vara+'<\/td>'+
-                        '<td style="display:flex;gap:4px">'+
-                            '<button class="btn-icon" onclick="enviarAlerta('+pj2+','+rj2+','+prj2+','+tipo2+')" title="Enviar WhatsApp">&#128241;<\/button>'+
-                            '<button class="btn-icon" onclick="confirmarCumprido('+pj2+',this)" title="Marcar cumprido" style="color:var(--green)">&#10003;<\/button>'+
+                        '<td>'+
+                            '<div style="display:flex;gap:4px;align-items:center">'+
+                            '<button class="btn-icon btn-wpp"'+
+                                ' data-proc="'+procE+'"'+
+                                ' data-resp="'+respE+'"'+
+                                ' data-prazo="'+prazoE+'"'+
+                                ' data-tipo="'+tipoS+'"'+
+                                ' title="Enviar WhatsApp">&#128241;<\/button>'+
+                            '<button class="btn-icon btn-cumprido"'+
+                                ' data-proc="'+procE+'"'+
+                                ' title="Marcar cumprido" style="color:var(--green)">&#10003;<\/button>'+
+                            '<\/div>'+
                         '<\/td>'+
                     '<\/tr>';
                 }
@@ -1534,6 +1475,24 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
             var total=filtrarDados(tipo==='critico'?PROXIMOS7:VENCIDOS_DATA,filtroState[tipo]).length;
             pagState[tipo]=Math.min(Math.max(1,p),Math.max(1,Math.ceil(total/POR_PAG)));
             renderPagina(tipo);
+        }
+
+        // Event delegation no document - funciona mesmo apos innerHTML ser substituido
+        function initTabelaEvents() {
+            document.addEventListener('click', function(e) {
+                var btn = e.target.closest('button.btn-wpp, button.btn-cumprido');
+                if (!btn) return;
+                if (btn.classList.contains('btn-wpp')) {
+                    var proc  = btn.getAttribute('data-proc')  || '';
+                    var resp  = btn.getAttribute('data-resp')  || '';
+                    var prazo = btn.getAttribute('data-prazo') || '';
+                    var tipo  = btn.getAttribute('data-tipo')  || 'proximo';
+                    enviarAlerta(proc, resp, prazo, tipo);
+                } else if (btn.classList.contains('btn-cumprido')) {
+                    var proc2 = btn.getAttribute('data-proc') || '';
+                    confirmarCumprido(proc2, btn);
+                }
+            });
         }
 
         function initFiltros(){
@@ -1665,6 +1624,7 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
         }
 
         initFiltros();
+        initTabelaEvents();
         loadDashboard();
         // Pre-carregar contatos no cache para WhatsApp funcionar sem delay
         equipe_renderizar().then(function() {
