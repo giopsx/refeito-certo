@@ -1077,33 +1077,88 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
 
         
 
+        function montarMensagemConsolidada(responsavel, processos, tipo) {
+            var hoje = new Date();
+            hoje.setHours(0,0,0,0);
+
+            var linhas = processos.map(function(r) {
+                var proc  = r.proc || r.processo || '';
+                var prazo = r.prazo || '';
+                var parte = r.parte || '';
+                var vara  = r.vara  || '';
+
+                // Determinar label de vencimento
+                var labelData = '';
+                if (tipo === 'proximo') {
+                    var dias = (typeof r.dias === 'number') ? r.dias : null;
+                    if (dias === null) {
+                        // Calcular a partir da data
+                        try {
+                            var partes = prazo.split('/');
+                            var dt = new Date(+partes[2], +partes[1]-1, +partes[0]);
+                            dt.setHours(0,0,0,0);
+                            dias = Math.round((dt - hoje) / 86400000);
+                        } catch(e) { dias = 0; }
+                    }
+                    if (dias === 0)      labelData = '⚠️ PRAZO VENCE HOJE';
+                    else if (dias === 1) labelData = '⚠️ PRAZO VENCE AMANHA';
+                    else                labelData = '⚠️ PRAZO VENCE EM ' + dias + ' DIAS';
+                } else {
+                    labelData = '🔴 PRAZO VENCIDO';
+                }
+
+                return labelData + '\n'
+                     + 'Processo: ' + proc + '\n'
+                     + 'Parte: ' + parte + '\n'
+                     + 'Prazo: ' + prazo + '\n'
+                     + 'Responsável: ' + responsavel + '\n'
+                     + 'Vara: ' + vara;
+            });
+
+            return linhas.join('\n\n─────────────────────\n\n')
+                 + '\n\n_Alerta automático — Subprocuradoria do Contencioso — PGM Porto Velho._';
+        }
+
+        function agruparPorResponsavel(lista) {
+            var mapa = {};
+            lista.forEach(function(r) {
+                var resp = (r.resp || r.responsavel || '').trim();
+                if (!resp) return;
+                var key = resp.toUpperCase();
+                if (!mapa[key]) mapa[key] = { nome: resp, processos: [] };
+                mapa[key].processos.push(r);
+            });
+            return Object.values(mapa);
+        }
+
         async function alertarTodosProximos() {
-            var f       = filtroState.critico;
+            var f        = filtroState.critico;
             var filtrado = filtrarDados(PROXIMOS7, f);
             if (!filtrado.length) { alert('Nenhum processo encontrado.'); return; }
-            if (!confirm('Abrir WhatsApp para os ' + filtrado.length + ' processos criticos?\nSera aberto um por vez.')) return;
 
-            var contatos = await carregarContatos();
+            var grupos = agruparPorResponsavel(filtrado);
+            var total  = grupos.length;
+            if (!confirm('Enviar mensagem consolidada para ' + total + ' responsável(is)?\nCada um receberá TODOS os seus processos em uma única mensagem.')) return;
+
+            var contatos  = await carregarContatos();
             var semNumero = [];
             var idx = 0;
 
             function enviarProximo() {
-                if (idx >= filtrado.length) {
+                if (idx >= grupos.length) {
                     if (semNumero.length) {
-                        alert('Concluido!\n\nSem numero cadastrado para:\n' + semNumero.join(', ') + '\n\nCadastre na aba Equipe.');
+                        alert('Concluido!\n\nSem número cadastrado para:\n' + semNumero.join(', ') + '\n\nCadastre na aba Equipe.');
                     }
                     return;
                 }
-                var r    = filtrado[idx++];
-                var proc = r.proc || r.processo || '';
-                var resp = r.resp || r.responsavel || '';
-                var prazo = r.prazo || '';
-                var num  = resp ? contatos[resp.toUpperCase()] : null;
+                var g   = grupos[idx++];
+                var num = contatos[g.nome.toUpperCase()] || null;
                 if (num) {
-                    abrirWhatsApp(num, montarMensagem(proc, resp, prazo, 'proximo'));
+                    var msg = montarMensagemConsolidada(g.nome, g.processos, 'proximo');
+                    abrirWhatsApp(num, msg);
                     setTimeout(enviarProximo, 2000);
                 } else {
-                    if (resp && semNumero.indexOf(resp) < 0) semNumero.push(resp);
+                    if (semNumero.indexOf(g.nome) < 0) semNumero.push(g.nome);
                     enviarProximo();
                 }
             }
@@ -1114,29 +1169,30 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
             var f        = filtroState.vencido;
             var filtrado = filtrarDados(VENCIDOS_DATA, f);
             if (!filtrado.length) { alert('Nenhum processo encontrado.'); return; }
-            if (!confirm('Abrir WhatsApp para os ' + filtrado.length + ' processos vencidos?\nSera aberto um por vez.')) return;
 
-            var contatos = await carregarContatos();
+            var grupos = agruparPorResponsavel(filtrado);
+            var total  = grupos.length;
+            if (!confirm('Enviar mensagem consolidada para ' + total + ' responsável(is)?\nCada um receberá TODOS os seus processos vencidos em uma única mensagem.')) return;
+
+            var contatos  = await carregarContatos();
             var semNumero = [];
             var idx = 0;
 
             function enviarProximo() {
-                if (idx >= filtrado.length) {
+                if (idx >= grupos.length) {
                     if (semNumero.length) {
-                        alert('Concluido!\n\nSem numero cadastrado para:\n' + semNumero.join(', ') + '\n\nCadastre na aba Equipe.');
+                        alert('Concluido!\n\nSem número cadastrado para:\n' + semNumero.join(', ') + '\n\nCadastre na aba Equipe.');
                     }
                     return;
                 }
-                var r    = filtrado[idx++];
-                var proc = r.proc || r.processo || '';
-                var resp = r.resp || r.responsavel || '';
-                var prazo = r.prazo || '';
-                var num  = resp ? contatos[resp.toUpperCase()] : null;
+                var g   = grupos[idx++];
+                var num = contatos[g.nome.toUpperCase()] || null;
                 if (num) {
-                    abrirWhatsApp(num, montarMensagem(proc, resp, prazo, 'vencido'));
+                    var msg = montarMensagemConsolidada(g.nome, g.processos, 'vencido');
+                    abrirWhatsApp(num, msg);
                     setTimeout(enviarProximo, 2000);
                 } else {
-                    if (resp && semNumero.indexOf(resp) < 0) semNumero.push(resp);
+                    if (semNumero.indexOf(g.nome) < 0) semNumero.push(g.nome);
                     enviarProximo();
                 }
             }
