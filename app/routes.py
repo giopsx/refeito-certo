@@ -1,1831 +1,281 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
-    <title>PGM Porto Velho — Painel Gerencial</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary: #7c3aed;
-            --primary-hover: #6d28d9;
-            --primary-light: #ede9fe;
-            --secondary: #dc2626;
-            --success: #16a34a;
-            --warning: #ea580c;
-            --info: #0284c7;
-            --light: #f5f3ff;
-            --dark: #1e1b2e;
-            --border: #e4e2f0;
-            --shadow: 0 1px 3px rgba(109, 40, 217, 0.08);
-            --shadow-lg: 0 10px 25px rgba(109, 40, 217, 0.12);
-            /* Dark mode tokens */
-            --bg: #f5f3ff;
-            --card-bg: #ffffff;
-            --text: #1e1b2e;
-            --text-muted: #64748b;
-            --header-bg: #5b21b6;
-            --footer-bg: #f5f3ff;
-        }
-
-        body.dark-mode {
-            --bg: #0f0d1a;
-            --card-bg: #1a1730;
-            --text: #e9e4ff;
-            --text-muted: #a89fd0;
-            --border: #2e2856;
-            --light: #0f0d1a;
-            --dark: #e9e4ff;
-            --shadow: 0 1px 3px rgba(0,0,0,0.4);
-            --shadow-lg: 0 10px 25px rgba(0,0,0,0.5);
-            --header-bg: #2d1f5e;
-            --footer-bg: #0f0d1a;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            transition: background 0.3s, color 0.3s;
-        }
-
-        header {
-            background: var(--header-bg);
-            color: white;
-            padding: 20px;
-            box-shadow: var(--shadow-lg);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            transition: background 0.3s;
-        }
-
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .logo small {
-            display: block;
-            font-size: 12px;
-            opacity: 0.8;
-            margin-top: 5px;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-size: 14px;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            border-bottom: 2px solid var(--border);
-            flex-wrap: wrap;
-        }
-
-        .tab-btn {
-            background: none;
-            border: none;
-            padding: 12px 20px;
-            font-size: 15px;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s;
-            color: var(--dark);
-            font-weight: 500;
-        }
-
-        .tab-btn:hover {
-            color: var(--primary);
-        }
-
-        .tab-btn.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.3s;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: var(--shadow);
-            transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .card-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-            font-size: 13px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .card-value {
-            font-size: 32px;
-            font-weight: bold;
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-
-        .card-label {
-            font-size: 14px;
-            color: #64748b;
-        }
-
-        .card.critical .card-value { color: var(--secondary); }
-        .card.warning .card-value { color: var(--warning); }
-        .card.success .card-value { color: var(--success); }
-
-        .badge {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .badge-critical { background: #fee2e2; color: var(--secondary); }
-        .badge-warning { background: #fef3c7; color: var(--warning); }
-        .badge-success { background: #dcfce7; color: var(--success); }
-        .badge-info { background: #cffafe; color: var(--info); }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            font-size: 14px;
-            color: var(--dark);
-        }
-
-        input[type="file"],
-        input[type="text"],
-        input[type="email"],
-        input[type="tel"],
-        select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        input:focus,
-        select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
-        }
-
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-hover);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .btn-secondary {
-            background: var(--secondary);
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #b91c1c;
-        }
-
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #15803d;
-        }
-
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--primary);
-            color: var(--primary);
-        }
-
-        .btn-outline:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-icon {
-            background: none;
-            border: 1px solid var(--border);
-            padding: 8px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-
-        .btn-icon:hover {
-            background: var(--light);
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .table-responsive {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        thead {
-            background: var(--light);
-            border-bottom: 2px solid var(--border);
-        }
-
-        th {
-            padding: 12px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 13px;
-            text-transform: uppercase;
-            color: #64748b;
-            letter-spacing: 0.5px;
-        }
-
-        td {
-            padding: 12px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        tbody tr:hover {
-            background: var(--primary-light);
-        }
-
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .status-open { background: #dbeafe; color: var(--info); }
-        .status-cumprido { background: #dcfce7; color: var(--success); }
-        .status-vencido { background: #fee2e2; color: var(--secondary); }
-        .status-proximo { background: #fef3c7; color: var(--warning); }
-
-        .alert {
-            padding: 16px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            border-left: 4px solid;
-        }
-
-        .alert-info {
-            background: #cffafe;
-            border-color: var(--info);
-            color: #0c4a6e;
-        }
-
-        .alert-warning {
-            background: #fef3c7;
-            border-color: var(--warning);
-            color: #78350f;
-        }
-
-        .alert-danger {
-            background: #fee2e2;
-            border-color: var(--secondary);
-            color: #7f1d1d;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            animation: fadeIn 0.3s;
-        }
-
-        .modal.open {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 8px;
-            max-width: 500px;
-            width: 90%;
-            box-shadow: var(--shadow-lg);
-        }
-
-        .modal-header {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: var(--dark);
-        }
-
-        .modal-footer {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            margin-top: 20px;
-        }
-
-        .list-group {
-            list-style: none;
-        }
-
-        .list-group-item {
-            padding: 15px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .list-group-item:last-child {
-            border-bottom: none;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #64748b;
-        }
-
-        .empty-state svg {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 20px;
-            opacity: 0.5;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: var(--border);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--success);
-            transition: width 0.3s;
-        }
-
-        .footer {
-            text-align: center;
-            padding: 30px 20px;
-            color: var(--text-muted);
-            font-size: 13px;
-            border-top: 1px solid var(--border);
-            margin-top: 50px;
-            background: var(--footer-bg);
-            transition: background 0.3s;
-        }
-
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                align-items: flex-start;
+"""Rotas HTTP da aplicacao - PGM Porto Velho."""
+from flask import Blueprint, render_template, request, jsonify
+from functools import wraps
+import os, json
+from datetime import datetime, date
+
+bp = Blueprint('main', __name__)
+
+_CACHE_FILE = '/tmp/pgm_data_cache.json'
+_cache = {}
+
+def _load_cache():
+    global _cache
+    if os.path.exists(_CACHE_FILE):
+        try:
+            with open(_CACHE_FILE, encoding='utf-8') as f:
+                _cache = json.load(f)
+        except Exception:
+            _cache = {}
+
+def _save_cache():
+    with open(_CACHE_FILE, 'w', encoding='utf-8') as f:
+        json.dump(_cache, f, ensure_ascii=False, indent=2)
+
+_load_cache()
+
+_NAO_PESSOAS = {
+    'SPF','SPJ','SPMA','GEC','AMBIENTAL','FISCAL','COMCEP','VERIFICAR','-',
+    'Sem responsável','GABINETE ACOMPANHANDO','CARTORIO/GABINETE','DISTRIBUIR',
+    'MANIFESTAÇÃO DESNECESSÁRIA','PREJUDICADO','',
+}
+_NAO_PESSOAS_PREFIXOS = ('DEVOLVIDO','ESCRITORIO','GABINETE','F704')
+_NORMALIZAR = {'ÉRICA':'ERICA','JEFERSON':'JEFFERSON'}
+
+def _normalizar(nome):
+    return _NORMALIZAR.get(nome.upper(), nome.upper()) if nome else ''
+
+def _eh_pessoa(nome):
+    if not nome or nome in _NAO_PESSOAS: return False
+    if nome.startswith(_NAO_PESSOAS_PREFIXOS): return False
+    if nome.count('.') >= 3 and nome.count('-') >= 1: return False
+    if any(c.isdigit() for c in nome): return False
+    if '/' in nome or '&' in nome or '\n' in nome: return False
+    return True
+
+def _parse_xlsx(file_obj):
+    import openpyxl, warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore')
+        wb = openpyxl.load_workbook(file_obj, read_only=True, data_only=True)
+    today = date.today()
+    ws_p = wb['Prazos 2026']
+    performance = {}
+    proximos_lista, vencidos_lista = [], []
+    total = vencidos_nc = proximos_count = cumpridos = 0
+
+    for row in ws_p.iter_rows(min_row=2, values_only=True):
+        if all(v is None for v in row): continue
+        if row[0] is None and row[1] is None and row[2] is None: continue
+
+        prazo_raw    = row[1]
+        responsavel  = _normalizar(str(row[2]).strip() if row[2] else '')
+        if not responsavel: responsavel = 'Sem responsável'
+        num_proc     = str(row[4]).strip() if row[4] else ''
+        parte        = str(row[5]).strip()[:60] if row[5] else ''
+        vara         = str(row[6]).strip() if row[6] else ''
+        assunto      = str(row[7]).strip()[:80] if row[7] else ''
+        cumprido_val = str(row[13]).strip().upper() if row[13] else ''
+
+        prazo_d = None
+        if isinstance(prazo_raw, datetime): prazo_d = prazo_raw.date()
+        elif isinstance(prazo_raw, date):   prazo_d = prazo_raw
+        prazo_str = prazo_d.strftime('%d/%m/%Y') if prazo_d else ''
+
+        if not prazo_d: continue
+        total += 1
+
+        ja_cumprido = cumprido_val in ('SIM','PARCIAL','PREJUDICADO')
+        if ja_cumprido: cumpridos += 1
+
+        diff = (prazo_d - today).days
+
+        if not ja_cumprido:
+            entry = {
+                'processo': num_proc, 'parte': parte,
+                'responsavel': responsavel, 'prazo': prazo_str,
+                'dias': abs(int(diff)), 'assunto': assunto, 'vara': vara,
             }
+            if diff < 0:
+                vencidos_nc += 1
+                vencidos_lista.append(entry)
+            elif diff <= 7:
+                proximos_count += 1
+                proximos_lista.append(entry)
 
-            .tabs {
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
+        if responsavel not in performance:
+            performance[responsavel] = {'total':0,'cumpridos':0,'criticos':0}
+        performance[responsavel]['total'] += 1
+        if ja_cumprido: performance[responsavel]['cumpridos'] += 1
+        if not ja_cumprido and diff < 0: performance[responsavel]['criticos'] += 1
+
+    taxa = round(cumpridos/total*100,1) if total > 0 else 0
+    perf_list = []
+    for resp, d in sorted(performance.items()):
+        if not _eh_pessoa(resp): continue
+        t, c = d['total'], d['cumpridos']
+        perf_list.append({
+            'responsavel':resp,'total':t,'cumpridos':c,
+            'taxa':round(c/t*100,1) if t>0 else 0,'criticos':d['criticos'],
+        })
+    perf_list.sort(key=lambda x: x['taxa'], reverse=True)
+    proximos_lista.sort(key=lambda x: x['dias'])
+    vencidos_lista.sort(key=lambda x: x['dias'], reverse=True)
+    ant = _cache.get('stats', {})
+    return {
+        'stats': {
+            'total':total,'vencidos':vencidos_nc,'proximos':proximos_count,
+            'cumpridos':cumpridos,'taxa':taxa,
+            'ultima_atualizacao':today.strftime('%d/%m/%Y'),
+        },
+        'stats_anterior': ant,
+        'performance': perf_list,
+        'proximos': proximos_lista,
+        'vencidos': vencidos_lista,
+    }
+
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        from flask import current_app
+        token = (request.args.get('token') or
+                 request.headers.get('Authorization','').replace('Bearer ',''))
+        if not token or token != current_app.config['ACCESS_TOKEN']:
+            return jsonify({'error':'Token inválido ou ausente'}), 401
+        return f(*args, **kwargs)
+    return decorated
+
+@bp.route('/', methods=['GET'])
+def index():
+    from flask import redirect, url_for, current_app
+    return redirect(url_for('main.painel', token=current_app.config['ACCESS_TOKEN']))
+
+@bp.route('/painel', methods=['GET'])
+@token_required
+def painel():
+    return render_template('dashboard.html')
+
+@bp.route('/api/upload', methods=['POST'])
+@token_required
+def upload_file():
+    if 'file' not in request.files: return jsonify({'error':'Arquivo não fornecido'}), 400
+    file = request.files['file']
+    if file.filename == '': return jsonify({'error':'Arquivo vazio'}), 400
+    if not file.filename.lower().endswith('.xlsx'): return jsonify({'error':'Apenas XLSX'}), 400
+    try:
+        data = _parse_xlsx(file)
+        ant = data.get('stats_anterior', {})
+        diff_info = {}
+        if ant:
+            diff_info = {
+                'vencidos_delta':  data['stats']['vencidos']  - ant.get('vencidos', 0),
+                'cumpridos_delta': data['stats']['cumpridos'] - ant.get('cumpridos', 0),
+                'total_delta':     data['stats']['total']     - ant.get('total', 0),
             }
-
-            .grid {
-                grid-template-columns: 1fr;
-            }
-
-            .modal-content {
-                max-width: 90%;
-            }
-
-            table {
-                font-size: 13px;
-            }
-
-            th, td {
-                padding: 8px;
-            }
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid var(--border);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        /* Dark mode toggle */
-        .dark-toggle {
-            background: rgba(255,255,255,0.15);
-            border: 1px solid rgba(255,255,255,0.3);
-            color: white;
-            padding: 8px 14px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: background 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .dark-toggle:hover {
-            background: rgba(255,255,255,0.25);
-        }
-
-        /* PDF progress overlay */
-        #pdf-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.55);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap: 16px;
-        }
-        #pdf-overlay.show {
-            display: flex;
-        }
-        #pdf-overlay p {
-            color: white;
-            font-size: 16px;
-            font-weight: 600;
-        }
-        #pdf-overlay .pdf-spinner {
-            width: 48px;
-            height: 48px;
-            border: 4px solid rgba(255,255,255,0.3);
-            border-top-color: #c4b5fd;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        /* Tab & form inputs in dark mode */
-        body.dark-mode .tab-btn {
-            color: var(--text-muted);
-        }
-        body.dark-mode .tab-btn.active {
-            color: #c4b5fd;
-            border-bottom-color: #c4b5fd;
-        }
-        body.dark-mode input,
-        body.dark-mode select {
-            background: #231f3b;
-            color: var(--text);
-            border-color: var(--border);
-        }
-        body.dark-mode th {
-            color: var(--text-muted);
-        }
-        body.dark-mode td {
-            border-color: var(--border);
-        }
-        body.dark-mode .badge-critical { background: #3b1414; color: #fca5a5; }
-        body.dark-mode .badge-warning { background: #2e1d05; color: #fcd34d; }
-        body.dark-mode .badge-success { background: #072212; color: #86efac; }
-        body.dark-mode .badge-info { background: #062035; color: #7dd3fc; }
-        body.dark-mode .status-open { background: #0c2d4a; color: #7dd3fc; }
-        body.dark-mode .status-cumprido { background: #072212; color: #86efac; }
-        body.dark-mode .status-vencido { background: #3b1414; color: #fca5a5; }
-        body.dark-mode .status-proximo { background: #2e1d05; color: #fcd34d; }
-        body.dark-mode .alert-info { background: #0c2d4a; color: #bae6fd; }
-        body.dark-mode .alert-warning { background: #2e1d05; color: #fde68a; }
-        body.dark-mode .alert-danger { background: #3b1414; color: #fecaca; }
-        body.dark-mode .btn-outline { border-color: #c4b5fd; color: #c4b5fd; }
-        body.dark-mode .btn-outline:hover { background: #c4b5fd; color: #1e1b2e; }
-        body.dark-mode .list-group-item { border-color: var(--border); }
-        body.dark-mode .progress-bar { background: var(--border); }
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-
-    <script type="application/json" id="dados-proximos">[{"proc": "7039272-16.2025.8.22.0001", "parte": "CARLOS GLEY BEZERRA DA COSTA", "resp": "GECILENE", "prazo": "16/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 0}, {"proc": "7053419-47.2025.8.22.0001", "parte": "MARCOS CESAR FERREIRA DA MOTA", "resp": "KAMILA", "prazo": "16/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 0}, {"proc": "7015273-97.2026.8.22.0001", "parte": "MARIA CONCEICAO SILVA", "resp": "LEONARDO", "prazo": "16/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 0}, {"proc": "1022319-22.2025.4.01.4100", "parte": "ALEXANDRE MOURA ROCA", "resp": "MIRTON", "prazo": "17/04/2026", "vara": "4ª Vara Federal de Juizado Especial Cíve", "dias": 1}, {"proc": "1022372-03.2025.4.01.4100", "parte": "LUCAS CESAR FERREIRA BELARMINO", "resp": "MIRTON", "prazo": "17/04/2026", "vara": "4ª Vara Federal de Juizado Especial Cíve", "dias": 1}, {"proc": "7044635-81.2025.8.22.0001", "parte": "MARCO SERGIO DA SILVA", "resp": "KAMILA", "prazo": "17/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 1}, {"proc": "7000342-41.2016.8.22.0001", "parte": "MARIO SERGIO LEIRAS TEIXEIRA", "resp": "JEFFERSON", "prazo": "17/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 1}, {"proc": "7010575-82.2025.8.22.0001", "parte": "JEOVAL BATISTA DA SILVA e outros", "resp": "MIRTON", "prazo": "17/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 1}, {"proc": "7075007-13.2025.8.22.0001", "parte": "FELIPE RENOIR SA BARRETO SANTOS", "resp": "BEATRIZ", "prazo": "17/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 1}, {"proc": "7005767-97.2026.8.22.0001", "parte": "RAIMUNDA NONATA DO NASCIMENTO", "resp": "MAURICIO", "prazo": "17/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 1}, {"proc": "7041286-46.2020.8.22.0001", "parte": "KLEBSON LUIZ LAVOR E SILVA e outros", "resp": "JEFFERSON", "prazo": "17/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 1}, {"proc": "7068403-41.2022.8.22.0001", "parte": "KARYNA CANDEIAS ORTELAM", "resp": "LEONARDO", "prazo": "17/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 1}, {"proc": "7024208-97.2024.8.22.0001", "parte": "ZENILDA DOS SANTOS FREIRE CORREA e outros", "resp": "BEATRIZ", "prazo": "17/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 1}, {"proc": "7068696-06.2025.8.22.0001", "parte": "COOPERATIVA DE ECONOMIA E CREDITO MUTUO DOS INTEGR", "resp": "JEFFERSON", "prazo": "17/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 1}, {"proc": "1025556-64.2025.4.01.4100", "parte": "AZEMAR CASTRO AMORIM", "resp": "MIRTON", "prazo": "17/04/2026", "vara": "2ª Vara Federal Cível da SJRO", "dias": 1}, {"proc": "7042763-75.2018.8.22.0001", "parte": "JOSE EDAILTON SILVA DOS SANTOS", "resp": "LEONARDO", "prazo": "20/04/2026", "vara": "4ª Vara Cível", "dias": 4}, {"proc": "0813028-76.2024.8.22.0000", "parte": "MARIO SERGIO LEIRAS TEIXEIRA", "resp": "JEFFERSON", "prazo": "20/04/2026", "vara": "2ª Câmara Especial", "dias": 4}, {"proc": "7020063-37.2020.8.22.0001", "parte": "SBS EMPREENDIMENTOS LTDA", "resp": "MAURICIO", "prazo": "20/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 4}, {"proc": "7003077-03.2023.8.22.0001", "parte": "ROBERTO EDUARDO SOBRINHO e outros (5)", "resp": "MIRTON", "prazo": "20/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 4}, {"proc": "7038257-46.2024.8.22.0001", "parte": "LUZIA AUGUSTA GUIMARAES e outros (", "resp": "GECILENE", "prazo": "20/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 4}, {"proc": "7002794-09.2025.8.22.0001", "parte": "ROGERIO DIAS TENORIO", "resp": "MAURICIO", "prazo": "20/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 4}, {"proc": "7019664-32.2025.8.22.0001", "parte": "MABEL DE ALMEIDA COLARES", "resp": "MAURICIO", "prazo": "20/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 4}, {"proc": "7048340-87.2025.8.22.0001", "parte": "JOSE WILDES DE BRITO", "resp": "JEFFERSON", "prazo": "20/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 4}, {"proc": "7028157-03.2022.8.22.0001", "parte": "ROBERTO DIAS DA VEIGA e outros (1) X", "resp": "BEATRIZ", "prazo": "20/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 4}, {"proc": "7017010-09.2024.8.22.0001", "parte": "SEBASTIAO BATISTA GUEDES NETO e outros", "resp": "JEFFERSON", "prazo": "20/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 4}, {"proc": "7010617-34.2025.8.22.0001", "parte": "JEOVAL BATISTA DA SILVA e outros (5)", "resp": "JEFFERSON", "prazo": "20/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 4}, {"proc": "7010673-67.2025.8.22.0001", "parte": "SILMO DA SILVA SANTANA", "resp": "JEFFERSON", "prazo": "20/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 4}, {"proc": "7068531-56.2025.8.22.0001", "parte": "FRANCISCO PORTELA AGUIAR ", "resp": "BEATRIZ", "prazo": "20/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 4}, {"proc": "7009410-63.2026.8.22.0001", "parte": "JOSE MARIA JUNIOR TAVARES DE CARVALHO", "resp": "BEATRIZ", "prazo": "23/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 7}, {"proc": "1002753-34.2018.4.01.4100", "parte": "MIGUEL VINICIUS DE SOUZA MARQUES", "resp": "MIRTON", "prazo": "23/04/2026", "vara": "1ª Vara Federal Cível", "dias": 7}, {"proc": "1001363-48.2026.4.01.4100", "parte": "MARIA JESUITA MOREIRA DE SOUZA", "resp": "MIRTON", "prazo": "23/04/2026", "vara": "1ª Vara Federal Cível", "dias": 7}, {"proc": "1002587-65.2019.4.01.4100", "parte": "UNIÃO FEDERAL e outros", "resp": "MIRTON", "prazo": "23/04/2026", "vara": "5ª Turma/Gab. 15 - DESEMBARGADOR FEDERAL", "dias": 7}, {"proc": "1010888-98.2019.4.01.4100", "parte": "CRISTINA MICHELE DENNY e outros", "resp": "LEONARDO", "prazo": "23/04/2026", "vara": "5ª Turma/Gab. 15 - DESEMBARGADOR FEDERAL", "dias": 7}, {"proc": "7000533-98.2026.8.22.0013", "parte": "MARIA DE FREITAS LEAL", "resp": "DISTRIBUIR", "prazo": "23/04/2026", "vara": "Cerejeiras - 2ª Vara Genérica", "dias": 7}, {"proc": "7011115-09.2020.8.22.0001", "parte": "DINALVO ALVES DE OLIVEIRA", "resp": "DISTRIBUIR", "prazo": "23/04/2026", "vara": "10ª Vara Cível", "dias": 7}, {"proc": "7064322-78.2024.8.22.0001", "parte": "BENAVENUTA OLIVEIRA GOMES", "resp": "DISTRIBUIR", "prazo": "23/04/2026", "vara": "8ª Vara Cível", "dias": 7}, {"proc": "7026717-06.2021.8.22.0001", "parte": "SILVIO NASCIMENTO GUALBERTO e outro", "resp": "DISTRIBUIR", "prazo": "23/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 7}, {"proc": "7044355-52.2021.8.22.0001", "parte": "ANDREIA LIMA DE ARAUJO", "resp": "JEFFERSON", "prazo": "23/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 7}]</script>
-    <script type="application/json" id="dados-vencidos">[{"proc": "7067532-74.2023.8.22.0001", "parte": "TELMA CRISTINA LACERDA DE MELO", "resp": "JEFFERSON", "prazo": "25/05/2025", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 326}, {"proc": "7015968-51.2026.8.22.0001", "parte": "MRM65 SERVICOS DE APOIO A GESTAO DE SAUDE LTDA", "resp": "", "prazo": "25/05/2025", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 326}, {"proc": "7029796-32.2017.8.22.0001", "parte": "LAGOA AZUL EMPREENDIMENTOS IMOBILIARIOS EIRELI", "resp": "JEFFERSON", "prazo": "21/01/2026", "vara": "8ª Vara Cível", "dias": 85}, {"proc": "7061552-83.2022.8.22.0001", "parte": "ROBERTO EDUARDO SOBRINHO", "resp": "MIRTON", "prazo": "21/01/2026", "vara": "1ª Vara de Fazenda Pública", "dias": 85}, {"proc": "1019710-66.2025.4.01.4100", "parte": "PEDRO LINO PEREIRA", "resp": "MIRTON", "prazo": "22/01/2026", "vara": "4ª Vara Federal de Juizado Especial Cíve", "dias": 84}, {"proc": "0009294-65.2015.8.22.0001", "parte": "PORTO PARK COMERCIO E EMPREENDIMENTOS LTDA", "resp": "JEFFERSON", "prazo": "22/01/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 84}, {"proc": "7048350-10.2020.8.22.0001", "parte": "METUS CONTRUCOES INCORPORACOES DE RONDONIA LTDA - ", "resp": "JEFFERSON", "prazo": "22/01/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 84}, {"proc": "7027341-89.2020.8.22.0001", "parte": "MARIO SERGIO LEIRAS TEIXEIRA", "resp": "JEFFERSON", "prazo": "22/01/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 84}, {"proc": "7049275-98.2023.8.22.0001", "parte": "CSF COMERCIO E SERVICOS EMPRESARIAIS LTDA - EPP", "resp": "JEFFERSON", "prazo": "22/01/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 84}, {"proc": "7061552-83.2022.8.22.0001", "parte": "ROBERTO EDUARDO SOBRINHO e outros", "resp": "MIRTON", "prazo": "22/01/2026", "vara": "1ª Vara de Fazenda Pública", "dias": 84}, {"proc": "7010671-97.2025.8.22.0001", "parte": "RUBENS ALEINE DE MELLO NOGUEIRA", "resp": "MIRTON", "prazo": "22/01/2026", "vara": "1ª Vara de Fazenda Pública", "dias": 84}, {"proc": "0009294-65.2015.8.22.0001", "parte": "PORTO PARK COMERCIO E EMPREENDIMENTOS LTDA", "resp": "JEFFERSON", "prazo": "22/01/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 84}, {"proc": "7026707-59.2021.8.22.0001", "parte": "SILVIO NASCIMENTO GUALBERTO", "resp": "JEFFERSON", "prazo": "22/01/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 84}, {"proc": "7048715-88.2025.8.22.0001", "parte": "RAIMUNDO SILVA CAETANO", "resp": "JEFFERSON", "prazo": "22/01/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 84}, {"proc": "7019550-64.2023.8.22.0001", "parte": "RAQUEL DA SILVA ALMEIDA", "resp": "JEFFERSON", "prazo": "22/01/2026", "vara": "1ª Câmara Especial", "dias": 84}, {"proc": "7000243-56.2025.8.22.0001", "parte": "ADMINISTRADORA SILVESTRE LTDA", "resp": "JEFFERSON", "prazo": "22/01/2026", "vara": "1ª Câmara Especial", "dias": 84}, {"proc": "7031931-46.2019.8.22.0001", "parte": "EDUARDO CARLOS RODRIGUES DA SILVA", "resp": "MIRTON", "prazo": "22/01/2026", "vara": "1ª Vara de Fazenda Pública", "dias": 84}, {"proc": "7010568-90.2025.8.22.0001", "parte": "VALNEY CRISTIAN PEREIRA DE MORAIS", "resp": "MIRTON", "prazo": "22/01/2026", "vara": "1ª Vara de Fazenda Pública", "dias": 84}, {"proc": "7078644-74.2022.8.22.0001", "parte": "ADLA HATZINAKIS ABUZED", "resp": "JEFFERSON", "prazo": "22/01/2026", "vara": "EXECUÇÃO FISCAL", "dias": 84}, {"proc": "7046177-81.2018.8.22.0001", "parte": "ESTADO DE RONDONIA", "resp": "JEFFERSON", "prazo": "23/01/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 83}, {"proc": "7037664-85.2022.8.22.0001", "parte": "TOKIO MARINE SEGURADORA SA", "resp": "YOUSSEF", "prazo": "23/01/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 83}, {"proc": "7041870-74.2024.8.22.0001", "parte": "JOÃO DOS SANTOS JOSÉ", "resp": "KARYTHA", "prazo": "23/01/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 83}, {"proc": "0818425-19.2024.8.22.0000", "parte": "ROBSON RODRIGUES DA SILVA", "resp": "KARYTHA", "prazo": "23/01/2026", "vara": "2ª Câmara Especial", "dias": 83}, {"proc": "0818705-87.2024.8.22.0000", "parte": "MARIO SERGIO LEIRAS TEIXEIRA", "resp": "YOUSSEF", "prazo": "23/01/2026", "vara": "2ª Câmara Especial", "dias": 83}, {"proc": "0819463-66.2024.8.22.0000", "parte": "ROBERTO EDUARDO SOBRINHO", "resp": "MIRTON", "prazo": "23/01/2026", "vara": "2ª Câmara Especial", "dias": 83}, {"proc": "0807402-42.2025.8.22.0000", "parte": "E J CONSTRUTORA LTDA", "resp": "KARYTHA", "prazo": "23/01/2026", "vara": "2ª Câmara Especial", "dias": 83}, {"proc": "7080531-93.2022.8.22.0001", "parte": "DIRCEU RODRIGUES", "resp": "YOUSSEF", "prazo": "23/01/2026", "vara": "1ª Câmara Especial", "dias": 83}, {"proc": "7003038-69.2024.8.22.0001", "parte": "WILFREDO EMANOEL WENZEL", "resp": "YOUSSEF", "prazo": "23/01/2026", "vara": "2ª Câmara Especial", "dias": 83}, {"proc": "7032414-47.2017.8.22.0001", "parte": "JAILSON RAMALHO FERREIRA", "resp": "JEFFERSON", "prazo": "23/01/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 83}, {"proc": "7000762-05.2023.8.22.0000", "parte": "JOAO PEDRO RODRIGUES DOS SANTOS", "resp": "JEFFERSON", "prazo": "23/01/2026", "vara": "EXECUÇÃO FISCAL", "dias": 83}, {"proc": "7027344-44.2020.8.22.0001", "parte": "MARIO SERGIO LEIRAS TEIXEIRA", "resp": "JEFFERSON", "prazo": "23/01/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 83}, {"proc": "7034249-65.2020.8.22.0001", "parte": "NTA - NOVAS TECNICAS DE ASFALTOS LTDA.", "resp": "YOUSSEF", "prazo": "23/01/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 83}, {"proc": "7035399-47.2021.8.22.0001", "parte": "MARIETE MACIEL DE BRITO", "resp": "JEFFERSON", "prazo": "23/01/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 83}, {"proc": "7069300-69.2022.8.22.0001", "parte": "MARIO SERGIO LEIRAS TEIXEIRA", "resp": "YOUSSEF", "prazo": "23/01/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 83}, {"proc": "7000608-84.2023.8.22.0000", "parte": "ROBSON RODRIGUES DA SILVA", "resp": "JEFFERSON", "prazo": "23/01/2026", "vara": "EXECUÇÃO FISCAL", "dias": 83}, {"proc": "7011992-10.2024.8.22.0000", "parte": "ANDREIA LIMA DE ARAUJO", "resp": "YOUSSEF", "prazo": "26/01/2026", "vara": "EXECUÇÃO FISCAL", "dias": 80}, {"proc": "7010177-77.2021.8.22.0001", "parte": "DISTRIBUIDORA DE ENERGIA S.A", "resp": "JEFFERSON", "prazo": "26/01/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 80}, {"proc": "7004946-04.2023.8.22.0000", "parte": "G P COMERCIO E REPRESENTACAO LTDA - EPP", "resp": "YOUSSEF", "prazo": "26/01/2026", "vara": "EXECUÇÃO FISCAL", "dias": 80}, {"proc": "7032068-86.2023.8.22.0001", "parte": "ROGERIO CABRAL DE SOUZA", "resp": "YOUSSEF", "prazo": "27/01/2026", "vara": "1ª Vara de Fazenda Pública", "dias": 79}, {"proc": "7059822-03.2023.8.22.0001", "parte": "ENERGISA RONDÔNIA - DISTRIBUIDORA DE ENERGIA S.A", "resp": "JEFFERSON", "prazo": "27/01/2026", "vara": "1ª Câmara Especial", "dias": 79}, {"proc": "7020824-63.2023.8.22.0001", "parte": "NOROESTE CONST CIVIL E EMPREEND IMOBILIARIOS LTDA ", "resp": "YOUSSEF", "prazo": "27/01/2026", "vara": "5ª Vara Cível", "dias": 79}, {"proc": "7031938-38.2019.8.22.0001", "parte": "EDUARDO CARLOS RODRIGUES DA SILVA", "resp": "MIRTON", "prazo": "27/01/2026", "vara": "1ª Vara de Fazenda Pública", "dias": 79}, {"proc": "7068934-25.2025.8.22.0001", "parte": "HENRIQUE VALVERDE", "resp": "JEFFERSON", "prazo": "27/01/2026", "vara": "1ª Vara de Fazenda Pública", "dias": 79}, {"proc": "7068951-61.2025.8.22.0001", "parte": "MARIA TERESA PEREIRA DE CARVALHO", "resp": "JEFFERSON", "prazo": "27/01/2026", "vara": "1ª Vara de Fazenda Pública", "dias": 79}, {"proc": "7026681-61.2021.8.22.0001", "parte": "SILVIO NASCIMENTO GUALBERTO", "resp": "JEFFERSON", "prazo": "28/01/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 78}, {"proc": "7018420-39.2023.8.22.0001", "parte": "VIVIAN APARECIDA DE OLIVEIRA IRMAO", "resp": "JEFFERSON", "prazo": "28/01/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 78}, {"proc": "0809819-65.2025.8.22.0000", "parte": "JAPURA PNEUS LTDA", "resp": "JEFFERSON", "prazo": "28/01/2026", "vara": "2ª Câmara Especial", "dias": 78}, {"proc": "0812436-95.2025.8.22.0000", "parte": "W . N. SERVICOS DE REPRESENTACOES COMERCIAL LTDA", "resp": "JEFFERSON", "prazo": "28/01/2026", "vara": "1ª Câmara Especial", "dias": 78}, {"proc": "7017823-36.2024.8.22.0001", "parte": "FRANCISCA MARIA LIMA MONTEIRO", "resp": "JEFFERSON", "prazo": "28/01/2026", "vara": "9ª Vara Cível", "dias": 78}, {"proc": "7056818-84.2025.8.22.0001", "parte": "LUIZ FELIPE DA SILVA MAGALHAES e outros", "resp": "REGIA", "prazo": "29/01/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 77}, {"proc": "7057885-21.2024.8.22.0001", "parte": "JULIA LINS FARIAS SANTOS", "resp": "GECILENE", "prazo": "29/01/2026", "vara": "1ª Vara de Fazenda Pública", "dias": 77}, {"proc": "7010335-93.2025.8.22.0001", "parte": "MARIETE MACIEL DE BRITO", "resp": "MIRTON", "prazo": "29/01/2026", "vara": "1ª Vara de Fazenda Pública", "dias": 77}, {"proc": "7015418-90.2025.8.22.0001", "parte": "IVANIR GURGEL DO AMARAL", "resp": "KARYTHA", "prazo": "29/01/2026", "vara": "1ª Vara de Fazenda Pública", "dias": 77}, {"proc": "7031938-38.2019.8.22.0001", "parte": "EDUARDO CARLOS RODRIGUES DA SILVA", "resp": "MIRTON", "prazo": "03/02/2026", "vara": "1ª Vara de Fazenda Pública", "dias": 72}, {"proc": "7076285-54.2022.8.22.0001", "parte": "FATIMA CRISTINA FERNANDES", "resp": "YOUSSEF", "prazo": "03/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 72}, {"proc": "0814183-80.2025.8.22.0000", "parte": "NILDA CARVALHO TORRES", "resp": "YOUSSEF", "prazo": "03/02/2026", "vara": "1ª Câmara Especial/Gabinete Des. Gilbert", "dias": 72}, {"proc": "7035410-76.2021.8.22.0001", "parte": "MARIETE MACIEL DE BRITO", "resp": "MIRTON", "prazo": "04/02/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 71}, {"proc": "1000893-32.2017.4.01.4100", "parte": "ILSA BRANDAO DE FREITAS SILVA e outros", "resp": "MIRTON", "prazo": "04/02/2026", "vara": "5ª Turma/Gab. 15 - DESEMBARGADOR FEDERAL", "dias": 71}, {"proc": "7048340-87.2025.8.22.0001", "parte": "JOSE WILDES DE BRITO", "resp": "JEFFERSON", "prazo": "04/02/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 71}, {"proc": "0017975-63.2011.8.22.0001", "parte": "JAIR RAMIRES", "resp": "JEFFERSON", "prazo": "04/02/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 71}, {"proc": "0002010-11.2012.8.22.0001", "parte": "ROBERTO EDUARDO SOBRINHO", "resp": "MIRTON", "prazo": "04/02/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 71}, {"proc": "7063119-18.2023.8.22.0001", "parte": "CELLYANNE LOPES DE SOUZA SILVA", "resp": "GECILENE", "prazo": "04/02/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 71}, {"proc": "7014629-96.2022.8.22.0001", "parte": "HOSPITAL CENTRAL LTDA", "resp": "JEFFERSON", "prazo": "04/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 71}, {"proc": "7067532-74.2023.8.22.0001", "parte": "TELMA CRISTINA LACERDA DE MELO", "resp": "JEFFERSON", "prazo": "04/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 71}, {"proc": "7022136-40.2024.8.22.0001", "parte": "MARIA JOANITA LOBATO", "resp": "JEFFERSON", "prazo": "04/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 71}, {"proc": "7010772-37.2025.8.22.0001", "parte": "JOAO FRANCISCO DA COSTA CHAGAS JUNIOR", "resp": "YOUSSEF", "prazo": "04/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 71}, {"proc": "7068696-06.2025.8.22.0001", "parte": "COOPERATIVA DE ECONOMIA E CREDITO MUTUO DOS INTEGR", "resp": "JEFFERSON", "prazo": "04/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 71}, {"proc": "7068956-83.2025.8.22.0001", "parte": "GREMIO RECREATIVO ESCOLA DE SAMBA UNIDOS DA CASTAN", "resp": "JEFFERSON", "prazo": "04/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 71}, {"proc": "7041225-88.2020.8.22.0001", "parte": "ANA CRISTINA CORDEIRO DA SILVA", "resp": "JEFFERSON", "prazo": "04/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 71}, {"proc": "7041288-16.2020.8.22.0001", "parte": "ANA CRISTINA CORDEIRO DA SILVA", "resp": "JEFFERSON", "prazo": "04/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 71}, {"proc": "7068944-69.2025.8.22.0001", "parte": "FRANCISCA ALMEIDA DA SILVA", "resp": "JEFFERSON", "prazo": "04/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 71}, {"proc": "1008489-57.2023.4.01.4100", "parte": "ESTADO DE RONDONIA", "resp": "MAURICIO", "prazo": "04/02/2026", "vara": "11ª Turma/Gab", "dias": 71}, {"proc": "7050698-25.2025.8.22.0001", "parte": "CHECK UP OCUPACIONAL LTDA - ME", "resp": "JEFFERSON", "prazo": "04/02/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 71}, {"proc": "7023368-24.2023.8.22.0001", "parte": "JOAO BOSCO DA SILVA", "resp": "JEFFERSON", "prazo": "04/02/2026", "vara": "5ª Vara Cível", "dias": 71}, {"proc": "7011052-52.2018.8.22.0001", "parte": "GILBERTO MORAIS DE ALMEIDA", "resp": "JEFFERSON", "prazo": "04/02/2026", "vara": "8ª Vara Cível", "dias": 71}, {"proc": "7035415-98.2021.8.22.0001", "parte": "JOELCIMAR SAMPAIO DA SILVA", "resp": "JEFFERSON", "prazo": "04/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 71}, {"proc": "7035415-98.2021.8.22.0001", "parte": "JOELCIMAR SAMPAIO DA SILVA e outros", "resp": "JEFFERSON", "prazo": "04/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 71}, {"proc": "1010215-66.2023.4.01.4100", "parte": "ROMULO JOSE GUIMARAES", "resp": "KARYTHA", "prazo": "05/02/2026", "vara": "1ª Vara Federal Cível", "dias": 70}, {"proc": "1007385-93.2024.4.01.4100", "parte": "RAEL VICTOR MENEZES SOARES", "resp": "MIRTON", "prazo": "05/02/2026", "vara": "1ª Vara Federal Cível", "dias": 70}, {"proc": "7035638-46.2024.8.22.0001", "parte": "LUCIVANIA SILVA MACHADO", "resp": "YOUSSEF", "prazo": "05/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 70}, {"proc": "0815044-03.2024.8.22.0000", "parte": "MARCOS ROGERIO SOARES FARIAS", "resp": "JEFFERSON", "prazo": "05/02/2026", "vara": "1ª Câmara Especial", "dias": 70}, {"proc": "0006387-93.2010.8.22.0001", "parte": "MARLY CACULAKIS RIVA CALIXTO", "resp": "YOUSSEF", "prazo": "05/02/2026", "vara": "1ª Vara de Fazenda Pública", "dias": 70}, {"proc": "7000342-41.2016.8.22.0001", "parte": "MARIO SERGIO LEIRAS TEIXEIRA", "resp": "COMCEP", "prazo": "05/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 70}, {"proc": "7031712-33.2019.8.22.0001", "parte": "CARLOS ALBERTO LUCAS", "resp": "YOUSSEF", "prazo": "05/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 70}, {"proc": "7042694-38.2021.8.22.0001", "parte": "MANOEL CARLOS NERI DA SILVA", "resp": "JEFFERSON", "prazo": "05/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 70}, {"proc": "7010625-11.2025.8.22.0001", "parte": "EDVAN SOBRINHO DOS SANTOS", "resp": "JEFFERSON", "prazo": "05/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 70}, {"proc": "7000609-69.2023.8.22.0000", "parte": "ERENILSON SILVA BRITO", "resp": "JEFFERSON", "prazo": "05/02/2026", "vara": "EXECUÇÃO FISCAL", "dias": 70}, {"proc": "1001101-35.2025.4.01.4100", "parte": "DAIANE DO NASCIMENTO FERREIRA", "resp": "MIRTON", "prazo": "05/02/2026", "vara": "6ª Vara Federal", "dias": 70}, {"proc": "0021918-20.2013.8.22.0001", "parte": "ROBERTO EDUARDO SOBRINHO", "resp": "JEFFERSON", "prazo": "06/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 69}, {"proc": "7060883-30.2022.8.22.0001", "parte": "IRAILCE BATISTA FIGUEIRA LEITE", "resp": "KARYTHA", "prazo": "06/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 69}, {"proc": "7068928-18.2025.8.22.0001", "parte": "MARIA LUIZA DO VALE", "resp": "JEFFERSON", "prazo": "06/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 69}, {"proc": "7068939-47.2025.8.22.0001", "parte": "JOSELIA GOMES NEVES", "resp": "JEFFERSON", "prazo": "06/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 69}, {"proc": "7080575-15.2022.8.22.0001", "parte": "TRÊS MARIAS TRANSPORTES LTDA", "resp": "COMCEP", "prazo": "06/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 69}, {"proc": "7054899-60.2025.8.22.0001", "parte": "RICARDO GLACIANO BELEM", "resp": "GECILENE", "prazo": "06/02/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 69}, {"proc": "7068918-71.2025.8.22.0001", "parte": "JOSÉ GOMES BARROS", "resp": "KARYTHA", "prazo": "09/02/2026", "vara": "1ª Vara de Fazenda Pública", "dias": 66}, {"proc": "7068934-25.2025.8.22.0001", "parte": "HENRIQUE VALVERDE", "resp": "KARYTHA", "prazo": "09/02/2026", "vara": "1ª Vara de Fazenda Pública", "dias": 66}, {"proc": "7059258-58.2022.8.22.0001", "parte": "IPE EMPREENDIMENTOS IMOBILIARIOS LTDA", "resp": "MAURICIO", "prazo": "09/02/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 66}, {"proc": "1003051-89.2019.4.01.4100", "parte": "MUNICIPIO DE PORTO VELHO e outros", "resp": "MIRTON", "prazo": "09/02/2026", "vara": "6ª Turma/Gab. 16 - DESEMBARGADOR FEDERAL", "dias": 66}, {"proc": "7006939-48.2024.8.22.0000", "parte": "KLEBSON LUIZ LAVOR E SILVA", "resp": "JEFFERSON", "prazo": "09/02/2026", "vara": "EXECUÇÃO FISCAL", "dias": 66}, {"proc": "7035746-41.2025.8.22.0001", "parte": "RAIMUNDA MENDES JARDIM SANTOS", "resp": "KARYTHA", "prazo": "10/02/2026", "vara": "1ª Vara de Fazenda Pública", "dias": 65}, {"proc": "7016776-27.2024.8.22.0001", "parte": "ALDISANDRA SALDANHA MENEZES", "resp": "JEFFERSON", "prazo": "11/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 64}, {"proc": "1019086-85.2023.4.01.4100", "parte": "NUBIA FIGUEIREDO DE CARVALHO", "resp": "MIRTON", "prazo": "11/02/2026", "vara": "2ª Vara Federal Cível da SJRO", "dias": 64}, {"proc": "7068571-77.2021.8.22.0001", "parte": "ASSOCIACAO PROFIS DOS AUDIT FISCAIS DO MUNIC DE PV", "resp": "JEFFERSON", "prazo": "11/02/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 64}, {"proc": "7010575-82.2025.8.22.0001", "parte": "JEOVAL BATISTA DA SILVA", "resp": "MIRTON", "prazo": "11/02/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 64}, {"proc": "7047269-31.2017.8.22.0001", "parte": "PERT CONSTRUCOES LTDA", "resp": "JEFFERSON", "prazo": "12/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 63}, {"proc": "7005033-57.2023.8.22.0000", "parte": "KLEBSON LUIZ LAVOR E SILVA", "resp": "JEFFERSON", "prazo": "12/02/2026", "vara": "EXECUÇÃO FISCAL", "dias": 63}, {"proc": "1010864-94.2024.4.01.4100", "parte": "DANIELA REIS MENEZES", "resp": "MIRTON", "prazo": "12/02/2026", "vara": "2ª Vara Federal Cível", "dias": 63}, {"proc": "7026681-61.2021.8.22.0001", "parte": "SILVIO NASCIMENTO GUALBERTO", "resp": "JEFFERSON", "prazo": "12/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 63}, {"proc": "7046208-91.2024.8.22.0001", "parte": "PAMELA DA SILVA LOPES", "resp": "JEFFERSON", "prazo": "12/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 63}, {"proc": "7008523-16.2025.8.22.0001", "parte": "DANIEL DE SOUZA SILVA", "resp": "JEFFERSON", "prazo": "12/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 63}, {"proc": "7068939-47.2025.8.22.0001", "parte": "JOSELIA GOMES NEVES", "resp": "JEFFERSON", "prazo": "12/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 63}, {"proc": "7068696-06.2025.8.22.0001", "parte": "COOPERATIVA DE ECONOMIA E CREDITO MUTUO DOS INTEGR", "resp": "JEFFERSON", "prazo": "13/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 62}, {"proc": "7065959-64.2024.8.22.0001", "parte": "JUIZ DE DIREITO DA 1ª VARA DE FAZENDA PÚBLICA DA C", "resp": "FISCAL", "prazo": "13/02/2026", "vara": "1ª Câmara Especial", "dias": 62}, {"proc": "7000546-44.2023.8.22.0000", "parte": "EMERSON PINHEIRO DIAS", "resp": "JEFFERSON", "prazo": "13/02/2026", "vara": "2ª Câmara Especial", "dias": 62}, {"proc": "1015749-69.2023.4.01.0000", "parte": "ESTADO DE RONDONIA e outros", "resp": "MIRTON", "prazo": "13/02/2026", "vara": "11ª Turma/Gab. 33 - DESEMBARGADOR FEDERA", "dias": 62}, {"proc": "7004685-65.2025.8.22.0001", "parte": "MARCELO SERANTOLA RODRIGUES", "resp": "BEATRIZ", "prazo": "13/02/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 62}, {"proc": "7020675-38.2021.8.22.0001", "parte": "BENEDITA DO NASCIMENTO PEREIRA e outros", "resp": "JEFFERSON", "prazo": "13/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 62}, {"proc": "7025532-06.2016.8.22.0001", "parte": "LUIZ ANDRE DUARTE", "resp": "JEFFERSON", "prazo": "16/02/2026", "vara": "EXECUÇÃO FISCAL", "dias": 59}, {"proc": "7068941-17.2025.8.22.0001", "parte": "ANCELMO RABELO MAIA", "resp": "MAURICIO", "prazo": "16/02/2026", "vara": "1ª Vara de Fazenda Pública", "dias": 59}, {"proc": "7000669-42.2023.8.22.0000", "parte": "ROBERTO EDUARDO SOBRINHO", "resp": "JEFFERSON", "prazo": "16/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 59}, {"proc": "7057613-27.2024.8.22.0001", "parte": "DEBORA MARIAM DOS SANTOS MATOS DIAS", "resp": "LEONARDO", "prazo": "16/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 59}, {"proc": "7012849-19.2025.8.22.0001", "parte": "FRANCISCO EDWILSON BESSA HOLANDA DE NEGREIROS", "resp": "LEONARDO", "prazo": "16/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 59}, {"proc": "7021877-11.2025.8.22.0001", "parte": "MARIA CRISTINA SILVA DOS SANTOS", "resp": "JEFFERSON", "prazo": "16/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 59}, {"proc": "7000548-14.2023.8.22.0000", "parte": "CAMILA SCHIAVINATO CANOVA LAGARES", "resp": "LEONARDO", "prazo": "16/02/2026", "vara": "EXECUÇÃO FISCAL", "dias": 59}, {"proc": "7000588-93.2023.8.22.0000", "parte": "CONSTANTINO PESSOA CHAVES", "resp": "LEONARDO", "prazo": "16/02/2026", "vara": "EXECUÇÃO FISCAL", "dias": 59}, {"proc": "7002206-73.2023.8.22.0000", "parte": "CARLOS ALBERTO SOCCOL", "resp": "LEONARDO", "prazo": "16/02/2026", "vara": "EXECUÇÃO FISCAL", "dias": 59}, {"proc": "7068409-43.2025.8.22.0001", "parte": "DEVONILDO DE JESUS SANTANA", "resp": "GABINETE ACOMPANHANDO", "prazo": "17/02/2026", "vara": "1ª Vara de Fazenda Pública", "dias": 58}, {"proc": "7037381-33.2020.8.22.0001", "parte": "ALEXANDRE TABOSA SOBRINHO", "resp": "JEFFERSON", "prazo": "17/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 58}, {"proc": "7018527-49.2024.8.22.0001", "parte": "ROBSON MARTINS SOUZA", "resp": "JEFFERSON", "prazo": "17/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 58}, {"proc": "7008003-56.2025.8.22.0001", "parte": "ANTONIO COLARES PAVAO", "resp": "JEFFERSON", "prazo": "17/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 58}, {"proc": "7000536-97.2023.8.22.0000", "parte": "MARIO JONAS FREITAS GUTERRES", "resp": "JEFFERSON", "prazo": "17/02/2026", "vara": "EXECUÇÃO FISCAL", "dias": 58}, {"proc": "7022752-20.2021.8.22.0001", "parte": "JOSELIA FERREIRA DA SILVA", "resp": "LEONARDO", "prazo": "17/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 58}, {"proc": "1025390-47.2024.4.01.0000", "parte": "VICTOR VINICIUS BARROS SOARES e outros", "resp": "MIRTON", "prazo": "18/02/2026", "vara": "6ª Turma/Gab. 16 - DESEMBARGADOR FEDERAL", "dias": 57}, {"proc": "7008216-33.2023.8.22.0001", "parte": "W M LUNA - ME", "resp": "JEFFERSON", "prazo": "18/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 57}, {"proc": "7043715-25.2016.8.22.0001", "parte": "MPRO - MINISTÉRIO PÚBLICO DO ESTADO DE RONDÔNIA", "resp": "DEVOLVIDO AO CARTÓRIO", "prazo": "18/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 57}, {"proc": "0009931-84.2013.8.22.0001", "parte": "CICERO PESSOA REGO", "resp": "JEFFERSON", "prazo": "18/02/2026", "vara": "1ª Vara Cível", "dias": 57}, {"proc": "7059624-10.2016.8.22.0001", "parte": "MARIO SERGIO LEIRAS TEIXEIRA", "resp": "DEVOLVIDO AO CARTÓRIO\nACP", "prazo": "18/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 57}, {"proc": "7046234-31.2020.8.22.0001", "parte": "PAS - PROJETO, ASSESSORIA E SISTEMA LTDA - ME", "resp": "JEFFERSON", "prazo": "18/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 57}, {"proc": "7039850-57.2017.8.22.0001", "parte": "PORTO VELHO SHOPPING S.A", "resp": "JEFFERSON", "prazo": "20/02/2026", "vara": "8ª Vara Cível", "dias": 55}, {"proc": "7017010-09.2024.8.22.0001", "parte": "SEBASTIAO BATISTA GUEDES NETO", "resp": "JEFFERSON", "prazo": "20/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 55}, {"proc": "7002983-55.2024.8.22.0022", "parte": "LINDOMAR NONATO RODRIGUES", "resp": "KARYTHA", "prazo": "20/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 55}, {"proc": "7004882-91.2023.8.22.0000", "parte": "ANA PAULA SANTOS MESQUITA", "resp": "JEFFERSON", "prazo": "20/02/2026", "vara": "2ª Câmara Especial", "dias": 55}, {"proc": "7019664-32.2025.8.22.0001", "parte": "MABEL DE ALMEIDA COLARES", "resp": "LEONARDO", "prazo": "23/02/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 52}, {"proc": "7020642-48.2021.8.22.0001", "parte": "BENEDITA DO NASCIMENTO PEREIRA", "resp": "LEONARDO", "prazo": "23/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 52}, {"proc": "1020213-87.2025.4.01.4100", "parte": "MARIA HELENA COELHA EDUARDO", "resp": "MIRTON", "prazo": "23/02/2026", "vara": "6ª Vara Federal de Juizado Especial Cíve", "dias": 52}, {"proc": "7007001-51.2025.8.22.0001", "parte": "CENTRO DE TRADICOES GAUCHAS RONDA CRIOULA", "resp": "JEFFERSON", "prazo": "24/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 51}, {"proc": "7031908-03.2019.8.22.0001", "parte": "EDUARDO CARLOS RODRIGUES DA SILVA e outros", "resp": "JEFFERSON", "prazo": "24/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 51}, {"proc": "7080531-93.2022.8.22.0001", "parte": "DIRCEU RODRIGUES", "resp": "COMCEP", "prazo": "24/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 51}, {"proc": "7048252-20.2023.8.22.0001", "parte": "ANA CRISTINA CORDEIRO DA SILVA", "resp": "COMCEP", "prazo": "24/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 51}, {"proc": "7000550-81.2023.8.22.0000", "parte": "ANTONIO GERALDO AFFONSO", "resp": "JEFFERSON", "prazo": "25/02/2026", "vara": "EXECUÇÃO FISCAL", "dias": 50}, {"proc": "7058913-24.2024.8.22.0001", "parte": "ESTADO DE RONDONIA", "resp": "KARYTHA", "prazo": "25/02/2026", "vara": "2ª Câmara Especial", "dias": 50}, {"proc": "7054139-14.2025.8.22.0001", "parte": "ALINE COUTINHO ALBUQUERQUE GOMES", "resp": "CARTORIO/GABINETE", "prazo": "25/02/2026", "vara": "1ª Vara de Fazenda Pública", "dias": 50}, {"proc": "7043285-39.2017.8.22.0001", "parte": "SANTA ADELAIDE PROPERTIES LTDA - EPP", "resp": "JEFFERSON", "prazo": "25/02/2026", "vara": "4ª Vara Cível", "dias": 50}, {"proc": "0814595-45.2024.8.22.0000", "parte": "MARIO SERGIO LEIRAS TEIXEIRA", "resp": "MIRTON", "prazo": "25/02/2026", "vara": "2ª Câmara Especial", "dias": 50}, {"proc": "7054114-11.2019.8.22.0001", "parte": "JUIZ DE DIREITO DA 2ª VARA DE FAZENDA E SAÚDE PÚBL", "resp": "JEFFERSON", "prazo": "25/02/2026", "vara": "1ª Câmara Especial", "dias": 50}, {"proc": "7020675-38.2021.8.22.0001", "parte": "BENEDITA DO NASCIMENTO PEREIRA e outros", "resp": "JEFFERSON", "prazo": "25/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 50}, {"proc": "7057937-85.2022.8.22.0001", "parte": "ALBERTO SOUSA CASTROVIEJO", "resp": "JEFFERSON", "prazo": "25/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 50}, {"proc": "7010572-30.2025.8.22.0001", "parte": "JOSE WILDES DE BRITO e outros", "resp": "JEFFERSON", "prazo": "25/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 50}, {"proc": "7010673-67.2025.8.22.0001", "parte": "SILMO DA SILVA SANTANA", "resp": "JEFFERSON", "prazo": "25/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 50}, {"proc": "7075686-13.2025.8.22.0001", "parte": "SF SERVICOS DE MECANICA DE VEICULOS AUTOMOTORES LT", "resp": "LEONARDO", "prazo": "25/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 50}, {"proc": "7000531-75.2023.8.22.0000", "parte": "EDSON FRANCISCO DE OLIVEIRA SILVEIRA", "resp": "JEFFERSON", "prazo": "26/02/2026", "vara": "EXECUÇÃO FISCAL", "dias": 49}, {"proc": "1005543-15.2023.4.01.4100", "parte": "FRANCISCO DOS SANTOS VIEIRA", "resp": "MIRTON", "prazo": "26/02/2026", "vara": "1ª Vara Federal Cível", "dias": 49}, {"proc": "0120210-60.2001.8.22.0001", "parte": "JOSE ALVES VIEIRA GUEDES", "resp": "MIRTON", "prazo": "26/02/2026", "vara": "EXECUÇÃO FISCAL", "dias": 49}, {"proc": "7047115-08.2020.8.22.0001", "parte": "MARIO SERGIO LEIRAS TEIXEIRA", "resp": "JEFFERSON", "prazo": "26/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 49}, {"proc": "7001031-85.2016.8.22.0001", "parte": "JAÚ S/A CONSTRUTORA E INCORPORADORA", "resp": "JEFFERSON", "prazo": "27/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 48}, {"proc": "7037381-33.2020.8.22.0001", "parte": "ALEXANDRE TABOSA SOBRINHO", "resp": "JEFFERSON", "prazo": "27/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 48}, {"proc": "7010776-16.2021.8.22.0001", "parte": "MARIA IVONE CARVALHO DA SILVA", "resp": "JEFFERSON", "prazo": "27/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 48}, {"proc": "0067896-79.1997.8.22.0001", "parte": "CICERO RODRIGUES LAVOR", "resp": "JEFFERSON", "prazo": "27/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 48}, {"proc": "7018420-39.2023.8.22.0001", "parte": "VIVIAN APARECIDA DE OLIVEIRA IRMAO", "resp": "JEFFERSON", "prazo": "27/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 48}, {"proc": "7064906-48.2024.8.22.0001", "parte": "AUTO POSTO LONDON LTDA", "resp": "JEFFERSON", "prazo": "27/02/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 48}, {"proc": "7054322-82.2025.8.22.0001", "parte": "ASSOCIACAO DAS ESCOLAS COMUNITARIAS DE PORTO VELHO", "resp": "JEFFERSON", "prazo": "02/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 45}, {"proc": "7002595-58.2023.8.22.0000", "parte": "ELESONLUZ LEAL RAMOS DE ALBUQUERQUE", "resp": "JEFFERSON", "prazo": "02/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 45}, {"proc": "7035468-74.2024.8.22.0001", "parte": "TAILANI SANTOS GARCIA", "resp": "LEONARDO", "prazo": "02/03/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 45}, {"proc": "7030918-02.2025.8.22.0001", "parte": "JURANDIR RODRIGUES DE OLIVEIRA", "resp": "MIRTON", "prazo": "02/03/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 45}, {"proc": "7035415-98.2021.8.22.0001", "parte": "JOELCIMAR SAMPAIO DA SILVA e outros", "resp": "F7044891-24.2025.8.22.0001", "prazo": "02/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 45}, {"proc": "0168519-39.2006.8.22.0001", "parte": "HOSPITAL 9 DE JULHO S/S LTDA", "resp": "LEONARDO", "prazo": "03/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 44}, {"proc": "7004388-92.2024.8.22.0001", "parte": "PROTECAO MAXIMA VIGILANCIA E SEGURANCA LTDA - ME", "resp": "JEFFERSON", "prazo": "03/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 44}, {"proc": "AGRAVO EM RECURSO ESPECIAL Nº 3138792 - RO (2025/0503162-2)\n0801224-14.2024.8.22.0000", "parte": "ADLA HATZINAKIS ABUZED", "resp": "JEFFERSON", "prazo": "03/03/2026", "vara": "Gabinete Des. Miguel Monico", "dias": 44}, {"proc": "1007385-93.2024.4.01.4100", "parte": "RAEL VICTOR MENEZES SOARES", "resp": "MIRTON", "prazo": "03/03/2026", "vara": "1ª Vara Federal Cível da SJRO", "dias": 44}, {"proc": "7035720-19.2020.8.22.0001", "parte": "KEZIA MARINHO DA SILVA", "resp": "LEONARDO", "prazo": "04/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 43}, {"proc": "7023232-90.2024.8.22.0001", "parte": "ENERGISA RONDONIA - DISTRIBUIDORA DE ENERGIA S.A", "resp": "JEFFERSON", "prazo": "04/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 43}, {"proc": "7065166-28.2024.8.22.0001", "parte": "DELMA GOMES TEIXEIRA DE CASTRO", "resp": "JEFFERSON", "prazo": "04/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 43}, {"proc": "7040904-77.2025.8.22.0001", "parte": "JAPURA PNEUS LTDA", "resp": "LEONARDO", "prazo": "04/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 43}, {"proc": "7068696-06.2025.8.22.0001", "parte": "COOPERATIVA DE ECONOMIA E CREDITO MUTUO DOS INTEGR", "resp": "JEFFERSON", "prazo": "04/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 43}, {"proc": "7001545-62.2021.8.22.0001", "parte": "TATIANE DE FRANCA MOREIRA", "resp": "LEONARDO", "prazo": "04/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 43}, {"proc": "7002983-55.2024.8.22.0022", "parte": "LINDOMAR NONATO RODRIGUES", "resp": "LEONARDO", "prazo": "04/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 43}, {"proc": "7025386-47.2025.8.22.0001", "parte": "LUNARA CRISTINA ARAUJO SOUZA", "resp": "LEONARDO", "prazo": "04/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 43}, {"proc": "0815867-40.2025.8.22.0000", "parte": "MARIA CANDIDA DA SILVA BENJAMIN", "resp": "ERICA", "prazo": "04/03/2026", "vara": "2ª Câmara Especial", "dias": 43}, {"proc": "7025841-27.2016.8.22.0001", "parte": "JOSE CELZIMARIO GOMES NAPOLIAO", "resp": "JEFFERSON", "prazo": "04/03/2026", "vara": "EXECUÇÃO FISCAL", "dias": 43}, {"proc": "0816075-24.2025.8.22.0000", "parte": "COOPERATIVA DE CREDITO E INVESTIMENTOS DE RONDONIA", "resp": "JEFFERSON", "prazo": "04/03/2026", "vara": "1ª Câmara Especial", "dias": 43}, {"proc": "0816142-86.2025.8.22.0000", "parte": "DIVA PEREIRA DA SILVA", "resp": "LEONARDO", "prazo": "04/03/2026", "vara": "2ª Câmara Especial", "dias": 43}, {"proc": "0816281-38.2025.8.22.0000", "parte": "DAYTOP CENTRO TERAPEUTICO LTDA", "resp": "LEONARDO", "prazo": "04/03/2026", "vara": "1ª Câmara Especial", "dias": 43}, {"proc": "0008370-88.2014.8.22.0001", "parte": "JUCILENE DE QUEIROZ ANDRADE DUARTE", "resp": "LEONARDO", "prazo": "04/03/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 43}, {"proc": "7025798-75.2025.8.22.0001", "parte": "FERNANDO JUSTINIANO MEDINA", "resp": "", "prazo": "04/03/2026", "vara": "1ª Câmara Especial", "dias": 43}, {"proc": "7053468-25.2024.8.22.0001", "parte": "DARIANE PEREIRA DO AMARAL", "resp": "MIRTON", "prazo": "04/03/2026", "vara": "2ª Câmara Especial", "dias": 43}, {"proc": "7057885-21.2024.8.22.0001", "parte": "JULIA LINS FARIAS SANTOS", "resp": "", "prazo": "04/03/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 43}, {"proc": "7000508-24.2026.8.22.0001", "parte": "ASSOCIACAO DOS ESTABELECIMENTOS DE SERVICOS FUNERA", "resp": "", "prazo": "04/03/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 43}, {"proc": "7027281-14.2023.8.22.0001", "parte": "ALISON MARTINS DA SILVA e outros", "resp": "AMBIENTAL", "prazo": "04/03/2026", "vara": "3ª Vara Cível", "dias": 43}, {"proc": "7075340-62.2025.8.22.0001", "parte": "MARIA ALVES DE ARAUJO", "resp": "JEFFERSON", "prazo": "04/03/2026", "vara": "7ª Vara Cível", "dias": 43}, {"proc": "AgInt nos EDcl no AGRAVO EM RECURSO ESPECIAL Nº 2941172 - RO (2025/0181831-0\n7062841-61.2016.8.22.0001", "parte": "ASSOCIACAO DOS MORADORES DO BAIRRO CIDADE ALT", "resp": "AMBIENTAL", "prazo": "04/03/2026", "vara": "Gabinete Des. Gilberto Barbosa", "dias": 43}, {"proc": "0009604-71.2015.8.22.0001", "parte": "MARCOS CELSO BORRI", "resp": "LEONARDO", "prazo": "04/03/2026", "vara": "1ª Câmara Especial", "dias": 43}, {"proc": "7012646-38.2017.8.22.0001", "parte": "ANNE MARIE SANTOS", "resp": "MIRTON", "prazo": "05/03/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 42}, {"proc": "7010621-71.2025.8.22.0001", "parte": "ROBSON RODRIGUES DA SILVA", "resp": "MAURICIO", "prazo": "05/03/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 42}, {"proc": "7005767-97.2026.8.22.0001", "parte": "RAIMUNDA NONATA DO NASCIMENTO", "resp": "MAURICIO", "prazo": "05/03/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 42}, {"proc": "7002918-97.2022.8.22.0000", "parte": "OLMIRA CARLOS DOS SANTOS", "resp": "LEONARDO", "prazo": "05/03/2026", "vara": "EXECUÇÃO FISCAL", "dias": 42}, {"proc": "7000574-12.2023.8.22.0000", "parte": "GILBERTO DAS DORES MORAES DO AMARAL", "resp": "LEONARDO", "prazo": "05/03/2026", "vara": "EXECUÇÃO FISCAL", "dias": 42}, {"proc": "7000661-65.2023.8.22.0000", "parte": "FRANCISCO EDWILSON BESSA HOLANDA DE NEGREIROS", "resp": "LEONARDO", "prazo": "05/03/2026", "vara": "EXECUÇÃO FISCAL", "dias": 42}, {"proc": "7002599-95.2023.8.22.0000", "parte": "KRUGER DARWICH ZACHARIAS", "resp": "LEONARDO", "prazo": "05/03/2026", "vara": "EXECUÇÃO FISCAL", "dias": 42}, {"proc": "7004886-31.2023.8.22.0000", "parte": "JOSE HERMINIO COELHO", "resp": "LEONARDO", "prazo": "05/03/2026", "vara": "EXECUÇÃO FISCAL", "dias": 42}, {"proc": "1016704-85.2024.4.01.4100", "parte": "VALDECI DA SILVA FERREIRA", "resp": "MIRTON", "prazo": "06/03/2026", "vara": "2ª Vara Federal Cível da SJRO", "dias": 41}, {"proc": "0009385-06.2012.4.01.4100", "parte": "ALEX ALVES FERREIRA", "resp": "MIRTON", "prazo": "06/03/2026", "vara": "6ª Turma/Gab", "dias": 41}, {"proc": "7004882-91.2023.8.22.0000", "parte": "ANTONIO GERALDO AFFONSO", "resp": "LEONARDO", "prazo": "06/03/2026", "vara": "EXECUÇÃO FISCAL", "dias": 41}, {"proc": "7004948-71.2023.8.22.0000", "parte": "HARPIA COMERCIO GENEROS ALIMENTICIOS, SERVICOS LTD", "resp": "LEONARDO", "prazo": "06/03/2026", "vara": "EXECUÇÃO FISCAL", "dias": 41}, {"proc": "1023057-10.2025.4.01.4100", "parte": "EDUARDO CORDEIRO BUGANEMI BOTELHO e outros", "resp": "MIRTON", "prazo": "06/03/2026", "vara": "12ª Turma/Gab. 36 - DESEMBARGADORA FEDER", "dias": 41}, {"proc": "7057061-62.2024.8.22.0001", "parte": "ANA CLAUDIA ROBERTA MOLOCNY", "resp": "LEONARDO", "prazo": "06/03/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 41}, {"proc": "7070066-20.2025.8.22.0001", "parte": "DIOVANDRES HENRIQUE MUNIZ DE OLIVEIRA", "resp": "JEFFERSON", "prazo": "06/03/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 41}, {"proc": "7025131-07.2016.8.22.0001", "parte": "ELIZABETH LEITE DE OLIVEIRA", "resp": "JEFFERSON", "prazo": "09/03/2026", "vara": "EXECUÇÃO FISCAL", "dias": 38}, {"proc": "1005137-33.2019.4.01.4100", "parte": "BIANCA SOARES RAMOS", "resp": "MIRTON", "prazo": "09/03/2026", "vara": "1ª Vara Federal Cível", "dias": 38}, {"proc": "1025899-60.2025.4.01.4100", "parte": "CRISTINA ANDRADE DA SILVA", "resp": "MIRTON", "prazo": "09/03/2026", "vara": "6ª Vara Federal de Juizado Especial Cíve", "dias": 38}, {"proc": "1025556-64.2025.4.01.4100", "parte": "AZEMAR CASTRO AMORIM", "resp": "MIRTON", "prazo": "09/03/2026", "vara": "2ª Vara Federal", "dias": 38}, {"proc": "7028189-37.2024.8.22.0001", "parte": "LOUIZZY FERREIRA BARROS", "resp": "COMCEP", "prazo": "09/03/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 38}, {"proc": "7002218-87.2023.8.22.0000", "parte": "GETULIO GABRIEL DA COSTA", "resp": "LEONARDO", "prazo": "09/03/2026", "vara": "EXECUÇÃO FISCAL", "dias": 38}, {"proc": "7036087-67.2025.8.22.0001", "parte": "JUÍZO DE DIREITO DA 1ª VARA DE FAZENDA PÚBLICA DA ", "resp": "JEFFERSON", "prazo": "09/03/2026", "vara": "2ª Câmara Especial", "dias": 38}, {"proc": "7001167-07.2024.8.22.0000", "parte": "JOSE ASSIS JUNIOR REGO CAVALCANTE", "resp": "JEFFERSON", "prazo": "09/03/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 38}, {"proc": "7007307-83.2026.8.22.0001", "parte": "EVELYN CAROLINE COSTA DOS SANTOS", "resp": "BEATRIZ", "prazo": "09/03/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 38}, {"proc": "7000606-17.2023.8.22.0000", "parte": "FRANCISCO SIZINHO GOMES", "resp": "JEFFERSON", "prazo": "09/03/2026", "vara": "EXECUÇÃO FISCAL", "dias": 38}, {"proc": "7068944-69.2025.8.22.0001", "parte": "FRANCISCA ALMEIDA DA SILVA", "resp": "JEFFERSON", "prazo": "09/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 38}, {"proc": "7077406-15.2025.8.22.0001", "parte": "MARIA DO SOCORRO DA SILVA ARAUJO MACIEL", "resp": "JEFFERSON", "prazo": "09/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 38}, {"proc": "AREsp 3139364/RO (2025/0503249-1)\n0811593-67.2024.8.22.0000", "parte": "JOSE DIONIZIO FILHO", "resp": "BEATRIZ", "prazo": "09/03/2026", "vara": "2ª Câmara Especial", "dias": 38}, {"proc": "AREsp 3137707/RO (2025/0503052-3) \n0808065-25.2024.8.22.0000", "parte": "EDISON CARNEIRO SOBRINHO", "resp": "JEFFERSON", "prazo": "09/03/2026", "vara": "2ª Câmara Especial", "dias": 38}, {"proc": "7073816-30.2025.8.22.0001", "parte": "JONAS NUNES DOS SANTOS JUNIOR", "resp": "DEVOLVIDO AO CARTÓRIO", "prazo": "10/03/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 37}, {"proc": "7040956-10.2024.8.22.0001", "parte": "CACILDA SOARES DA SILVA", "resp": "MAURICIO", "prazo": "10/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 37}, {"proc": "7075508-64.2025.8.22.0001", "parte": "SHEILA CRISTIANE BARROZO DA SILVA", "resp": "LEONARDO", "prazo": "10/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 37}, {"proc": "7001031-85.2016.8.22.0001", "parte": "JAÚ S/A CONSTRUTORA E INCORPORADORA", "resp": "JEFFERSON", "prazo": "10/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 37}, {"proc": "7042271-73.2024.8.22.0001", "parte": "HUGO MARCIANO PEREIRA SANTOS", "resp": "JEFFERSON", "prazo": "10/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 37}, {"proc": "7000531-75.2023.8.22.0000", "parte": "EDSON FRANCISCO DE OLIVEIRA SILVEIRA", "resp": "JEFFERSON", "prazo": "10/03/2026", "vara": "EXECUÇÃO FISCAL", "dias": 37}, {"proc": "7034249-65.2020.8.22.0001", "parte": "NTA - NOVAS TECNICAS DE ASFALTOS LTDA.", "resp": "COMCEP", "prazo": "11/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 36}, {"proc": "7041288-16.2020.8.22.0001", "parte": "ANA CRISTINA CORDEIRO DA SILVA", "resp": "JEFFERSON", "prazo": "11/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 36}, {"proc": "7010571-45.2025.8.22.0001", "parte": "FRANCISCO EDWILSON BESSA HOLANDA DE NEGREIROS", "resp": "JEFFERSON", "prazo": "11/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 36}, {"proc": "7017299-05.2025.8.22.0001", "parte": "MIGUEL SOARES BARROS", "resp": "JEFFERSON", "prazo": "11/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 36}, {"proc": "7024689-26.2025.8.22.0001", "parte": "ASSOCIACAO RONDONIENSE DE MUNICIPIOS", "resp": "ESCRITORIO CARMARGO, MAGALHAES & CANEDO ADVOGADOS", "prazo": "11/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 36}, {"proc": "1025556-64.2025.4.01.4100", "parte": "AZEMAR CASTRO AMORIM", "resp": "MIRTON", "prazo": "12/03/2026", "vara": "2ª Vara Federal Cível da SJRO", "dias": 35}, {"proc": "7044355-52.2021.8.22.0001", "parte": "ANDREIA LIMA DE ARAUJO", "resp": "JEFFERSON", "prazo": "12/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 35}, {"proc": "7000530-90.2023.8.22.0000", "parte": "IVANI FERREIRA LINS", "resp": "JEFFERSON", "prazo": "12/03/2026", "vara": "EXECUÇÃO FISCAL", "dias": 35}, {"proc": "7010665-90.2025.8.22.0001", "parte": "EDVAN SOBRINHO DOS SANTOS", "resp": "MIRTON", "prazo": "12/03/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 35}, {"proc": "7052176-39.2023.8.22.0001", "parte": "ANTONINHA APARECIDA ALVES DA SILVA", "resp": "BEATRIZ", "prazo": "12/03/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 35}, {"proc": "1007812-53.2025.4.01.4101", "parte": "LARISSA FRANCA MACIEL", "resp": "MIRTON", "prazo": "13/03/2026", "vara": "Juizado Especial Cível e Criminal Adjunt", "dias": 34}, {"proc": "7000574-12.2023.8.22.0000", "parte": "JORGE ADRIANO PEREIRA LEITE", "resp": "MIRTON", "prazo": "13/03/2026", "vara": "Vice Presidência/Gab. Vice Presidência", "dias": 34}, {"proc": "0000135-75.2014.4.01.4100", "parte": "CAIXA ECONOMICA FEDERAL - CEF", "resp": "MIRTON", "prazo": "13/03/2026", "vara": "1ª Vara Federal Cível da SJRO", "dias": 34}, {"proc": "1001384-24.2026.4.01.4100", "parte": "DAVI FERNANDO DE SOUSA MARTINS", "resp": "MIRTON", "prazo": "13/03/2026", "vara": "2ª Vara Federal Cível", "dias": 34}, {"proc": "7060520-43.2022.8.22.0001", "parte": "ELESONLUZ LEAL RAMOS DE ALBUQUERQUE", "resp": "JEFFERSON", "prazo": "13/03/2026", "vara": "EXECUÇÃO FISCAL", "dias": 34}, {"proc": "7050875-04.2016.8.22.0001", "parte": "AVANY RODRIGUES ANDRADE", "resp": "MAURICIO", "prazo": "13/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 34}, {"proc": "0015806-40.2010.8.22.0001", "parte": "COLUMBIA SEGURANCA E VIGILANCIA PATRIMONIAL LTDA.", "resp": "JEFFERSON", "prazo": "13/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 34}, {"proc": "0021135-33.2010.8.22.0001", "parte": "VALZOMIRO BIZARELLO", "resp": "COMCEP", "prazo": "13/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 34}, {"proc": "7020824-63.2023.8.22.0001", "parte": "NOROESTE CONST CIVIL E EMPREEND IMOBILIARIOS LTDA ", "resp": "AMBIENTAL", "prazo": "16/03/2026", "vara": "5ª Vara Cível", "dias": 31}, {"proc": "7005203-29.2023.8.22.0000", "parte": "JARBAS CARVALHO DOS SANTOS", "resp": "JEFFERSON", "prazo": "16/03/2026", "vara": "EXECUÇÃO FISCAL", "dias": 31}, {"proc": "7046177-81.2018.8.22.0001", "parte": "ESTADO DE RONDONIA", "resp": "JEFFERSON", "prazo": "17/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 30}, {"proc": "7067279-18.2025.8.22.0001", "parte": "JOELCIMAR SAMPAIO DA SILVA", "resp": "JEFFERSON", "prazo": "17/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 30}, {"proc": "7043509-93.2025.8.22.0001", "parte": "META SUPERMERCADO ATACADO E VAREJO LTDA", "resp": "JEFFERSON", "prazo": "17/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 30}, {"proc": "7010680-69.2019.8.22.0001", "parte": "MARIO SERGIO LEIRAS TEIXEIRA", "resp": "JEFFERSON", "prazo": "17/03/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 30}, {"proc": "7031908-03.2019.8.22.0001", "parte": "EDUARDO CARLOS RODRIGUES DA SILVA", "resp": "JEFFERSON", "prazo": "17/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 30}, {"proc": "7054792-50.2024.8.22.0001", "parte": "ROSEMILDO MEDEIROS DE CAMPOS", "resp": "JEFFERSON", "prazo": "17/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 30}, {"proc": "7021877-11.2025.8.22.0001", "parte": "MARIA CRISTINA SILVA DOS SANTOS", "resp": "JEFFERSON", "prazo": "17/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 30}, {"proc": "7027438-31.2016.8.22.0001", "parte": "JOAO BOSCO OLIVEIRA DE ALMEIDA", "resp": "DEVOLVIDO AO CARTÓRIO\nCUMPRIMENTO DE\nSENTENÇA", "prazo": "18/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 29}, {"proc": "7074081-37.2022.8.22.0001", "parte": "JOAO LEONEL BERTOLIN", "resp": "MAURICIO", "prazo": "18/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 29}, {"proc": "7002572-15.2023.8.22.0000", "parte": "MARIO JORGE DE MEDEIROS", "resp": "JEFFERSON", "prazo": "18/03/2026", "vara": "EXECUÇÃO FISCAL", "dias": 29}, {"proc": "7010616-49.2025.8.22.0001", "parte": "M & E CONSTRUTORA E TERRAPLENAGEM LTDA - ME", "resp": "KAMILA", "prazo": "18/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 29}, {"proc": "7010617-34.2025.8.22.0001", "parte": "JEOVAL BATISTA DA SILVA", "resp": "KAMILA", "prazo": "18/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 29}, {"proc": "7068956-83.2025.8.22.0001", "parte": "GREMIO RECREATIVO ESCOLA DE SAMBA UNIDOS DA CASTAN", "resp": "KAMILA", "prazo": "18/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 29}, {"proc": "7026681-61.2021.8.22.0001", "parte": "SILVIO NASCIMENTO GUALBERTO e outro", "resp": "JEFFERSON", "prazo": "18/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 29}, {"proc": "7062586-88.2025.8.22.0001", "parte": "MARDEN PIRES TERRA", "resp": "LEONARDO", "prazo": "18/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 29}, {"proc": "7076241-30.2025.8.22.0001", "parte": "NEO CONSULTORIA E ADMINISTRACAO DE BENEFICIOS EIRE", "resp": "MAURICIO", "prazo": "19/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 28}, {"proc": "7001939-52.2024.8.22.0005", "parte": "DAGMAR SOARES BARRETO", "resp": "JEFFERSON", "prazo": "20/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 27}, {"proc": "7057937-85.2022.8.22.0001", "parte": "ALBERTO SOUSA CASTROVIEJO", "resp": "JEFFERSON", "prazo": "24/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 23}, {"proc": "7043643-91.2023.8.22.0001", "parte": "G R DA SILVA MECANICA", "resp": "JEFFERSON", "prazo": "24/03/2026", "vara": "2ª Câmara Especial", "dias": 23}, {"proc": "1015629-50.2020.4.01.4100", "parte": "EVA TAISE DE OLIVEIRA LINS e outros", "resp": "JEFFERSON", "prazo": "25/03/2026", "vara": "5ª Turma/Gab. 13 - DESEMBARGADOR FEDERAL", "dias": 22}, {"proc": "7068934-25.2025.8.22.0001", "parte": "HENRIQUE VALVERDE e outros", "resp": "JEFFERSON", "prazo": "25/03/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 22}, {"proc": "7051154-72.2025.8.22.0001", "parte": "JAIRO DE SOUZA LIMA", "resp": "LEONARDO", "prazo": "25/03/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 22}, {"proc": "7067873-66.2024.8.22.0001", "parte": "ESTADO DE RONDONIA", "resp": "KAMILA", "prazo": "25/03/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 22}, {"proc": "7025146-73.2016.8.22.0001", "parte": "ADLA HATZINAKIS ABUZED", "resp": "COMCEP", "prazo": "26/03/2026", "vara": "EXECUÇÃO FISCAL", "dias": 21}, {"proc": "7064964-32.2016.8.22.0001", "parte": "MARIO SERGIO LEIRAS TEIXEIRA", "resp": "JEFFERSON", "prazo": "26/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 21}, {"proc": "7013280-53.2025.8.22.0001", "parte": "WILLIAM CESAR COSTA DE SOUSA", "resp": "GECILENE", "prazo": "26/03/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 21}, {"proc": "7068951-61.2025.8.22.0001", "parte": "MARIA TERESA PEREIRA DE CARVALHO e outros", "resp": "JEFFERSON", "prazo": "26/03/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 21}, {"proc": "7043643-91.2023.8.22.0001", "parte": "G R DA SILVA MECANICA", "resp": "JEFFERSON", "prazo": "26/03/2026", "vara": "2ª Câmara Especial/Gabinete Titularidade", "dias": 21}, {"proc": "AREsp 3143664/RO (2026/0004040-2)70761853620218220001", "parte": "KARINA ARAUJO DA SILVA", "resp": "MAURICIO", "prazo": "26/03/2026", "vara": "STJ", "dias": 21}, {"proc": "0003466-25.2014.8.22.0001", "parte": "RAFAEL AUGUSTO FREITAS DE OLIVEIRA", "resp": "LEONARDO", "prazo": "26/03/2026", "vara": "3ª Vara Cível", "dias": 21}, {"proc": "7048608-15.2023.8.22.0001", "parte": "VALDENISE DE ALMEIDA", "resp": "LEONARDO", "prazo": "26/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 21}, {"proc": "7021595-07.2024.8.22.0001", "parte": "VALCIMAR e outros registrado(a) civilmente como VA", "resp": "MAURICIO", "prazo": "26/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 21}, {"proc": "7010678-89.2025.8.22.0001", "parte": "FRANCISCO ITAMAR DA COSTA", "resp": "LEONARDO", "prazo": "26/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 21}, {"proc": "7010639-92.2025.8.22.0001", "parte": "FORTAL CONSTRUCOES LTDA", "resp": "", "prazo": "26/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 21}, {"proc": "7059589-35.2025.8.22.0001", "parte": "RAFAEL GIL PASSOS BARREIROS", "resp": "LEONARDO", "prazo": "26/03/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 21}, {"proc": "7013360-80.2026.8.22.0001", "parte": "PAMELA KADYJA MELO DA COSTA", "resp": "GECILENE", "prazo": "26/03/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 21}, {"proc": "7010616-49.2025.8.22.0001", "parte": "M & E CONSTRUTORA E TERRAPLENAGEM LTDA - ME", "resp": "", "prazo": "26/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 21}, {"proc": "7014133-28.2026.8.22.0001", "parte": "MAYSA KAROLINE SOUSA ASTENRETER", "resp": "", "prazo": "26/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 21}, {"proc": "7021848-10.2015.8.22.0001", "parte": "DENISE HOULMONT CARVALHO ROSA DE PAULA", "resp": "ERICA", "prazo": "26/03/2026", "vara": "8ª Vara Cível", "dias": 21}, {"proc": "0811901-69.2025.8.22.0000", "parte": "ASSOCIACAO COMERCIAL E EMPRESARIAL DE PORTO VELHO ", "resp": "MAURICIO", "prazo": "27/03/2026", "vara": "2ª Câmara Especial", "dias": 20}, {"proc": "0815044-03.2024.8.22.0000", "parte": "MARCOS ROGERIO SOARES FARIAS", "resp": "JEFFERSON", "prazo": "27/03/2026", "vara": "1ª Câmara Especial", "dias": 20}, {"proc": "0801232-20.2026.8.22.0000", "parte": "JULIANA APARECIDA DA COSTA", "resp": "AMBIENTAL", "prazo": "27/03/2026", "vara": "2ª Câmara Especial", "dias": 20}, {"proc": "7030910-25.2025.8.22.0001", "parte": "ALAN KUELSON QUEIROZ FEDER e outros (1)", "resp": "JEFFERSON", "prazo": "27/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 20}, {"proc": "7017391-68.2025.8.22.0005", "parte": "RITA VIEIRA DOS SANTOS", "resp": "LEONARDO", "prazo": "30/03/2026", "vara": "Ji-Paraná - 5ª Vara Cível", "dias": 17}, {"proc": "7067279-18.2025.8.22.0001", "parte": "JOELCIMAR SAMPAIO DA SILVA", "resp": "JEFFERSON", "prazo": "30/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 17}, {"proc": "7049974-89.2023.8.22.0001", "parte": "MARCELO CRUZ DA SILVA", "resp": "", "prazo": "30/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 17}, {"proc": "7074806-21.2025.8.22.0001", "parte": "MILCA JANAINA ALVES PEREA", "resp": "", "prazo": "30/03/2026", "vara": "EXECUÇÃO FISCAL", "dias": 17}, {"proc": "7011911-87.2026.8.22.0001", "parte": "ALINE CRISTINA BATISTUZZI RAIMUNDO", "resp": "", "prazo": "30/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 17}, {"proc": "7005635-40.2026.8.22.0001", "parte": "MARIA DAS GRACAS DA SILVA SOARES", "resp": "MAURICIO", "prazo": "31/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 16}, {"proc": "7005623-26.2026.8.22.0001", "parte": "MARIO JONAS FREITAS GUTERRES", "resp": "JEFFERSON", "prazo": "31/03/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 16}, {"proc": "7002589-51.2023.8.22.0000", "parte": "JAILSON RAMALHO FERREIRA", "resp": "JEFFERSON", "prazo": "31/03/2026", "vara": "EXECUÇÃO FISCAL", "dias": 16}, {"proc": "7034888-15.2022.8.22.0001", "parte": "THEODORO OLIVEIRA COMERCIO DE ALIMENTOS EIRELI", "resp": "LEONARDO", "prazo": "01/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 15}, {"proc": "7073050-74.2025.8.22.0001", "parte": "THIAGO ARROYO QUINTANILHA", "resp": "LEONARDO", "prazo": "01/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 15}, {"proc": "7041225-88.2020.8.22.0001", "parte": "ANA CRISTINA CORDEIRO DA SILVA ", "resp": "JEFFERSON", "prazo": "01/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 15}, {"proc": "7008216-33.2023.8.22.0001", "parte": "W M LUNA - ME", "resp": "JEFFERSON", "prazo": "01/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 15}, {"proc": "7010625-11.2025.8.22.0001", "parte": "EDVAN SOBRINHO DOS SANTOS", "resp": "JEFFERSON", "prazo": "01/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 15}, {"proc": "0801755-32.2026.8.22.0000", "parte": "JOELCIMAR SAMPAIO DA SILVA", "resp": "JEFFERSON", "prazo": "02/04/2026", "vara": "1ª Câmara Especial", "dias": 14}, {"proc": "7003038-69.2024.8.22.0001", "parte": "WILFREDO EMANOEL WENZEL", "resp": "JEFFERSON", "prazo": "02/04/2026", "vara": "2ª Câmara Especial", "dias": 14}, {"proc": "0801007-97.2026.8.22.0000", "parte": "ONILSON PEREIRA COSTA", "resp": "COMCEP", "prazo": "02/04/2026", "vara": "1ª Câmara Especial", "dias": 14}, {"proc": "0801404-59.2026.8.22.0000", "parte": "JOAO PEDRO RODRIGUES DOS SANTOS", "resp": "JEFFERSON", "prazo": "02/04/2026", "vara": "2ª Câmara Especial", "dias": 14}, {"proc": "7000531-75.2023.8.22.0000", "parte": "EDSON FRANCISCO DE OLIVEIRA SILVEIRA", "resp": "JEFFERSON", "prazo": "03/04/2026", "vara": "EXECUÇÃO FISCAL", "dias": 13}, {"proc": "7000601-92.2023.8.22.0000", "parte": "EDJALES BENICIO DE BRITO", "resp": "JEFFERSON", "prazo": "03/04/2026", "vara": "EXECUÇÃO FISCAL", "dias": 13}, {"proc": "7068542-22.2024.8.22.0001", "parte": "GILBERTO FERREIRA DOS SANTOS", "resp": "LEONARDO", "prazo": "03/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 13}, {"proc": "7059724-47.2025.8.22.0001", "parte": "GLADSON KAIM MATHIAS", "resp": "BEATRIZ", "prazo": "03/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 13}, {"proc": "0811189-16.2024.8.22.0000", "parte": "MARIO SERGIO LEIRAS TEIXEIRA", "resp": "", "prazo": "03/04/2026", "vara": "1ª Câmara Especial", "dias": 13}, {"proc": "7043643-91.2023.8.22.0001", "parte": "G R DA SILVA MECANICA", "resp": "JEFFERSON", "prazo": "03/04/2026", "vara": "2ª Câmara Especial", "dias": 13}, {"proc": "7035746-41.2025.8.22.0001", "parte": "RAIMUNDA MENDES JARDIM SANTOS", "resp": "LEONARDO", "prazo": "06/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 10}, {"proc": "7000575-94.2023.8.22.0000", "parte": "ERASMO CARLOS DOS SANTOS", "resp": "MIRTON", "prazo": "06/04/2026", "vara": "EXECUÇÃO FISCAL", "dias": 10}, {"proc": "7004521-74.2023.8.22.0000", "parte": "EDUARDO CARLOS RODRIGUES DA SILVA", "resp": "JEFFERSON", "prazo": "06/04/2026", "vara": "EXECUÇÃO FISCAL", "dias": 10}, {"proc": "7058233-15.2019.8.22.0001", "parte": "JOACY SANDES RAPOSO FILHO", "resp": "JEFFERSON", "prazo": "06/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 10}, {"proc": "7001545-62.2021.8.22.0001", "parte": "TATIANE DE FRANCA MOREIRA", "resp": "JEFFERSON", "prazo": "06/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 10}, {"proc": "7031515-44.2020.8.22.0001", "parte": "ESPÓLIO DE JOÃO LEAL LOBO", "resp": "JEFFERSON", "prazo": "06/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 10}, {"proc": "7045704-85.2024.8.22.0001", "parte": "SOCIEDADE DE PROTECAO A HABITACAO DO BRASILEIRO", "resp": "LEONARDO", "prazo": "06/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 10}, {"proc": "7041990-83.2025.8.22.0001", "parte": "TEREZA OLIVEIRA DA SILVA", "resp": "LEONARDO", "prazo": "06/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 10}, {"proc": "7054899-60.2025.8.22.0001", "parte": "RICARDO GLACIANO BELEM", "resp": "GECILENE", "prazo": "06/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 10}, {"proc": "7068934-25.2025.8.22.0001", "parte": "HENRIQUE VALVERDE", "resp": "JEFFERSON", "prazo": "06/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 10}, {"proc": "0810306-35.2025.8.22.0000", "parte": "ARIADNE DEMETRIO GALLERT", "resp": "COMCEP", "prazo": "06/04/2026", "vara": "Presidência do TJRO", "dias": 10}, {"proc": "7005349-62.2026.8.22.0001", "parte": "PABLO ALLAN MIRANDA MOURA DOS SANTOS", "resp": "AMBIENTAL", "prazo": "07/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 9}, {"proc": "7004521-74.2023.8.22.0000", "parte": "EDUARDO CARLOS RODRIGUES DA SILVA", "resp": "JEFFERSON", "prazo": "07/04/2026", "vara": "EXECUÇÃO FISCAL", "dias": 9}, {"proc": "7008523-16.2025.8.22.0001", "parte": "DANIEL DE SOUZA SILVA", "resp": "JEFFERSON", "prazo": "07/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 9}, {"proc": "7026056-03.2016.8.22.0001", "parte": "JOANA NASCIMENTO VINHORQUIS", "resp": "JEFFERSON", "prazo": "08/04/2026", "vara": "EXECUÇÃO FISCAL", "dias": 8}, {"proc": "0017590-92.2010.4.01.4100", "parte": "IRINEU CARLOS ALMEIDA", "resp": "MIRTON", "prazo": "08/04/2026", "vara": "1ª Vara Federal Cível", "dias": 8}, {"proc": "0002088-69.2017.4.01.4100", "parte": "ROSANGELA RODRIGUES SILVA", "resp": "COMCEP", "prazo": "08/04/2026", "vara": "1ª Vara Federal Cível", "dias": 8}, {"proc": "7013467-37.2020.8.22.0001", "parte": "JAIME TAMES REINAGA", "resp": "LEONARDO", "prazo": "08/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 8}, {"proc": "7074426-66.2023.8.22.0001", "parte": "EDP TRANSMISSAO NORTE 2 S.A", "resp": "LEONARDO", "prazo": "08/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 8}, {"proc": "7043867-92.2024.8.22.0001", "parte": "ANTONIA AILA DE CARVALHO SALES SANTOS", "resp": "GECILENE", "prazo": "08/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 8}, {"proc": "7027625-24.2025.8.22.0001", "parte": "EDIMAR OLIVEIRA", "resp": "LEONARDO", "prazo": "08/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 8}, {"proc": "7013360-80.2026.8.22.0001", "parte": "PAMELA KADYJA MELO DA COSTA", "resp": "GECILENE", "prazo": "08/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 8}, {"proc": "7066721-80.2024.8.22.0001", "parte": "WALDEMIR FERREIRA DA CRUZ", "resp": "GECILENE", "prazo": "09/04/2026", "vara": "1ª Câmara Especial", "dias": 7}, {"proc": "0809853-74.2024.8.22.0000", "parte": "SIMONY FREITAS DE MENEZES", "resp": "JEFFERSON", "prazo": "09/04/2026", "vara": "2ª Câmara Especial", "dias": 7}, {"proc": "7029357-16.2020.8.22.0001", "parte": "ENERGISA RONDONIA - DISTRIBUIDORA DE ENERGIA S.A", "resp": "LEONARDO", "prazo": "09/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 7}, {"proc": "7041288-16.2020.8.22.0001", "parte": "ANA CRISTINA CORDEIRO DA SILVA ", "resp": "JEFFERSON", "prazo": "09/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 7}, {"proc": "7031895-62.2023.8.22.0001", "parte": "EDUARDO CARLOS RODRIGUES DA SILVA", "resp": "", "prazo": "09/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 7}, {"proc": "7023232-90.2024.8.22.0001", "parte": "ENERGISA RONDONIA - DISTRIBUIDORA DE ENERGIA S.A", "resp": "JEFFERSON", "prazo": "09/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 7}, {"proc": "7012838-87.2025.8.22.0001", "parte": "DAVID DE ALECRIM MATOS", "resp": "", "prazo": "09/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 7}, {"proc": "7068928-18.2025.8.22.0001", "parte": "MARIA LUIZA DO VALE", "resp": "MAURICIO", "prazo": "09/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 7}, {"proc": "7068946-39.2025.8.22.0001", "parte": "ANCELMO RABELO MAIA", "resp": "MAURICIO", "prazo": "09/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 7}, {"proc": "7068958-53.2025.8.22.0001", "parte": "GILMARY OJOPE DOS SANTOS", "resp": "MAURICIO", "prazo": "09/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 7}, {"proc": "7019602-89.2025.8.22.0001", "parte": "NEIDE LEMOS DO NASCIMENTO", "resp": "", "prazo": "09/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 7}, {"proc": "7000610-54.2023.8.22.0000", "parte": "MARIO JORGE DE MEDEIROS", "resp": "JEFFERSON", "prazo": "10/04/2026", "vara": "EXECUÇÃO FISCAL", "dias": 6}, {"proc": "0002010-11.2012.8.22.0001", "parte": "MPRO - MINISTÉRIO PÚBLICO DO ESTADO DE RONDÔNIA e ", "resp": "MIRTON", "prazo": "10/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 6}, {"proc": "7010671-97.2025.8.22.0001", "parte": "RUBENS ALEINE DE MELLO NOGUEIRA", "resp": "MIRTON", "prazo": "10/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 6}, {"proc": "7007307-83.2026.8.22.0001", "parte": "EVELYN CAROLINE COSTA DOS SANTOS", "resp": "LEONARDO", "prazo": "13/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 3}, {"proc": "7008868-50.2023.8.22.0001", "parte": "ROBERTO EDUARDO SOBRINHO", "resp": "MIRTON", "prazo": "13/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 3}, {"proc": "7035042-28.2025.8.22.0001", "parte": "VANIVALDO PEREIRA DA SILVA", "resp": "JEFFERSON", "prazo": "13/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 3}, {"proc": "7064548-49.2025.8.22.0001", "parte": "MARIA AUXILIADORA FERNANDES FARIAS", "resp": "LEONARDO", "prazo": "13/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 3}, {"proc": "7035410-76.2021.8.22.0001", "parte": "MARIETE MACIEL DE BRITO", "resp": "MIRTON", "prazo": "13/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 3}, {"proc": "7021848-10.2015.8.22.0001", "parte": "DENISE HOULMONT CARVALHO ROSA DE PAULA", "resp": "", "prazo": "13/04/2026", "vara": "8ª Vara Cível", "dias": 3}, {"proc": "7075686-13.2025.8.22.0001", "parte": "SF SERVICOS DE MECANICA DE VEICULOS AUTOMOTORES LT", "resp": "LEONARDO", "prazo": "14/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 2}, {"proc": "0801953-69.2026.8.22.0000", "parte": "MARIA DO SOCORRO DA SILVA ARAUJO MACIEL", "resp": "JEFFERSON", "prazo": "14/04/2026", "vara": "1ª Câmara Especial", "dias": 2}, {"proc": "7012646-38.2017.8.22.0001", "parte": " ANNE MARIE SANTOS e outros (2)", "resp": "MIRTON", "prazo": "14/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 2}, {"proc": "7002918-97.2022.8.22.0000", "parte": "OLMIRA CARLOS DOS SANTOS", "resp": "LEONARDO", "prazo": "14/04/2026", "vara": "EXECUÇÃO FISCAL", "dias": 2}, {"proc": "1025556-64.2025.4.01.4100", "parte": "AZEMAR CASTRO AMORIM", "resp": "MIRTON", "prazo": "14/04/2026", "vara": "2ª Vara Federal Cível da SJRO", "dias": 2}, {"proc": "7047515-17.2023.8.22.0001", "parte": "MARIA EDILEUZA FERREIRA RAMOS", "resp": "GECILENE", "prazo": "15/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 1}, {"proc": "7058913-24.2024.8.22.0001", "parte": "ESTADO DE RONDONIA ", "resp": "LEONARDO", "prazo": "15/04/2026", "vara": "1ª Vara de Fazenda e Saúde Pública", "dias": 1}, {"proc": "7012681-95.2017.8.22.0001", "parte": "AUGUSTO JOSE MONTEIRO DIOGO", "resp": "JEFFERSON", "prazo": "15/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 1}, {"proc": "0059733-32.2005.8.22.0001", "parte": "ROBERTO EDUARDO SOBRINHO", "resp": "MIRTON", "prazo": "15/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 1}, {"proc": "7031908-03.2019.8.22.0001", "parte": "EDUARDO CARLOS RODRIGUES DA SILVA", "resp": "JEFFERSON", "prazo": "15/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 1}, {"proc": "7020638-11.2021.8.22.0001", "parte": "BENEDITA DO NASCIMENTO PEREIRA", "resp": "JEFFERSON", "prazo": "15/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 1}, {"proc": "7010609-57.2025.8.22.0001", "parte": "JEOVAL BATISTA DA SILVA e outros", "resp": "JEFFERSON", "prazo": "15/04/2026", "vara": "2ª Vara de Fazenda e Saúde Pública", "dias": 1}]</script>
-</head>
-<body>
-    <!-- Header -->
-    <header>
-        <div class="header-content">
-            <div class="logo">
-                📊 PGM Porto Velho
-                <small>Painel Gerencial — Subprocuradoria Contenciosa</small>
-            </div>
-            <div class="user-info">
-                <span>🔒 Protegido por token</span>
-                <button class="dark-toggle" id="darkToggle" onclick="toggleDark()">🌙 Modo Noturno</button>
-            </div>
-        </div>
-    </header>
-
-    <!-- PDF Overlay -->
-    <div id="pdf-overlay">
-        <div class="pdf-spinner"></div>
-        <p id="pdf-status">Gerando PDF...</p>
-    </div>
-
-    <!-- Container Principal -->
-    <div class="container">
-        <!-- Abas de navegação -->
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab(event, 'dashboard')">📊 Dashboard</button>
-            <button class="tab-btn" onclick="switchTab(event, 'import')">📤 Importar</button>
-            <button class="tab-btn" onclick="switchTab(event, 'criticos')">🟠 Críticos (7 dias)</button>
-            <button class="tab-btn" onclick="switchTab(event, 'vencidos')">🔴 Vencidos</button>
-            <button class="tab-btn" onclick="switchTab(event, 'relatorios')">📄 Relatórios</button>
-            <button class="tab-btn" onclick="switchTab(event, 'equipe')">👥 Equipe</button>
-        </div>
-
-        <!-- TAB 1: Dashboard -->
-        <div id="dashboard" class="tab-content active">
-            <h2>Dashboard Gerencial</h2>
-            <p style="color: #64748b; margin-bottom: 30px;">Visão geral dos prazos processuais e performance.</p>
-
-            <!-- KPIs -->
-            <div class="grid">
-                <div class="card">
-                    <div class="card-header">📋 Total de Processos</div>
-                    <div class="card-value" id="kpi-total">—</div>
-                    <div class="card-label">Ativos no sistema</div>
-                </div>
-
-                <div class="card critical">
-                    <div class="card-header">⏰ Vencidos</div>
-                    <div class="card-value" id="kpi-vencidos">—</div>
-                    <div class="card-label">Requerem ação imediata</div>
-                </div>
-
-                <div class="card warning">
-                    <div class="card-header">📅 Próximos (7 dias)</div>
-                    <div class="card-value" id="kpi-proximos">—</div>
-                    <div class="card-label">Atenção recomendada</div>
-                </div>
-
-                <div class="card success">
-                    <div class="card-header">✅ Cumpridos</div>
-                    <div class="card-value" id="kpi-cumpridos">—</div>
-                    <div class="card-label" id="kpi-taxa-label">— de taxa</div>
-                </div>
-            </div>
-
-            <!-- Gráfico simplificado -->
-            <div class="card" style="margin-bottom: 20px;">
-                <div class="card-header">📈 Performance por Funcionário</div>
-                <div style="position:relative;height:220px;margin-bottom:16px;">
-                    <canvas id="chart-performance"></canvas>
-                </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Funcionário</th>
-                            <th>Total</th>
-                            <th>Cumpridos</th>
-                            <th>Taxa</th>
-                            <th>Críticos</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody-performance">
-                        <tr><td colspan="5" style="text-align:center;color:#94a3b8;">Carregando dados…</td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="alert alert-info">
-                <strong>ℹ️ Informação:</strong> O painel é atualizado automaticamente a cada 5 minutos.
-                Alertas são enviados às 8h e 14h para prazos críticos.
-            </div>
-        </div>
-
-        <!-- TAB 2: Importar -->
-        <div id="import" class="tab-content">
-            <h2>Importar Planilha</h2>
-            <p style="color: #64748b; margin-bottom: 30px;">Selecione o arquivo XLSX com os prazos processuais.</p>
-
-            <div class="card" style="max-width: 600px;">
-                <form id="importForm">
-                    <div class="form-group">
-                        <label for="file">📁 Arquivo (XLSX)</label>
-                        <input type="file" id="file" name="file" accept=".xlsx" required>
-                        <small style="color: #64748b; margin-top: 8px; display: block;">
-                            ✓ Formato esperado: Prazos_2026_Contencioso.xlsx<br>
-                            ✓ Colunas: Processo | Responsável | Prazo | Descrição | Status
-                        </small>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary" style="width: 100%;">
-                        🚀 Importar Planilha
-                    </button>
-                </form>
-
-                <div style="margin-top: 30px; padding-top: 30px; border-top: 1px solid var(--border);">
-                    <h3 style="margin-bottom: 15px;">📋 Última importação</h3>
-                    <ul class="list-group" id="import-history">
-                        <li class="list-group-item" style="color:#94a3b8;">Nenhuma planilha importada ainda.</li>
-                    </ul>
-                    <div id="import-diff" style="margin-top:12px;display:none;"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 3: Criticos (proximos 7 dias) -->
-        <div id="criticos" class="tab-content">
-            <h2>Criticos — Proximos 7 Dias 🟠</h2>
-            <p style="color:#64748b;margin-bottom:20px;">Processos com prazo vencendo nos proximos 7 dias, nao cumpridos.</p>
-            <div class="alert alert-warning" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
-                <span>⏰ <strong><span id="count-proximos-vencer">—</span> processos</strong> vencem nos proximos 7 dias.</span>
-                <div style="display:flex;gap:8px;">
-                    <button class="btn" style="padding:6px 12px;font-size:12px;background:var(--warning);color:white;border:none;border-radius:6px;cursor:pointer;" onclick="alertarTodosProximos()">📱 Alertar Todos</button>
-                </div>
-            </div>
-            <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;"><input type="text" id="filtro-critico" placeholder="Buscar processo, responsavel ou parte..." style="flex:1;min-width:180px;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;background:var(--card-bg);color:var(--text);"><select id="resp-critico" style="padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;background:var(--card-bg);color:var(--text);"><option value="">Todos os responsaveis</option><option value="AMBIENTAL">Ambiental</option><option value="BEATRIZ">Beatriz</option><option value="COMCEP">Comcep</option><option value="DISTRIBUIR">Distribuir</option><option value="ERICA">Erica</option><option value="FISCAL">Fiscal</option><option value="GECILENE">Gecilene</option><option value="JEFFERSON">Jefferson</option><option value="KAMILA">Kamila</option><option value="KARYTHA">Karytha</option><option value="LEONARDO">Leonardo</option><option value="MAURICIO">Mauricio</option><option value="MIRTON">Mirton</option><option value="REGIA">Regia</option><option value="YOUSSEF">Youssef</option></select><select id="vara-critico" style="padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;background:var(--card-bg);color:var(--text);max-width:200px;"><option value="">Todas as varas</option><option value="10ª Vara Cível">10ª Vara Cível</option><option value="11ª Turma/Gab">11ª Turma/Gab</option><option value="11ª Turma/Gab. 33 - DESEMBARGADOR FEDERA">11ª Turma/Gab. 33 - DESEMBARGADOR FEDERA</option><option value="12ª Turma/Gab. 36 - DESEMBARGADORA FEDER">12ª Turma/Gab. 36 - DESEMBARGADORA FEDER</option><option value="1ª Câmara Especial">1ª Câmara Especial</option><option value="1ª Câmara Especial/Gabinete Des. Gilbert">1ª Câmara Especial/Gabinete Des. Gilbert</option><option value="1ª Vara Cível">1ª Vara Cível</option><option value="1ª Vara Federal Cível">1ª Vara Federal Cível</option><option value="1ª Vara Federal Cível da SJRO">1ª Vara Federal Cível da SJRO</option><option value="1ª Vara de Fazenda Pública">1ª Vara de Fazenda Pública</option><option value="1ª Vara de Fazenda e Saúde Pública">1ª Vara de Fazenda e Saúde Pública</option><option value="2ª Câmara Especial">2ª Câmara Especial</option><option value="2ª Câmara Especial/Gabinete Titularidade">2ª Câmara Especial/Gabinete Titularidade</option><option value="2ª Vara Federal">2ª Vara Federal</option><option value="2ª Vara Federal Cível">2ª Vara Federal Cível</option><option value="2ª Vara Federal Cível da SJRO">2ª Vara Federal Cível da SJRO</option><option value="2ª Vara de Fazenda e Saúde Pública">2ª Vara de Fazenda e Saúde Pública</option><option value="3ª Vara Cível">3ª Vara Cível</option><option value="4ª Vara Cível">4ª Vara Cível</option><option value="4ª Vara Federal de Juizado Especial Cíve">4ª Vara Federal de Juizado Especial Cíve</option><option value="5ª Turma/Gab. 13 - DESEMBARGADOR FEDERAL">5ª Turma/Gab. 13 - DESEMBARGADOR FEDERAL</option><option value="5ª Turma/Gab. 15 - DESEMBARGADOR FEDERAL">5ª Turma/Gab. 15 - DESEMBARGADOR FEDERAL</option><option value="5ª Vara Cível">5ª Vara Cível</option><option value="6ª Turma/Gab">6ª Turma/Gab</option><option value="6ª Turma/Gab. 16 - DESEMBARGADOR FEDERAL">6ª Turma/Gab. 16 - DESEMBARGADOR FEDERAL</option><option value="6ª Vara Federal">6ª Vara Federal</option><option value="6ª Vara Federal de Juizado Especial Cíve">6ª Vara Federal de Juizado Especial Cíve</option><option value="7ª Vara Cível">7ª Vara Cível</option><option value="8ª Vara Cível">8ª Vara Cível</option><option value="9ª Vara Cível">9ª Vara Cível</option><option value="Cerejeiras - 2ª Vara Genérica">Cerejeiras - 2ª Vara Genérica</option><option value="EXECUÇÃO FISCAL">EXECUÇÃO FISCAL</option><option value="Gabinete Des. Gilberto Barbosa">Gabinete Des. Gilberto Barbosa</option><option value="Gabinete Des. Miguel Monico">Gabinete Des. Miguel Monico</option><option value="Ji-Paraná - 5ª Vara Cível">Ji-Paraná - 5ª Vara Cível</option><option value="Juizado Especial Cível e Criminal Adjunt">Juizado Especial Cível e Criminal Adjunt</option><option value="Presidência do TJRO">Presidência do TJRO</option><option value="STJ">STJ</option><option value="Vice Presidência/Gab. Vice Presidência">Vice Presidência/Gab. Vice Presidência</option></select><button class="btn" style="padding:9px 14px;background:var(--primary);color:white;border:none;border-radius:6px;cursor:pointer;font-size:12px;" onclick="exportarXlsx('critico')" title="Exportar Excel">📥 Excel</button></div>
-            <div class="table-responsive">
-                <table><thead><tr><th>Processo</th><th>Parte</th><th>Responsavel</th><th>Prazo</th><th>Vence em</th><th>Vara</th><th>Acoes</th></tr></thead>
-                <tbody id="tbody-proximos-vencer"><tr><td colspan="7" style="text-align:center;color:#94a3b8;">Carregando...</td></tr></tbody></table>
-            </div>
-            <div id="pag-criticos" style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;font-size:13px;color:var(--text-muted);flex-wrap:wrap;gap:8px;"></div>
-        </div>
-
-        <!-- TAB 4 NOVA: Vencidos -->
-        <div id="vencidos" class="tab-content">
-            <h2>Processos Vencidos 🔴</h2>
-            <p style="color:#64748b;margin-bottom:20px;">Processos com prazo ja expirado e nao cumpridos.</p>
-            <div class="alert alert-danger" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
-                <span>⚠️ <strong><span id="count-vencidos">—</span> processos</strong> com prazo vencido aguardam providencias.</span>
-                <button class="btn" style="padding:6px 12px;font-size:12px;background:var(--secondary);color:white;border:none;border-radius:6px;cursor:pointer;" onclick="alertarTodosVencidos()">📱 Alertar Todos</button>
-            </div>
-            <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;"><input type="text" id="filtro-vencido" placeholder="Buscar processo, responsavel ou parte..." style="flex:1;min-width:180px;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;background:var(--card-bg);color:var(--text);"><select id="resp-vencido" style="padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;background:var(--card-bg);color:var(--text);"><option value="">Todos os responsaveis</option><option value="AMBIENTAL">Ambiental</option><option value="BEATRIZ">Beatriz</option><option value="COMCEP">Comcep</option><option value="DISTRIBUIR">Distribuir</option><option value="ERICA">Erica</option><option value="FISCAL">Fiscal</option><option value="GECILENE">Gecilene</option><option value="JEFFERSON">Jefferson</option><option value="KAMILA">Kamila</option><option value="KARYTHA">Karytha</option><option value="LEONARDO">Leonardo</option><option value="MAURICIO">Mauricio</option><option value="MIRTON">Mirton</option><option value="REGIA">Regia</option><option value="YOUSSEF">Youssef</option></select><select id="vara-vencido" style="padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;background:var(--card-bg);color:var(--text);max-width:200px;"><option value="">Todas as varas</option><option value="10ª Vara Cível">10ª Vara Cível</option><option value="11ª Turma/Gab">11ª Turma/Gab</option><option value="11ª Turma/Gab. 33 - DESEMBARGADOR FEDERA">11ª Turma/Gab. 33 - DESEMBARGADOR FEDERA</option><option value="12ª Turma/Gab. 36 - DESEMBARGADORA FEDER">12ª Turma/Gab. 36 - DESEMBARGADORA FEDER</option><option value="1ª Câmara Especial">1ª Câmara Especial</option><option value="1ª Câmara Especial/Gabinete Des. Gilbert">1ª Câmara Especial/Gabinete Des. Gilbert</option><option value="1ª Vara Cível">1ª Vara Cível</option><option value="1ª Vara Federal Cível">1ª Vara Federal Cível</option><option value="1ª Vara Federal Cível da SJRO">1ª Vara Federal Cível da SJRO</option><option value="1ª Vara de Fazenda Pública">1ª Vara de Fazenda Pública</option><option value="1ª Vara de Fazenda e Saúde Pública">1ª Vara de Fazenda e Saúde Pública</option><option value="2ª Câmara Especial">2ª Câmara Especial</option><option value="2ª Câmara Especial/Gabinete Titularidade">2ª Câmara Especial/Gabinete Titularidade</option><option value="2ª Vara Federal">2ª Vara Federal</option><option value="2ª Vara Federal Cível">2ª Vara Federal Cível</option><option value="2ª Vara Federal Cível da SJRO">2ª Vara Federal Cível da SJRO</option><option value="2ª Vara de Fazenda e Saúde Pública">2ª Vara de Fazenda e Saúde Pública</option><option value="3ª Vara Cível">3ª Vara Cível</option><option value="4ª Vara Cível">4ª Vara Cível</option><option value="4ª Vara Federal de Juizado Especial Cíve">4ª Vara Federal de Juizado Especial Cíve</option><option value="5ª Turma/Gab. 13 - DESEMBARGADOR FEDERAL">5ª Turma/Gab. 13 - DESEMBARGADOR FEDERAL</option><option value="5ª Turma/Gab. 15 - DESEMBARGADOR FEDERAL">5ª Turma/Gab. 15 - DESEMBARGADOR FEDERAL</option><option value="5ª Vara Cível">5ª Vara Cível</option><option value="6ª Turma/Gab">6ª Turma/Gab</option><option value="6ª Turma/Gab. 16 - DESEMBARGADOR FEDERAL">6ª Turma/Gab. 16 - DESEMBARGADOR FEDERAL</option><option value="6ª Vara Federal">6ª Vara Federal</option><option value="6ª Vara Federal de Juizado Especial Cíve">6ª Vara Federal de Juizado Especial Cíve</option><option value="7ª Vara Cível">7ª Vara Cível</option><option value="8ª Vara Cível">8ª Vara Cível</option><option value="9ª Vara Cível">9ª Vara Cível</option><option value="Cerejeiras - 2ª Vara Genérica">Cerejeiras - 2ª Vara Genérica</option><option value="EXECUÇÃO FISCAL">EXECUÇÃO FISCAL</option><option value="Gabinete Des. Gilberto Barbosa">Gabinete Des. Gilberto Barbosa</option><option value="Gabinete Des. Miguel Monico">Gabinete Des. Miguel Monico</option><option value="Ji-Paraná - 5ª Vara Cível">Ji-Paraná - 5ª Vara Cível</option><option value="Juizado Especial Cível e Criminal Adjunt">Juizado Especial Cível e Criminal Adjunt</option><option value="Presidência do TJRO">Presidência do TJRO</option><option value="STJ">STJ</option><option value="Vice Presidência/Gab. Vice Presidência">Vice Presidência/Gab. Vice Presidência</option></select><button class="btn" style="padding:9px 14px;background:var(--primary);color:white;border:none;border-radius:6px;cursor:pointer;font-size:12px;" onclick="exportarXlsx('vencido')" title="Exportar Excel">📥 Excel</button></div>
-            <div class="table-responsive">
-                <table><thead><tr><th>Processo</th><th>Parte</th><th>Responsavel</th><th>Prazo</th><th>Dias Vencido</th><th>Vara</th><th>Acoes</th></tr></thead>
-                <tbody id="tbody-vencidos"><tr><td colspan="7" style="text-align:center;color:#94a3b8;">Carregando...</td></tr></tbody></table>
-            </div>
-            <div id="pag-vencidos" style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;font-size:13px;color:var(--text-muted);flex-wrap:wrap;gap:8px;"></div>
-        </div>
-
-        <!-- TAB 4: Relatórios -->
-        <div id="relatorios" class="tab-content">
-            <h2>Gerar Relatórios</h2>
-            <p style="color: #64748b; margin-bottom: 30px;">Gere relatórios em PDF para compartilhamento e análise.</p>
-
-            <div class="grid">
-                <div class="card">
-                    <div class="card-header">📅 Relatório Semanal</div>
-                    <p style="margin: 15px 0; color: #64748b;">Resumo de prazos cumpridos, vencidos e próximos da semana.</p>
-                    <button class="btn btn-primary" onclick="generateReport('semanal')" style="width: 100%;">
-                        Gerar PDF
-                    </button>
-                    <small style="display: block; margin-top: 10px; color: #64748b;">
-                        ✓ Última geração: 15/04/2026 às 14:30
-                    </small>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">📊 Relatório Mensal</div>
-                    <p style="margin: 15px 0; color: #64748b;">Análise detalhada do mês com performance por procurador.</p>
-                    <button class="btn btn-primary" onclick="generateReport('mensal')" style="width: 100%;">
-                        Gerar PDF
-                    </button>
-                    <small style="display: block; margin-top: 10px; color: #64748b;">
-                        ✓ Última geração: 01/04/2026 às 09:00
-                    </small>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">👤 Relatório Individual</div>
-                    <p style="margin: 15px 0; color: #64748b;">Performance de um procurador específico.</p>
-                    <select style="width: 100%; margin-bottom: 10px;">
-                        <option>Selecione um procurador...</option>
-                        <option>Jefferson</option>
-                        <option>Mariana</option>
-                        <option>Carlos</option>
-                        <option>Ana</option>
-                    </select>
-                    <button class="btn btn-primary" onclick="generateReport('individual')" style="width: 100%;">
-                        Gerar PDF
-                    </button>
-                </div>
-            </div>
-
-            <div class="card" style="margin-top: 30px;">
-                <div class="card-header">📚 Relatórios Anteriores</div>
-                <ul class="list-group">
-                    <li class="list-group-item">
-                        <div>
-                            <strong>Relatório Semanal — Semana 15</strong><br>
-                            <small style="color: #64748b;">Gerado em 15/04/2026</small>
-                        </div>
-                        <a href="#" style="color: var(--primary); text-decoration: none; font-weight: 600;">↓ Baixar</a>
-                    </li>
-                    <li class="list-group-item">
-                        <div>
-                            <strong>Relatório Mensal — Março/2026</strong><br>
-                            <small style="color: #64748b;">Gerado em 01/04/2026</small>
-                        </div>
-                        <a href="#" style="color: var(--primary); text-decoration: none; font-weight: 600;">↓ Baixar</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- TAB 5: Equipe -->
-        <div id="equipe" class="tab-content">
-            <h2>Gerenciar Equipe</h2>
-            <p style="color: #64748b; margin-bottom: 30px;">Cadastre membros da equipe e seus contatos WhatsApp.</p>
-
-            <div class="card" style="max-width: 500px; margin-bottom: 30px;">
-                <h3 style="margin-bottom: 20px;" id="equipe-form-titulo">➕ Novo Membro</h3>
-                <div>
-                    <input type="hidden" id="equipe-edit-id" value="">
-                    <div class="form-group">
-                        <label>Nome</label>
-                        <input type="text" id="eq-nome" placeholder="Ex: Jefferson" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Função</label>
-                        <select id="eq-funcao">
-                            <option>Procurador(a)</option>
-                            <option>Procurador(a)-Adjunto(a)</option>
-                            <option>Assessor(a) Jurídico(a)</option>
-                            <option>Estagiário(a)</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>E-mail</label>
-                        <input type="email" id="eq-email" placeholder="jefferson@pgm.porto-velho.br">
-                    </div>
-                    <div class="form-group">
-                        <label>WhatsApp</label>
-                        <input type="tel" id="eq-whatsapp" placeholder="+5569999999999">
-                        <small style="display:block;margin-top:8px;color:#64748b;">
-                            ℹ️ Formato: +55 + DDD + número (Ex: +5569987654321)
-                        </small>
-                    </div>
-                    <div style="display:flex;gap:10px;">
-                        <button class="btn btn-success" style="flex:1;" onclick="equipe_salvar()">
-                            ➕ Salvar Membro
-                        </button>
-                        <button class="btn" id="equipe-btn-cancelar" style="display:none;background:#e2e8f0;color:#475569;" onclick="equipe_cancelarEdicao()">
-                            ✕ Cancelar
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3 style="margin-bottom: 20px;">👥 Membros Cadastrados</h3>
-                <ul class="list-group" id="equipe-lista">
-                    <li style="color:#94a3b8;padding:16px;">Nenhum membro cadastrado ainda.</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <div class="footer">
-        <p>🔒 Procuradoria-Geral do Município de Porto Velho — Subprocuradoria Contenciosa — 2026</p>
-        <p style="margin-top: 10px; opacity: 0.7;">Painel protegido. Acesso exclusivamente por token.</p>
-    </div>
-
-    <script>
-        /* ── Tabs ── */
-        function switchTab(e, tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(tabName).classList.add('active');
-            e.target.classList.add('active');
-        }
-
-        /* ── Modo Noturno ── */
-        function toggleDark() {
-            const body = document.body;
-            const btn  = document.getElementById('darkToggle');
-            body.classList.toggle('dark-mode');
-            const isDark = body.classList.contains('dark-mode');
-            btn.textContent = isDark ? '☀️ Modo Claro' : '🌙 Modo Noturno';
-            localStorage.setItem('pgm-dark', isDark ? '1' : '0');
-        }
-        // Restaurar preferência salva
-        if (localStorage.getItem('pgm-dark') === '1') {
-            document.body.classList.add('dark-mode');
-            document.addEventListener('DOMContentLoaded', () => {
-                const btn = document.getElementById('darkToggle');
-                if (btn) btn.textContent = '☀️ Modo Claro';
-            });
-        }
-
-        /* ── PDF Real ── */
-        async function generateReport(type) {
-            const overlay  = document.getElementById('pdf-overlay');
-            const statusEl = document.getElementById('pdf-status');
-
-            // Mapear conteúdo do relatório por tipo
-            const labels = {
-                semanal:    'Relatório Semanal — Semana 16/2026',
-                mensal:     'Relatório Mensal — Abril/2026',
-                individual: 'Relatório Individual',
-            };
-
-            overlay.classList.add('show');
-            statusEl.textContent = 'Capturando dados do painel…';
-
-            try {
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-
-                const pageW = pdf.internal.pageSize.getWidth();
-                const pageH = pdf.internal.pageSize.getHeight();
-                const margin = 15;
-                let y = margin;
-
-                /* ── Cabeçalho ── */
-                pdf.setFillColor(91, 33, 182); // roxo escuro
-                pdf.rect(0, 0, pageW, 30, 'F');
-
-                pdf.setTextColor(255, 255, 255);
-                pdf.setFontSize(14);
-                pdf.setFont('helvetica', 'bold');
-                pdf.text('PGM Porto Velho — Subprocuradoria Contenciosa', margin, 13);
-
-                pdf.setFontSize(10);
-                pdf.setFont('helvetica', 'normal');
-                pdf.text(labels[type] || `Relatório ${type}`, margin, 22);
-
-                const hoje = new Date().toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric' });
-                const hora = new Date().toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
-                pdf.text(`Emitido em ${hoje} às ${hora}`, pageW - margin, 22, { align: 'right' });
-
-                y = 40;
-
-                /* ── Bloco de KPIs ── */
-                statusEl.textContent = 'Adicionando indicadores…';
-                await sleep(200);
-
-                const kpis = [
-                    { label: 'Total de Processos', value: '128', color: [124, 58, 237] },
-                    { label: 'Vencidos',            value: '12',  color: [220, 38, 38] },
-                    { label: 'Próximos (7 dias)',   value: '8',   color: [234, 88, 12] },
-                    { label: 'Cumpridos',           value: '108', color: [22, 163, 74] },
-                ];
-
-                const colW = (pageW - margin * 2 - 9) / 4;
-                kpis.forEach((k, i) => {
-                    const x = margin + i * (colW + 3);
-                    pdf.setFillColor(...k.color);
-                    pdf.roundedRect(x, y, colW, 22, 3, 3, 'F');
-                    pdf.setTextColor(255, 255, 255);
-                    pdf.setFont('helvetica', 'bold');
-                    pdf.setFontSize(16);
-                    pdf.text(k.value, x + colW / 2, y + 11, { align: 'center' });
-                    pdf.setFontSize(7);
-                    pdf.setFont('helvetica', 'normal');
-                    pdf.text(k.label, x + colW / 2, y + 18, { align: 'center' });
-                });
-
-                y += 32;
-
-                /* ── Taxa de cumprimento ── */
-                pdf.setTextColor(30, 27, 46);
-                pdf.setFont('helvetica', 'bold');
-                pdf.setFontSize(10);
-                pdf.text('Taxa de Cumprimento Geral', margin, y);
-                y += 5;
-
-                const barW = pageW - margin * 2;
-                pdf.setFillColor(228, 226, 240);
-                pdf.roundedRect(margin, y, barW, 6, 3, 3, 'F');
-                pdf.setFillColor(22, 163, 74);
-                pdf.roundedRect(margin, y, barW * 0.844, 6, 3, 3, 'F');
-
-                pdf.setFontSize(8);
-                pdf.setTextColor(100, 116, 139);
-                pdf.text('84,4%', margin + barW * 0.844 + 2, y + 4.5);
-                y += 14;
-
-                /* ── Tabela de performance ── */
-                statusEl.textContent = 'Montando tabela de performance…';
-                await sleep(200);
-
-                pdf.setFont('helvetica', 'bold');
-                pdf.setFontSize(10);
-                pdf.setTextColor(30, 27, 46);
-                pdf.text('Performance por Funcionário', margin, y);
-                y += 4;
-
-                // Cabeçalho da tabela
-                const cols = ['Procurador', 'Total', 'Cumpridos', 'Taxa', 'Críticos'];
-                const colXs = [margin, margin+40, margin+65, margin+90, margin+135];
-                const rowH = 8;
-
-                pdf.setFillColor(237, 233, 254);
-                pdf.rect(margin, y, pageW - margin * 2, rowH, 'F');
-                pdf.setFont('helvetica', 'bold');
-                pdf.setFontSize(8);
-                pdf.setTextColor(91, 33, 182);
-                cols.forEach((c, i) => pdf.text(c, colXs[i] + 1, y + 5.5));
-                y += rowH;
-
-                const rows = [
-                    ['Jefferson', '32', '28', '87,5%', '2'],
-                    ['Mariana',   '28', '27', '96,4%', '0'],
-                    ['Carlos',    '35', '31', '88,6%', '5'],
-                    ['Ana',       '33', '22', '66,7%', '5'],
-                ];
-
-                rows.forEach((r, ri) => {
-                    if (ri % 2 === 0) {
-                        pdf.setFillColor(250, 248, 255);
-                        pdf.rect(margin, y, pageW - margin * 2, rowH, 'F');
-                    }
-                    pdf.setFont('helvetica', ri === 0 ? 'bold' : 'normal');
-                    pdf.setFontSize(8);
-                    pdf.setTextColor(30, 27, 46);
-                    r.forEach((cell, ci) => pdf.text(String(cell), colXs[ci] + 1, y + 5.5));
-                    y += rowH;
-                });
-
-                // Borda da tabela
-                pdf.setDrawColor(228, 226, 240);
-                pdf.rect(margin, y - rows.length * rowH - rowH, pageW - margin * 2, rows.length * rowH + rowH);
-                y += 10;
-
-                /* ── Processos Críticos ── */
-                if (type === 'semanal' || type === 'mensal') {
-                    statusEl.textContent = 'Adicionando processos críticos…';
-                    await sleep(200);
-
-                    pdf.setFont('helvetica', 'bold');
-                    pdf.setFontSize(10);
-                    pdf.setTextColor(220, 38, 38);
-                    pdf.text('⚠ Prazos Vencidos (Top 3)', margin, y);
-                    y += 5;
-
-                    const criticos = [
-                        ['2024.0001', 'Carlos',  '05/04/2026', '10 dias'],
-                        ['2024.0015', 'Ana',     '08/04/2026', '7 dias' ],
-                        ['2024.0032', 'Carlos',  '02/04/2026', '13 dias'],
-                    ];
-
-                    const hCols = ['Processo', 'Responsável', 'Prazo', 'Dias Vencido'];
-                    const hXs   = [margin, margin+40, margin+90, margin+130];
-
-                    pdf.setFillColor(254, 226, 226);
-                    pdf.rect(margin, y, pageW - margin * 2, rowH, 'F');
-                    pdf.setFont('helvetica', 'bold');
-                    pdf.setFontSize(8);
-                    pdf.setTextColor(185, 28, 28);
-                    hCols.forEach((c, i) => pdf.text(c, hXs[i] + 1, y + 5.5));
-                    y += rowH;
-
-                    criticos.forEach((r, ri) => {
-                        if (ri % 2 === 0) {
-                            pdf.setFillColor(255, 249, 249);
-                            pdf.rect(margin, y, pageW - margin * 2, rowH, 'F');
-                        }
-                        pdf.setFont('helvetica', 'normal');
-                        pdf.setFontSize(8);
-                        pdf.setTextColor(30, 27, 46);
-                        r.forEach((cell, ci) => pdf.text(cell, hXs[ci] + 1, y + 5.5));
-                        y += rowH;
-                    });
-                    y += 10;
-                }
-
-                /* ── Rodapé ── */
-                pdf.setFillColor(245, 243, 255);
-                pdf.rect(0, pageH - 15, pageW, 15, 'F');
-                pdf.setFontSize(7);
-                pdf.setTextColor(100, 116, 139);
-                pdf.text('Procuradoria-Geral do Município de Porto Velho — Documento gerado automaticamente pelo Painel Gerencial PGM', pageW / 2, pageH - 6, { align: 'center' });
-
-                /* ── Salvar ── */
-                statusEl.textContent = 'Finalizando…';
-                await sleep(300);
-
-                const nomeArquivo = `PGM_${type}_${hoje.replace(/\//g, '-')}.pdf`;
-                pdf.save(nomeArquivo);
-
-            } catch (err) {
-                console.error('Erro ao gerar PDF:', err);
-                alert('Erro ao gerar o PDF. Tente novamente.');
-            } finally {
-                overlay.classList.remove('show');
-            }
-        }
-
-        function sleep(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-
-        /**
-         * Envia alerta WhatsApp para o responsável pelo processo.
-         * Em produção: substituir o alert() por uma chamada real à API de mensagens.
-         */
-        function enviarAlerta(processo, responsavel, prazo, tipo) {
-            const emoji = tipo === 'vencido' ? '🔴' : '🟠';
-            const situacao = tipo === 'vencido'
-                ? `VENCIDO em ${prazo}`
-                : `vencendo em ${prazo}`;
-            const mensagem = `${emoji} *ALERTA DE PRAZO — PGM Porto Velho*\n\nOlá, ${responsavel}!\n\nO processo *${processo}* está com prazo ${situacao}.\n\nPor favor, tome as providências necessárias o quanto antes.\n\n📋 Acesse o painel para mais detalhes.`;
-
-            // Em produção: chamar API de WhatsApp aqui (ex: Evolution API, Z-API, etc.)
-            // fetch('/api/alertas/whatsapp', { method: 'POST', body: JSON.stringify({ processo, responsavel, mensagem }) })
-
-            const confirmado = confirm(
-                `📱 Enviar alerta WhatsApp para ${responsavel}?\n\n` +
-                `Processo: ${processo}\n` +
-                `Situação: prazo ${situacao}\n\n` +
-                `Mensagem:\n"${mensagem.replace(/\*/g, '')}"`
-            );
-            if (confirmado) {
-                alert(`✅ Alerta enviado para ${responsavel}!\n\nEm produção, a mensagem seria enviada via WhatsApp.`);
-            }
-        }
-
-        /**
-         * Dispara alerta para todos os processos que vencerão em breve.
-         */
-        function alertarTodosProximos() {
-            const linhas = document.querySelectorAll('#tbody-proximos-vencer tr');
-            const processos = [];
-            linhas.forEach(tr => {
-                const processo = tr.querySelector('td strong')?.textContent;
-                const responsavel = tr.querySelectorAll('td')[1]?.textContent?.trim();
-                const prazo = tr.querySelectorAll('td')[2]?.textContent?.trim();
-                if (processo && responsavel && prazo) processos.push({ processo, responsavel, prazo });
-            });
-
-            if (processos.length === 0) {
-                alert('Nenhum processo próximo do vencimento encontrado.');
-                return;
-            }
-
-            const lista = processos.map(p => `• ${p.processo} — ${p.responsavel} (${p.prazo})`).join('\n');
-            const confirmado = confirm(
-                `📱 Enviar alerta para TODOS os ${processos.length} processos próximos do vencimento?\n\n${lista}`
-            );
-            if (confirmado) {
-                processos.forEach(p => {
-                    console.log(`Alerta enviado: ${p.processo} → ${p.responsavel}`);
-                });
-                alert(`✅ ${processos.length} alertas enviados com sucesso!\n\nEm produção, cada responsável receberia uma mensagem individual no WhatsApp.`);
-            }
-        }
-
-
-        // ─── Utilitário: pega o token da URL ──────────────────────────────
-        function getToken() {
-            return new URLSearchParams(window.location.search).get('token') || '';
-        }
-
-        // ─── Renderiza KPIs e tabela de performance ───────────────────────
-        function renderDashboard(data) {
-            if (data.sem_dados) return;
-            const s = data.stats || {};
-            document.getElementById('kpi-total').textContent     = s.total     ?? '—';
-            document.getElementById('kpi-vencidos').textContent  = s.vencidos  ?? '—';
-            document.getElementById('kpi-proximos').textContent  = s.proximos  ?? '—';
-            document.getElementById('kpi-cumpridos').textContent = s.cumpridos ?? '—';
-            document.getElementById('kpi-taxa-label').textContent = `${s.taxa ?? '—'}% de taxa`;
-
-            const tbody = document.getElementById('tbody-performance');
-            const perf = data.performance || [];
-            if (perf.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#94a3b8;">Sem dados de performance.</td></tr>';
-                return;
-            }
-            tbody.innerHTML = perf.map(p => {
-                const badgeCls = p.criticos === 0 ? 'badge-success' : p.criticos <= 3 ? 'badge-warning' : 'badge-critical';
-                return `<tr>
-                    <td><strong>${p.responsavel}</strong></td>
-                    <td>${p.total}</td>
-                    <td>${p.cumpridos}</td>
-                    <td><div style="width:120px;">
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width:${p.taxa}%;"></div>
-                        </div>
-                    </div></td>
-                    <td><span class="badge ${badgeCls}">${p.criticos}</span></td>
-                </tr>`;
-            }).join('');
-
-            // Atualiza histórico de importação
-            if (data.filename && s.ultima_atualizacao) {
-                document.getElementById('import-history').innerHTML = `
-                    <li class="list-group-item">
-                        <div>
-                            <strong>${data.filename}</strong><br>
-                            <small style="color:#64748b;">${s.ultima_atualizacao} — ${s.total} processos</small>
-                        </div>
-                        <span class="badge badge-success">✓ Ok</span>
-                    </li>`;
-            }
-        }
-
-        // ─── Renderiza tabelas de críticos ────────────────────────────────
-        function renderCriticos(data) {
-            if (data.sem_dados) return;
-
-            // Vencidos
-            const venc = data.vencidos || [];
-            document.getElementById('count-vencidos').textContent = venc.length;
-            const tbV = document.getElementById('tbody-vencidos');
-            if (venc.length === 0) {
-                tbV.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#22c55e;">✅ Nenhum prazo vencido!</td></tr>';
-            } else {
-                tbV.innerHTML = venc.map(r => `<tr>
-                    <td><strong>${r.processo}</strong><br><small>${r.assunto || r.vara}</small></td>
-                    <td>${r.responsavel}</td>
-                    <td>${r.prazo}</td>
-                    <td><span class="badge badge-critical">${r.dias} dia${r.dias !== 1 ? 's' : ''}</span></td>
-                    <td>
-                        <button class="btn-icon" title="Enviar alerta WhatsApp" onclick="enviarAlerta('${r.processo}','${r.responsavel}','${r.prazo}','vencido')">📱</button>
-                        <button class="btn-icon" title="Marcar como cumprido">✓</button>
-                    </td>
-                </tr>`).join('');
-            }
-
-            // Próximos
-            const prox = data.proximos || [];
-            document.getElementById('count-proximos-vencer').textContent = prox.length;
-            const tbP = document.getElementById('tbody-proximos-vencer');
-            if (prox.length === 0) {
-                tbP.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#22c55e;">✅ Nenhum prazo vencendo nos próximos 7 dias!</td></tr>';
-            } else {
-                tbP.innerHTML = prox.map(r => {
-                    const label = r.dias === 0 ? 'Hoje' : r.dias === 1 ? 'Amanhã' : `${r.dias} dias`;
-                    return `<tr>
-                        <td><strong>${r.processo}</strong><br><small>${r.assunto || r.vara}</small></td>
-                        <td>${r.responsavel}</td>
-                        <td>${r.prazo}</td>
-                        <td><span class="badge" style="background:#fff7ed;color:#b45309;font-weight:700;">${label}</span></td>
-                        <td>
-                            <button class="btn-icon" title="Enviar alerta WhatsApp" onclick="enviarAlerta('${r.processo}','${r.responsavel}','${r.prazo}','proximo')">📱</button>
-                            <button class="btn-icon" title="Marcar como cumprido">✓</button>
-                        </td>
-                    </tr>`;
-                }).join('');
-            }
-        }
-
-        // ─── Carrega dados da API ao abrir o painel ───────────────────────
-        async function loadDashboard() {
-            const token = getToken();
-            try {
-                const [dashRes, critRes] = await Promise.all([
-                    fetch(`/api/dashboard?token=${token}`),
-                    fetch(`/api/criticos?token=${token}`)
-                ]);
-                if (dashRes.ok) renderDashboard(await dashRes.json());
-                if (critRes.ok) renderCriticos(await critRes.json());
-            } catch (e) {
-                console.error('Erro ao carregar dados:', e);
-            }
-        }
-
-
-        // ── DADOS EMBUTIDOS (fallback se API falhar) ──────────────────────
-        var PROXIMOS7 = JSON.parse(document.getElementById('dados-proximos').textContent);
-        var VENCIDOS_DATA = JSON.parse(document.getElementById('dados-vencidos').textContent);
-
-        // ── TOKEN ─────────────────────────────────────────────────────────
-        function getToken() {
-            return new URLSearchParams(window.location.search).get('token') || '';
-        }
-
-        // ── PAGINAÇÃO E FILTRO ────────────────────────────────────────────
-        var POR_PAG = 25;
-        var pagState = { critico: 1, vencido: 1 };
-        var filtroState = {
-            critico: { texto: '', resp: '', vara: '' },
-            vencido: { texto: '', resp: '', vara: '' }
-        };
-
-        function filtrarDados(dados, f) {
-            return dados.filter(function(r) {
-                var hay = ((r.proc||r.processo) + (r.parte||'') + (r.resp||r.responsavel||'') + (r.vara||'')).toLowerCase();
-                var txt = f.texto ? hay.indexOf(f.texto.toLowerCase()) >= 0 : true;
-                var resp = f.resp ? (r.resp||r.responsavel||'') === f.resp : true;
-                var vara = f.vara ? (r.vara||'').indexOf(f.vara) >= 0 : true;
-                return txt && resp && vara;
-            });
-        }
-
-        function urgenciaCor(dias, tipo) {
-            if (tipo === 'vencido') {
-                if (dias > 30) return 'background:rgba(220,38,38,0.08);';
-                if (dias > 7)  return 'background:rgba(234,88,12,0.07);';
-                return 'background:rgba(234,179,8,0.08);';
-            }
-            if (dias === 0) return 'background:rgba(220,38,38,0.08);';
-            if (dias <= 2)  return 'background:rgba(234,88,12,0.07);';
-            return 'background:rgba(234,179,8,0.06);';
-        }
-
-        function buildBtn(tipo, page, label, disabled, active) {
-            var bg  = active ? 'var(--primary)' : 'var(--card-bg)';
-            var col = active ? 'white' : 'var(--text)';
-            var dis = disabled ? ' disabled' : '';
-            return '<button onclick="mudarPag(\u0022' + tipo + '\u0022,' + page + ')" style="padding:4px 10px;border:1px solid var(--border);border-radius:5px;cursor:pointer;font-size:12px;background:' + bg + ';color:' + col + ';"' + dis + '>' + label + '</button>';
-        }
-
-        function renderPagina(tipo) {
-            var isCritico = tipo === 'critico';
-            var dados = isCritico ? PROXIMOS7 : VENCIDOS_DATA;
-            var f = filtroState[tipo];
-            var filtrado = filtrarDados(dados, f);
-            var totalPags = Math.max(1, Math.ceil(filtrado.length / POR_PAG));
-            if (pagState[tipo] > totalPags) pagState[tipo] = totalPags;
-            var ini = (pagState[tipo] - 1) * POR_PAG;
-            var pagDados = filtrado.slice(ini, ini + POR_PAG);
-
-            var tbId  = isCritico ? 'tbody-proximos-vencer' : 'tbody-vencidos';
-            var cntId = isCritico ? 'count-proximos-vencer' : 'count-vencidos';
-            var pagId = 'pag-' + tipo;
-
-            var el = document.getElementById(cntId);
-            if (el) el.textContent = filtrado.length;
-
-            var tb = document.getElementById(tbId);
-            if (!tb) return;
-
-            if (pagDados.length === 0) {
-                tb.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#22c55e;padding:20px;">Nenhum processo encontrado.</td></tr>';
-            } else {
-                var rows = '';
-                for (var i = 0; i < pagDados.length; i++) {
-                    var r = pagDados[i];
-                    var proc = r.proc || r.processo || '';
-                    var parte = r.parte || '';
-                    var resp  = r.resp  || r.responsavel || '';
-                    var prazo = r.prazo || '';
-                    var vara  = r.vara  || '';
-                    var dias  = r.dias  || 0;
-                    var cor   = urgenciaCor(dias, isCritico ? 'critico' : 'vencido');
-                    var pj    = JSON.stringify(proc);
-                    var rj    = JSON.stringify(resp);
-                    var prj   = JSON.stringify(prazo);
-                    var tipoj = JSON.stringify(isCritico ? 'proximo' : 'vencido');
-                    var dLabel = isCritico
-                        ? (dias === 0 ? 'Hoje' : dias === 1 ? 'Amanha' : dias + ' dias')
-                        : dias + 'd';
-                    var badgeCls = isCritico
-                        ? 'style="background:#fff7ed;color:#b45309;font-weight:700;"'
-                        : 'class="badge badge-critical"';
-                    rows += '<tr style="' + cor + '">' +
-                        '<td><strong>' + proc + '</strong></td>' +
-                        '<td style="font-size:12px;">' + parte + '</td>' +
-                        '<td>' + resp + '</td>' +
-                        '<td>' + prazo + '</td>' +
-                        '<td><span class="badge" ' + badgeCls + '>' + dLabel + '</span></td>' +
-                        '<td style="font-size:11px;color:#64748b;">' + vara + '</td>' +
-                        '<td style="display:flex;gap:4px;">' +
-                            '<button class="btn-icon" onclick="enviarAlerta(' + pj + ',' + rj + ',' + prj + ',' + tipoj + ')" title="Enviar alerta WhatsApp">📱</button>' +
-                            '<button class="btn-icon" onclick="confirmarCumprido(' + pj + ',this)" title="Marcar como cumprido" style="color:var(--success);">✓</button>' +
-                        '</td>' +
-                    '</tr>';
-                }
-                tb.innerHTML = rows;
-            }
-
-            var pagEl = document.getElementById(pagId);
-            if (!pagEl) return;
-            var s = Math.max(1, pagState[tipo] - 2);
-            var eIdx = Math.min(totalPags, s + 4);
-            var btns = buildBtn(tipo, pagState[tipo]-1, '<', pagState[tipo]===1, false);
-            for (var k=s; k<=eIdx; k++) btns += buildBtn(tipo, k, k, false, k===pagState[tipo]);
-            btns += buildBtn(tipo, pagState[tipo]+1, '>', pagState[tipo]===totalPags, false);
-            pagEl.innerHTML = '<span>' + filtrado.length + ' processos · pag. ' + pagState[tipo] + ' de ' + totalPags + '</span><div style="display:flex;gap:4px;">' + btns + '</div>';
-        }
-
-        function mudarPag(tipo, p) {
-            var dados = tipo === 'critico' ? PROXIMOS7 : VENCIDOS_DATA;
-            var f = filtroState[tipo];
-            var total = filtrarDados(dados, f).length;
-            var maxP = Math.max(1, Math.ceil(total / POR_PAG));
-            pagState[tipo] = Math.min(Math.max(1, p), maxP);
-            renderPagina(tipo);
-        }
-
-        // ── MARCAR COMO CUMPRIDO ──────────────────────────────────────────
-        function confirmarCumprido(proc, btn) {
-            if (!confirm('Marcar processo ' + proc + ' como cumprido?\n\nEle sera removido das listas de pendentes.')) return;
-            var token = getToken();
-            btn.disabled = true;
-            btn.textContent = '...';
-            fetch('/api/cumprido?token=' + token, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ processo: proc })
-            })
-            .then(function(r) { return r.json(); })
-            .then(function(json) {
-                if (json.success) {
-                    PROXIMOS7   = PROXIMOS7.filter(function(x)   { return (x.proc||x.processo) !== proc; });
-                    VENCIDOS_DATA = VENCIDOS_DATA.filter(function(x) { return (x.proc||x.processo) !== proc; });
-                    renderPagina('critico');
-                    renderPagina('vencido');
-                    var tr = btn.closest('tr');
-                    if (tr) {
-                        tr.style.transition = 'opacity .4s';
-                        tr.style.opacity = '0';
-                        setTimeout(function() { tr.remove(); }, 400);
-                    }
-                } else {
-                    alert('Erro: ' + (json.error || 'Falha'));
-                    btn.disabled = false;
-                    btn.textContent = 'v';
-                }
-            })
-            .catch(function() {
-                // Fallback offline: remove so do frontend
-                PROXIMOS7   = PROXIMOS7.filter(function(x)   { return (x.proc||x.processo) !== proc; });
-                VENCIDOS_DATA = VENCIDOS_DATA.filter(function(x) { return (x.proc||x.processo) !== proc; });
-                renderPagina('critico');
-                renderPagina('vencido');
-                var tr = btn.closest('tr');
-                if (tr) { tr.style.opacity='0'; setTimeout(function(){tr.remove();},400); }
-            });
-        }
-
-        // ── EXPORTAR XLSX ─────────────────────────────────────────────────
-        function exportarXlsx(tipo) {
-            var isCritico = tipo === 'critico';
-            var dados = isCritico ? PROXIMOS7 : VENCIDOS_DATA;
-            var f = filtroState[tipo];
-            var filtrado = filtrarDados(dados, f);
-            var cabecalho = ['Processo','Parte Ativa','Responsavel','Prazo', isCritico?'Vence em':'Dias Vencido','Vara'];
-            var linhas = filtrado.map(function(r) {
-                var proc = r.proc||r.processo||'';
-                var dias = r.dias||0;
-                var dLabel = isCritico ? (dias===0?'Hoje':dias===1?'Amanha':dias+' dias') : dias+'d';
-                return [proc, r.parte||'', r.resp||r.responsavel||'', r.prazo||'', dLabel, r.vara||''];
-            });
-            var wb = XLSX.utils.book_new();
-            var ws = XLSX.utils.aoa_to_sheet([cabecalho].concat(linhas));
-            ws['!cols'] = [{wch:24},{wch:40},{wch:16},{wch:12},{wch:10},{wch:36}];
-            XLSX.utils.book_append_sheet(wb, ws, isCritico?'Criticos 7 dias':'Vencidos');
-            var nome = (isCritico ? 'criticos_7dias' : 'vencidos') + '_' + new Date().toLocaleDateString('pt-BR').replace(/\//g,'-') + '.xlsx';
-            XLSX.writeFile(wb, nome);
-        }
-
-        // ── ALERTAS ───────────────────────────────────────────────────────
-        function alertarTodosVencidos() {
-            var filtrado = filtrarDados(VENCIDOS_DATA, filtroState.vencido);
-            if (!filtrado.length) { alert('Nenhum processo encontrado.'); return; }
-            if (confirm('Enviar alerta para TODOS os ' + filtrado.length + ' processos vencidos?')) {
-                alert(filtrado.length + ' alertas enviados! (Em producao, mensagem WhatsApp por responsavel.)');
-            }
-        }
-
-        // ── CHART DE PERFORMANCE ──────────────────────────────────────────
-        var _chartInstance = null;
-        function renderChart(perf) {
-            var canvas = document.getElementById('chart-performance');
-            if (!canvas || !perf || perf.length === 0) return;
-            if (_chartInstance) { _chartInstance.destroy(); }
-            var labels = perf.map(function(p) { return p.responsavel; });
-            var taxas  = perf.map(function(p) { return p.taxa; });
-            var cores  = taxas.map(function(t) {
-                if (t >= 80) return 'rgba(22,163,74,0.75)';
-                if (t >= 50) return 'rgba(234,88,12,0.75)';
-                return 'rgba(220,38,38,0.75)';
-            });
-            _chartInstance = new Chart(canvas, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Taxa de cumprimento (%)',
-                        data: taxas,
-                        backgroundColor: cores,
-                        borderRadius: 4,
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { min: 0, max: 100, ticks: { callback: function(v) { return v + '%'; } } },
-                        y: { ticks: { font: { size: 11 } } }
-                    }
-                }
-            });
-        }
-
-        // ── FILTROS ───────────────────────────────────────────────────────
-        function initFiltros() {
-            ['critico','vencido'].forEach(function(tipo) {
-                var ft = document.getElementById('filtro-' + tipo);
-                var rs = document.getElementById('resp-' + tipo);
-                var vs = document.getElementById('vara-' + tipo);
-                if (ft) ft.addEventListener('input', function() { filtroState[tipo].texto = this.value; pagState[tipo]=1; renderPagina(tipo); });
-                if (rs) rs.addEventListener('change', function() { filtroState[tipo].resp  = this.value; pagState[tipo]=1; renderPagina(tipo); });
-                if (vs) vs.addEventListener('change', function() { filtroState[tipo].vara  = this.value; pagState[tipo]=1; renderPagina(tipo); });
-            });
-        }
-
-        // ── renderCriticos e renderDashboard (override) ───────────────────
-        function renderCriticos(data) {
-            if (data && data.proximos) PROXIMOS7    = data.proximos.map(function(r) { return { proc:r.processo, parte:r.parte||'', resp:r.responsavel, prazo:r.prazo, vara:r.vara, dias:r.dias }; });
-            if (data && data.vencidos) VENCIDOS_DATA = data.vencidos.map(function(r) { return { proc:r.processo, parte:r.parte||'', resp:r.responsavel, prazo:r.prazo, vara:r.vara, dias:r.dias }; });
-            renderPagina('critico');
-            renderPagina('vencido');
-        }
-
-        var _origRD = renderDashboard;
-        function renderDashboard(data) {
-            if (data && !data.sem_dados) {
-                _origRD(data);
-                if (data.performance) renderChart(data.performance);
-            } else {
-                var kpis = { total:'938', vencidos:VENCIDOS_DATA.length, proximos:PROXIMOS7.length, cumpridos:'391' };
-                ['total','vencidos','proximos','cumpridos'].forEach(function(k) {
-                    var el = document.getElementById('kpi-' + k); if(el) el.textContent = kpis[k];
-                });
-                var tx = document.getElementById('kpi-taxa-label'); if(tx) tx.textContent = '41.7% de taxa';
-            }
-            renderPagina('critico');
-            renderPagina('vencido');
-        }
-
-        // ── UPLOAD COM DIFF ───────────────────────────────────────────────
-        var _origUpload = null;
-
-        function initUploadMelhorado() {
-            var form = document.getElementById('importForm');
-            if (!form) return;
-            form.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                var token = getToken();
-                var fileInput = document.getElementById('file');
-                var btn = this.querySelector('button[type=submit]') || this.querySelector('.btn-primary');
-                if (!fileInput || !fileInput.files[0]) { alert('Selecione um arquivo.'); return; }
-                if (btn) { btn.textContent = 'Importando...'; btn.disabled = true; }
-                var formData = new FormData();
-                formData.append('file', fileInput.files[0]);
-                try {
-                    var res = await fetch('/api/upload?token=' + token, { method:'POST', body:formData });
-                    var json = await res.json();
-                    if (res.ok && json.success) {
-                        var s = json.stats;
-                        var d = json.diff || {};
-                        var difTxt = '';
-                        if (d.total_delta !== undefined) {
-                            var sinal = function(n) { return n > 0 ? '+'+n : n; };
-                            difTxt = '<div style="margin-top:10px;padding:10px;background:#f0fdf4;border-radius:6px;font-size:13px;color:#166534;">'
-                                + '<strong>Comparando com importacao anterior:</strong><br>'
-                                + 'Processos: ' + sinal(d.total_delta) + ' | '
-                                + 'Vencidos: '  + sinal(d.vencidos_delta) + ' | '
-                                + 'Cumpridos: ' + sinal(d.cumpridos_delta)
-                                + '</div>';
-                        }
-                        alert('Planilha importada!\n\n' + s.total + ' processos | ' + s.vencidos + ' vencidos | ' + s.proximos + ' proximos | ' + s.taxa + '% cumpridos');
-                        var diffEl = document.getElementById('import-diff');
-                        if (diffEl && difTxt) { diffEl.innerHTML = difTxt; diffEl.style.display='block'; }
-                        var hist = document.getElementById('import-history');
-                        if (hist) hist.innerHTML = '<li class="list-group-item"><div><strong>' + json.filename + '</strong><br><small style="color:#64748b;">' + new Date().toLocaleDateString('pt-BR') + ' — ' + s.total + ' processos</small></div><span class="badge badge-success">Ok</span></li>';
-                        await loadDashboard();
-                        this.reset();
-                    } else {
-                        alert('Erro: ' + (json.error || 'Falha'));
-                    }
-                } catch(err) {
-                    alert('Erro de rede: ' + err.message);
-                } finally {
-                    if (btn) { btn.textContent = 'Importar Planilha'; btn.disabled = false; }
-                }
-            }, { once: false });
-        }
-
-        // ── EQUIPE COM API REAL ───────────────────────────────────────────
-        async function equipe_carregar_api() {
-            var token = getToken();
-            try {
-                var res = await fetch('/api/equipe?token=' + token);
-                if (!res.ok) throw new Error('API indisponivel');
-                var json = await res.json();
-                return json.membros || [];
-            } catch(e) {
-                try { return JSON.parse(localStorage.getItem('pgm_equipe_v1')) || []; } catch { return []; }
-            }
-        }
-
-        async function equipe_renderizar() {
-            var lista = await equipe_carregar_api();
-            var ul = document.getElementById('equipe-lista');
-            if (!ul) return;
-            if (!lista.length) { ul.innerHTML = '<li style="color:#94a3b8;padding:16px;">Nenhum membro cadastrado ainda.</li>'; return; }
-            ul.innerHTML = lista.map(function(m) {
-                return '<li class="list-group-item">'
-                    + '<div><strong>' + m.nome + '</strong><br>'
-                    + '<small style="color:#64748b;">' + m.funcao + (m.email ? ' | ' + m.email : '') + (m.whatsapp ? ' | ' + m.whatsapp : '') + '</small></div>'
-                    + '<div style="display:flex;gap:6px;">'
-                    + '<button class="btn-icon" onclick="equipe_editar_api(' + m.id + ')">&#9999;</button>'
-                    + '<button class="btn-icon" onclick="equipe_excluir_api(' + m.id + ',\u0022' + m.nome + '\u0022)">&#128465;</button>'
-                    + '</div></li>';
-            }).join('');
-        }
-
-        async function equipe_salvar() {
-            var token = getToken();
-            var nome     = document.getElementById('eq-nome').value.trim();
-            var funcao   = document.getElementById('eq-funcao').value;
-            var email    = document.getElementById('eq-email').value.trim();
-            var whatsapp = document.getElementById('eq-whatsapp').value.trim();
-            var editId   = document.getElementById('equipe-edit-id').value;
-            if (!nome) { alert('Informe o nome.'); return; }
-            var body = { nome: nome, funcao: funcao, email: email, whatsapp: whatsapp };
-            var url    = editId ? '/api/equipe/' + editId + '?token=' + token : '/api/equipe?token=' + token;
-            var method = editId ? 'PUT' : 'POST';
-            try {
-                var res = await fetch(url, { method: method, headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
-                var json = await res.json();
-                if (json.success) { equipe_limparForm(); await equipe_renderizar(); alert('Membro salvo!'); }
-                else alert('Erro: ' + (json.error||'Falha'));
-            } catch(e) {
-                equipe_salvar_storage_fallback(body, editId);
-                equipe_limparForm(); await equipe_renderizar();
-            }
-        }
-
-        function equipe_salvar_storage_fallback(body, editId) {
-            var lista = [];
-            try { lista = JSON.parse(localStorage.getItem('pgm_equipe_v1')) || []; } catch {}
-            if (editId) { lista = lista.map(function(m) { return m.id == editId ? Object.assign({},m,body) : m; }); }
-            else { lista.push(Object.assign({id: Date.now()}, body)); }
-            localStorage.setItem('pgm_equipe_v1', JSON.stringify(lista));
-        }
-
-        async function equipe_editar_api(id) {
-            var lista = await equipe_carregar_api();
-            var m = lista.find(function(x){ return x.id == id; });
-            if (!m) return;
-            document.getElementById('eq-nome').value     = m.nome;
-            document.getElementById('eq-funcao').value   = m.funcao;
-            document.getElementById('eq-email').value    = m.email||'';
-            document.getElementById('eq-whatsapp').value = m.whatsapp||'';
-            document.getElementById('equipe-edit-id').value = m.id;
-            document.getElementById('equipe-form-titulo').textContent = 'Editar Membro';
-            document.getElementById('equipe-btn-cancelar').style.display = 'inline-flex';
-            document.getElementById('eq-nome').focus();
-            document.getElementById('equipe-form-titulo').scrollIntoView({behavior:'smooth'});
-        }
-
-        async function equipe_excluir_api(id, nome) {
-            if (!confirm('Remover "' + nome + '" da equipe?')) return;
-            var token = getToken();
-            try {
-                await fetch('/api/equipe/' + id + '?token=' + token, { method:'DELETE' });
-            } catch(e) {
-                var lista = [];
-                try { lista = JSON.parse(localStorage.getItem('pgm_equipe_v1'))||[]; } catch {}
-                localStorage.setItem('pgm_equipe_v1', JSON.stringify(lista.filter(function(m){return m.id!=id;})));
-            }
-            await equipe_renderizar();
-        }
-
-        initFiltros();
-        setTimeout(initUploadMelhorado, 200);
-
-        loadDashboard();
-        equipe_renderizar();
-
-        // ─── Upload real da planilha ───────────────────────────────────────
-        document.getElementById('importForm')?.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const token = getToken();
-            const fileInput = document.getElementById('file');
-            const btn = this.querySelector('button[type=submit]');
-
-            if (!fileInput.files[0]) return alert('Selecione um arquivo.');
-
-            btn.textContent = '⏳ Importando…';
-            btn.disabled = true;
-
-            const formData = new FormData();
-            formData.append('file', fileInput.files[0]);
-
-            try {
-                const res = await fetch(`/api/upload?token=${token}`, {
-                    method: 'POST',
-                    body: formData
-                });
-                const json = await res.json();
-
-                if (res.ok && json.success) {
-                    const s = json.stats;
-                    alert(`✅ Planilha importada com sucesso!\n\n📊 ${s.total} processos carregados\n⏰ ${s.vencidos} vencidos\n📅 ${s.proximos} próximos (7 dias)\n✅ ${s.cumpridos} cumpridos (${s.taxa}%)`);
-                    this.reset();
-                    await loadDashboard();   // ← atualiza todo o dashboard
-                } else {
-                    alert(`❌ Erro: ${json.error || 'Falha desconhecida'}`);
-                }
-            } catch (err) {
-                alert(`❌ Erro de rede: ${err.message}`);
-            } finally {
-                btn.textContent = '🚀 Importar Planilha';
-                btn.disabled = false;
-            }
-        });
-
-        // ─── EQUIPE — CRUD com localStorage ──────────────────────────────
-        const EQUIPE_KEY = 'pgm_equipe_v1';
-
-        function equipe_carregar() {
-            try { return JSON.parse(localStorage.getItem(EQUIPE_KEY)) || []; }
-            catch { return []; }
-        }
-
-        function equipe_salvar_storage(lista) {
-            localStorage.setItem(EQUIPE_KEY, JSON.stringify(lista));
-        }
-
-        function equipe_renderizar() {
-            const lista = equipe_carregar();
-            const ul = document.getElementById('equipe-lista');
-            if (!ul) return;
-            if (lista.length === 0) {
-                ul.innerHTML = '<li style="color:#94a3b8;padding:16px;">Nenhum membro cadastrado ainda.</li>';
-                return;
-            }
-            ul.innerHTML = lista.map((m, i) => `
-                <li class="list-group-item">
-                    <div>
-                        <strong>${m.nome}</strong><br>
-                        <small style="color:#64748b;">${m.funcao}${m.email ? ' | ' + m.email : ''}${m.whatsapp ? ' | ' + m.whatsapp : ''}</small>
-                    </div>
-                    <div style="display:flex;gap:6px;">
-                        <button class="btn-icon" title="Editar" onclick="equipe_editar(${i})">✏️</button>
-                        <button class="btn-icon" title="Remover" onclick="equipe_excluir(${i})">🗑️</button>
-                    </div>
-                </li>`).join('');
-        }
-
-        function equipe_salvar() {
-            const nome     = document.getElementById('eq-nome').value.trim();
-            const funcao   = document.getElementById('eq-funcao').value;
-            const email    = document.getElementById('eq-email').value.trim();
-            const whatsapp = document.getElementById('eq-whatsapp').value.trim();
-            const editId   = document.getElementById('equipe-edit-id').value;
-
-            if (!nome) { alert('Informe o nome do membro.'); return; }
-
-            const lista = equipe_carregar();
-            const membro = { nome, funcao, email, whatsapp };
-
-            if (editId !== '') {
-                lista[parseInt(editId)] = membro;
-            } else {
-                lista.push(membro);
-            }
-
-            equipe_salvar_storage(lista);
-            equipe_renderizar();
-            equipe_limparForm();
-            alert(`✅ Membro "${nome}" salvo com sucesso!`);
-        }
-
-        function equipe_editar(i) {
-            const lista = equipe_carregar();
-            const m = lista[i];
-            document.getElementById('eq-nome').value      = m.nome;
-            document.getElementById('eq-funcao').value    = m.funcao;
-            document.getElementById('eq-email').value     = m.email || '';
-            document.getElementById('eq-whatsapp').value  = m.whatsapp || '';
-            document.getElementById('equipe-edit-id').value = i;
-            document.getElementById('equipe-form-titulo').textContent = '✏️ Editar Membro';
-            document.getElementById('equipe-btn-cancelar').style.display = 'inline-flex';
-            document.getElementById('eq-nome').focus();
-            // Scroll até o formulário
-            document.getElementById('equipe-form-titulo').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function equipe_excluir(i) {
-            const lista = equipe_carregar();
-            if (!confirm(`Remover "${lista[i].nome}" da equipe?`)) return;
-            lista.splice(i, 1);
-            equipe_salvar_storage(lista);
-            equipe_renderizar();
-        }
-
-        function equipe_cancelarEdicao() {
-            equipe_limparForm();
-        }
-
-        function equipe_limparForm() {
-            document.getElementById('eq-nome').value      = '';
-            document.getElementById('eq-email').value     = '';
-            document.getElementById('eq-whatsapp').value  = '';
-            document.getElementById('equipe-edit-id').value = '';
-            document.getElementById('equipe-form-titulo').textContent = '➕ Novo Membro';
-            document.getElementById('equipe-btn-cancelar').style.display = 'none';
-        }
-
-        // Carrega a equipe ao abrir a página
-        equipe_renderizar();
-
-    </script>
-</body>
-</html>
+        equipe_salva      = _cache.get('equipe', [])
+        cumpridos_manuais = _cache.get('cumpridos_manuais', [])
+        _cache.update(data)
+        _cache['filename']          = file.filename
+        _cache['equipe']            = equipe_salva
+        _cache['cumpridos_manuais'] = cumpridos_manuais
+        if cumpridos_manuais:
+            _cache['vencidos'] = [v for v in _cache['vencidos'] if v['processo'] not in cumpridos_manuais]
+            _cache['proximos'] = [v for v in _cache['proximos'] if v['processo'] not in cumpridos_manuais]
+        _save_cache()
+        return jsonify({'success':True,'stats':data['stats'],'diff':diff_info,'filename':file.filename}), 200
+    except KeyError as e:
+        return jsonify({'error':f'Aba não encontrada: {e}. Use "Prazos 2026".'}), 422
+    except Exception as e:
+        return jsonify({'error':str(e)}), 500
+
+@bp.route('/api/dashboard', methods=['GET'])
+@token_required
+def get_dashboard():
+    if not _cache: return jsonify({'sem_dados':True}), 200
+    return jsonify({
+        'stats':_cache.get('stats',{}),'performance':_cache.get('performance',[]),
+        'filename':_cache.get('filename',''),
+    })
+
+@bp.route('/api/criticos', methods=['GET'])
+@token_required
+def get_criticos():
+    if not _cache: return jsonify({'sem_dados':True}), 200
+    resp_filtro = request.args.get('responsavel','').strip().upper()
+    vencidos = _cache.get('vencidos',[])
+    proximos = _cache.get('proximos',[])
+    if resp_filtro:
+        vencidos = [v for v in vencidos if v.get('responsavel','').upper() == resp_filtro]
+        proximos = [p for p in proximos if p.get('responsavel','').upper() == resp_filtro]
+    return jsonify({'vencidos':vencidos,'proximos':proximos})
+
+@bp.route('/api/cumprido', methods=['POST'])
+@token_required
+def marcar_cumprido():
+    data = request.get_json()
+    if not data or 'processo' not in data: return jsonify({'error':'Processo obrigatório'}), 400
+    proc = data['processo']
+    manuais = _cache.get('cumpridos_manuais',[])
+    if proc not in manuais: manuais.append(proc)
+    _cache['cumpridos_manuais'] = manuais
+    antes_v = len(_cache.get('vencidos',[]))
+    antes_p = len(_cache.get('proximos',[]))
+    _cache['vencidos'] = [v for v in _cache.get('vencidos',[]) if v['processo'] != proc]
+    _cache['proximos'] = [v for v in _cache.get('proximos',[]) if v['processo'] != proc]
+    removidos = (antes_v - len(_cache['vencidos'])) + (antes_p - len(_cache['proximos']))
+    if removidos > 0 and 'stats' in _cache:
+        s = _cache['stats']
+        s['cumpridos'] = s.get('cumpridos',0) + 1
+        s['vencidos']  = max(0, s.get('vencidos',0) - (antes_v - len(_cache['vencidos'])))
+        s['proximos']  = max(0, s.get('proximos',0) - (antes_p - len(_cache['proximos'])))
+        total = s.get('total',1)
+        s['taxa'] = round(s['cumpridos']/total*100,1) if total > 0 else 0
+    _save_cache()
+    return jsonify({'success':True,'processo':proc})
+
+@bp.route('/api/equipe', methods=['GET'])
+@token_required
+def get_equipe():
+    return jsonify({'membros':_cache.get('equipe',[])})
+
+@bp.route('/api/equipe', methods=['POST'])
+@token_required
+def add_membro():
+    data = request.get_json()
+    if not data or not data.get('nome'): return jsonify({'error':'Nome obrigatório'}), 400
+    equipe = _cache.get('equipe',[])
+    membro = {
+        'id': int(datetime.now().timestamp()*1000),
+        'nome':     data.get('nome','').strip(),
+        'funcao':   data.get('funcao',''),
+        'email':    data.get('email','').strip(),
+        'whatsapp': data.get('whatsapp','').strip(),
+    }
+    equipe.append(membro)
+    _cache['equipe'] = equipe
+    _save_cache()
+    return jsonify({'success':True,'membro':membro}), 201
+
+@bp.route('/api/equipe/<int:membro_id>', methods=['PUT'])
+@token_required
+def update_membro(membro_id):
+    data = request.get_json()
+    equipe = _cache.get('equipe',[])
+    for m in equipe:
+        if m.get('id') == membro_id:
+            m.update({k:v for k,v in data.items() if k != 'id'})
+            _cache['equipe'] = equipe
+            _save_cache()
+            return jsonify({'success':True,'membro':m})
+    return jsonify({'error':'Não encontrado'}), 404
+
+@bp.route('/api/equipe/<int:membro_id>', methods=['DELETE'])
+@token_required
+def delete_membro(membro_id):
+    equipe = _cache.get('equipe',[])
+    nova = [m for m in equipe if m.get('id') != membro_id]
+    if len(nova) == len(equipe): return jsonify({'error':'Não encontrado'}), 404
+    _cache['equipe'] = nova
+    _save_cache()
+    return jsonify({'success':True})
+
+@bp.route('/robots.txt', methods=['GET'])
+def robots():
+    return 'User-agent: *\nDisallow: /', 200, {'Content-Type':'text/plain'}
+
+@bp.after_request
+def add_security_headers(response):
+    response.headers['X-Robots-Tag']         = 'noindex, nofollow'
+    response.headers['X-Content-Type-Options']= 'nosniff'
+    response.headers['X-Frame-Options']       = 'DENY'
+    return response
