@@ -109,6 +109,7 @@ def _parse_xlsx(file_obj):
     total = venc_nc = prox_count = cumpr = 0
     manuais = cache_get('cumpridos_manuais') or []
 
+    cumpridos_lista = []
     for row in ws.iter_rows(min_row=2, values_only=True):
         if all(v is None for v in row): continue
         if row[0] is None and row[1] is None and row[2] is None: continue
@@ -126,7 +127,10 @@ def _parse_xlsx(file_obj):
         total += 1
         prazo_str = prazo_d.strftime('%d/%m/%Y')
         ja_cumprido = cumpr_val in ('SIM','PARCIAL','PREJUDICADO') or proc in manuais
-        if ja_cumprido: cumpr += 1
+        if ja_cumprido:
+            cumpr += 1
+            prazo_str2 = prazo_d.strftime('%d/%m/%Y') if prazo_d else ''
+            cumpridos_lista.append({'processo':proc,'parte':parte,'responsavel':resp,'prazo':prazo_str2,'vara':vara})
         diff = (prazo_d - today).days
         if not ja_cumprido:
             entry = {'processo':proc,'parte':parte,'responsavel':resp,
@@ -155,6 +159,7 @@ def _parse_xlsx(file_obj):
         'performance': perf_list,
         'proximos': prox,
         'vencidos': venc,
+        'cumpridos_lista': cumpridos_lista,
     }
 
 # Auth
@@ -195,11 +200,12 @@ def upload_file():
                 'cumpridos_delta': data['stats']['cumpridos'] - stats_ant.get('cumpridos', 0),
                 'total_delta':     data['stats']['total']     - stats_ant.get('total', 0),
             }
-        cache_set('stats',       data['stats'])
-        cache_set('performance', data['performance'])
-        cache_set('proximos',    data['proximos'])
-        cache_set('vencidos',    data['vencidos'])
-        cache_set('filename',    file.filename)
+        cache_set('stats',           data['stats'])
+        cache_set('performance',     data['performance'])
+        cache_set('proximos',        data['proximos'])
+        cache_set('vencidos',        data['vencidos'])
+        cache_set('cumpridos_lista', data['cumpridos_lista'])
+        cache_set('filename',        file.filename)
         return jsonify({'success':True,'stats':data['stats'],'diff':diff_info,'filename':file.filename})
     except KeyError as e:
         return jsonify({'error':f'Aba nao encontrada: {e}. Use "Prazos 2026".'}), 422
@@ -225,6 +231,15 @@ def get_criticos():
         vencidos = [v for v in vencidos if v.get('responsavel','').upper()==f]
         proximos = [p for p in proximos if p.get('responsavel','').upper()==f]
     return jsonify({'vencidos':vencidos,'proximos':proximos})
+
+@bp.route('/api/cumpridos')
+@token_required
+def get_cumpridos():
+    lista = cache_get('cumpridos_lista') or []
+    resp_filtro = request.args.get('responsavel','').strip().upper()
+    if resp_filtro:
+        lista = [c for c in lista if c.get('responsavel','').upper() == resp_filtro]
+    return jsonify({'cumpridos': lista})
 
 @bp.route('/api/cumprido', methods=['POST'])
 @token_required
