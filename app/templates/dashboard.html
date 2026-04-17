@@ -1203,41 +1203,136 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
         }
 
         async function equipe_renderizar() {
-            var lista = await equipe_carregar_api();
+            var lista = [];
+            // 1. Tentar API
+            try {
+                var r = await fetch('/api/equipe?token=' + getToken());
+                if (r.ok) { var j = await r.json(); lista = j.membros || []; }
+            } catch(e) {}
+
+            // 2. Mesclar com localStorage - fonte permanente
+            try {
+                var local = JSON.parse(localStorage.getItem('pgm_equipe_v1') || '[]');
+                // Usar localStorage se tiver mais membros (API pode ter perdido dados)
+                if (local.length > lista.length) { lista = local; }
+                // Sincronizar API com localStorage se API estiver vazia
+                if (lista.length > 0 && local.length === 0) {
+                    localStorage.setItem('pgm_equipe_v1', JSON.stringify(lista));
+                }
+            } catch(e) {}
+
+            // 3. Popular cache de contatos para WhatsApp
+            if (!_contatosCache) _contatosCache = {};
+            lista.forEach(function(m) {
+                if (m.nome && m.whatsapp) _contatosCache[m.nome.toUpperCase()] = m.whatsapp;
+            });
+
             var ul = document.getElementById('equipe-lista');
             if (!ul) return;
-            if (!lista.length) { ul.innerHTML = '<li style="color:#94a3b8;padding:16px;">Nenhum membro cadastrado ainda.</li>'; return; }
-            ul.innerHTML = lista.map(function(m) {
-                return '<li class="list-group-item">'
-                    + '<div><strong>' + m.nome + '</strong><br>'
-                    + '<small style="color:#64748b;">' + m.funcao + (m.email ? ' | ' + m.email : '') + (m.whatsapp ? ' | ' + m.whatsapp : '') + '</small></div>'
-                    + '<div style="display:flex;gap:6px;">'
-                    + '<button class="btn-icon" onclick="equipe_editar_api(' + m.id + ')">&#9999;</button>'
-                    + '<button class="btn-icon" onclick="equipe_excluir_api(' + m.id + ',\u0022' + m.nome + '\u0022)">&#128465;</button>'
-                    + '</div></li>';
+            if (!lista.length) {
+                ul.innerHTML = '<li style="color:var(--text3);font-size:13px;padding:8px 0">Nenhum membro cadastrado ainda.</li>';
+                return;
+            }
+            var cores = ['#3b7fff','#00c875','#ffb300','#ff4757','#8b5cf6','#06b6d4'];
+            ul.innerHTML = lista.map(function(m, i) {
+                var ini = (m.nome || '?').slice(0, 2).toUpperCase();
+                var id  = m.id != null ? m.id : i;
+                var idf = JSON.stringify(id);
+                var nomef = JSON.stringify(m.nome || '');
+                return '<div class="li">' +
+                    '<div style="display:flex;align-items:center;gap:10px">' +
+                    '<div class="av" style="background:' + cores[i % cores.length] + '">' + ini + '</div>' +
+                    '<div>' +
+                    '<div style="font-size:13px;font-weight:600;color:var(--text)">' + m.nome + '</div>' +
+                    '<div style="font-size:11px;color:var(--text3)">' + m.funcao + (m.whatsapp ? ' · ' + m.whatsapp : '') + '</div>' +
+                    '</div></div>' +
+                    '<div style="display:flex;gap:6px">' +
+                    '<button class="bia" onclick="equipe_editar_local(' + idf + ')">Editar</button>' +
+                    '<button class="bia" onclick="equipe_excluir_local(' + idf + ',' + nomef + ')" style="color:var(--red)">Remover</button>' +
+                    '</div></div>';
             }).join('');
         }
 
+        function equipe_editar_local(id) {
+            try {
+                var lista = JSON.parse(localStorage.getItem('pgm_equipe_v1') || '[]');
+                var m = lista.find(function(x) { return String(x.id) === String(id); });
+                if (!m) return alert('Membro nao encontrado.');
+                document.getElementById('eq-nome').value     = m.nome    || '';
+                document.getElementById('eq-funcao').value   = m.funcao  || '';
+                document.getElementById('eq-email').value    = m.email   || '';
+                document.getElementById('eq-whatsapp').value = m.whatsapp|| '';
+                document.getElementById('equipe-edit-id').value = id;
+                var t = document.getElementById('equipe-form-titulo');
+                if (t) t.textContent = 'Editar Membro';
+                var b = document.getElementById('equipe-btn-cancelar');
+                if (b) b.style.display = 'inline-flex';
+                document.getElementById('eq-nome').scrollIntoView({ behavior:'smooth' });
+            } catch(e) { alert('Erro ao editar: ' + e.message); }
+        }
+
+        function equipe_excluir_local(id, nome) {
+            if (!confirm('Remover "' + nome + '" da equipe?')) return;
+            try {
+                var lista = JSON.parse(localStorage.getItem('pgm_equipe_v1') || '[]');
+                lista = lista.filter(function(x) { return String(x.id) !== String(id); });
+                localStorage.setItem('pgm_equipe_v1', JSON.stringify(lista));
+                if (_contatosCache && nome) delete _contatosCache[nome.toUpperCase()];
+                fetch('/api/equipe/' + id + '?token=' + getToken(), { method: 'DELETE' }).catch(function(){});
+                equipe_renderizar();
+            } catch(e) { alert('Erro ao remover: ' + e.message); }
+        }
+
         async function equipe_salvar() {
-            var token = getToken();
+            var token    = getToken();
             var nome     = document.getElementById('eq-nome').value.trim();
             var funcao   = document.getElementById('eq-funcao').value;
             var email    = document.getElementById('eq-email').value.trim();
             var whatsapp = document.getElementById('eq-whatsapp').value.trim();
             var editId   = document.getElementById('equipe-edit-id').value;
-            if (!nome) { alert('Informe o nome.'); return; }
+            if (!nome) { alert('Informe o nome do membro.'); return; }
             var body = { nome: nome, funcao: funcao, email: email, whatsapp: whatsapp };
-            var url    = editId ? '/api/equipe/' + editId + '?token=' + token : '/api/equipe?token=' + token;
-            var method = editId ? 'PUT' : 'POST';
+
+            // Tentar salvar na API
+            var savedViaAPI = false;
             try {
-                var res = await fetch(url, { method: method, headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+                var url    = editId ? '/api/equipe/' + editId + '?token=' + token : '/api/equipe?token=' + token;
+                var method = editId ? 'PUT' : 'POST';
+                var res  = await fetch(url, { method: method, headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
                 var json = await res.json();
-                if (json.success) { equipe_limparForm(); await equipe_renderizar(); alert('Membro salvo!'); }
-                else alert('Erro: ' + (json.error||'Falha'));
+                if (json.success) savedViaAPI = true;
+                else console.warn('API retornou erro:', json.error);
             } catch(e) {
-                equipe_salvar_storage_fallback(body, editId);
-                equipe_limparForm(); await equipe_renderizar();
+                console.warn('API indisponivel, usando localStorage:', e.message);
             }
+
+            // SEMPRE salvar no localStorage como backup permanente
+            try {
+                var lista = JSON.parse(localStorage.getItem('pgm_equipe_v1') || '[]');
+                var membro = Object.assign({ id: Date.now() }, body);
+                if (editId) {
+                    var found = false;
+                    lista = lista.map(function(m) {
+                        if (String(m.id) === String(editId)) { found = true; return Object.assign({}, m, body); }
+                        return m;
+                    });
+                    if (!found) lista.push(membro);
+                } else {
+                    lista.push(membro);
+                }
+                localStorage.setItem('pgm_equipe_v1', JSON.stringify(lista));
+                // Atualizar cache de contatos imediatamente
+                if (!_contatosCache) _contatosCache = {};
+                lista.forEach(function(m) {
+                    if (m.nome && m.whatsapp) _contatosCache[m.nome.toUpperCase()] = m.whatsapp;
+                });
+            } catch(e) {
+                console.error('Erro localStorage:', e);
+            }
+
+            equipe_limparForm();
+            await equipe_renderizar();
+            alert('Membro salvo com sucesso!' + (savedViaAPI ? '' : '\n(Salvo localmente — API indisponivel)'));
         }
 
         function equipe_salvar_storage_fallback(body, editId) {
@@ -1488,7 +1583,10 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
 
         initFiltros();
         loadDashboard();
-        equipe_renderizar();
+        // Pre-carregar contatos no cache para WhatsApp funcionar sem delay
+        equipe_renderizar().then(function() {
+            // Cache ja populado pelo equipe_renderizar
+        }).catch(function(){});
 </script>
 </body>
 </html>
