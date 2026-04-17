@@ -197,6 +197,8 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
 .btn-ghost:hover{background:var(--bg3);color:var(--text)}
 .bia{background:none;border:1px solid var(--border);padding:6px 10px;border-radius:var(--r2);cursor:pointer;font-size:12px;color:var(--text2);transition:all .15s;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:4px}
 .bia:hover{border-color:var(--accent);color:var(--accent);background:rgba(59,127,255,.08)}
+.btn-icon{background:none;border:1px solid var(--border);padding:5px 9px;border-radius:var(--r2);cursor:pointer;font-size:14px;color:var(--text2);transition:all .15s;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;line-height:1}
+.btn-icon:hover{border-color:var(--accent);color:var(--accent);background:rgba(59,127,255,.08)}
 
 /* FILTER BAR */
 .fb{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
@@ -281,8 +283,7 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
         <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 6l3 1m0 0l-3 9a5 5 0 006 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5 5 0 006 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
       </div>
       <div>
-        <div class="hdr-brand">PGM Porto Velho</div>
-        <div class="hdr-sub">Subprocuradoria Contenciosa</div>
+        <div class="hdr-brand" style="font-size:17px;font-weight:800;letter-spacing:-.02em">Subprocuradoria Contenciosa</div>
       </div>
     </div>
     <div class="hdr-divider"></div>
@@ -1024,14 +1025,7 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
         }
 
         function urgenciaCor(dias, tipo) {
-            if (tipo === 'vencido') {
-                if (dias > 30) return 'background:rgba(220,38,38,0.08);';
-                if (dias > 7)  return 'background:rgba(234,88,12,0.07);';
-                return 'background:rgba(234,179,8,0.08);';
-            }
-            if (dias === 0) return 'background:rgba(220,38,38,0.08);';
-            if (dias <= 2)  return 'background:rgba(234,88,12,0.07);';
-            return 'background:rgba(234,179,8,0.06);';
+            return '';
         }
 
         function buildBtn(tipo, page, label, disabled, active) {
@@ -1082,18 +1076,18 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
                         ? (dias === 0 ? 'Hoje' : dias === 1 ? 'Amanha' : dias + ' dias')
                         : dias + 'd';
                     var badgeCls = isCritico
-                        ? 'style="background:#fff7ed;color:#b45309;font-weight:700;"'
-                        : 'class="badge badge-critical"';
+                        ? 'class="badge ba"'
+                        : 'class="badge br"';
                     rows += '<tr style="' + cor + '">' +
                         '<td><strong>' + proc + '</strong></td>' +
                         '<td style="font-size:12px;">' + parte + '</td>' +
                         '<td>' + resp + '</td>' +
                         '<td>' + prazo + '</td>' +
-                        '<td><span class="badge" ' + badgeCls + '>' + dLabel + '</span></td>' +
+                        '<td><span ' + badgeCls + '>' + dLabel + '</span></td>' +
                         '<td style="font-size:11px;color:#64748b;">' + vara + '</td>' +
                         '<td style="display:flex;gap:4px;">' +
                             '<button class="btn-icon" onclick="enviarAlerta(' + pj + ',' + rj + ',' + prj + ',' + tipoj + ')" title="Enviar alerta WhatsApp">📱</button>' +
-                            '<button class="btn-icon" onclick="confirmarCumprido(' + pj + ',this)" title="Marcar como cumprido" style="color:var(--success);">✓</button>' +
+                            '<button class="btn-icon" onclick="confirmarCumprido(' + pj + ',this)" title="Marcar como cumprido" style="color:var(--green);">✓</button>' +
                         '</td>' +
                     '</tr>';
                 }
