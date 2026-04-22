@@ -24,14 +24,18 @@ def _sb_get(table, params=''):
     try:
         r = http.get(f'{SUPABASE_URL}/rest/v1/{table}?{params}', headers=_sb_headers(), timeout=10)
         return r.json() if r.ok else []
-    except: return []
+    except Exception as e:
+        print(f'[SB GET] {table}: {e}')
+        return []
 
 def _sb_post(table, data):
     try:
         r = http.post(f'{SUPABASE_URL}/rest/v1/{table}', headers=_sb_headers(), json=data, timeout=10)
         res = r.json()
         return res[0] if r.ok and isinstance(res, list) and res else res
-    except: return {}
+    except Exception as e:
+        print(f'[SB POST] {table}: {e}')
+        return {}
 
 def _sb_upsert_bulk(table, data_list):
     try:
@@ -39,19 +43,25 @@ def _sb_upsert_bulk(table, data_list):
         h['Prefer'] = 'resolution=merge-duplicates,return=minimal'
         r = http.post(f'{SUPABASE_URL}/rest/v1/{table}', headers=h, json=data_list, timeout=15)
         return r.ok
-    except: return False
+    except Exception as e:
+        print(f'[SB UPSERT] {table}: {e}')
+        return False
 
 def _sb_patch(table, key, val, data):
     try:
         r = http.patch(f'{SUPABASE_URL}/rest/v1/{table}?{key}=eq.{val}', headers=_sb_headers(), json=data, timeout=10)
         return r.ok
-    except: return False
+    except Exception as e:
+        print(f'[SB PATCH] {e}')
+        return False
 
 def _sb_delete(table, key, val):
     try:
         r = http.delete(f'{SUPABASE_URL}/rest/v1/{table}?{key}=eq.{val}', headers=_sb_headers(), timeout=10)
         return r.ok
-    except: return False
+    except Exception as e:
+        print(f'[SB DELETE] {e}')
+        return False
 
 # --- GESTÃO DE CACHE (DADOS_CACHE) ---
 
@@ -71,7 +81,7 @@ def cache_set(chave, valor):
                   json={'chave': chave, 'valor': valor, 'atualizado': datetime.utcnow().isoformat()}, timeout=10)
     except: pass
 
-# --- LÓGICA DE PARSE (SISTEMA ANTERIOR + NOVO) ---
+# --- LÓGICA DE PROCESSAMENTO ---
 
 def _norm(nome):
     return str(nome).strip().upper() if nome else 'SEM RESPONSAVEL'
@@ -82,7 +92,6 @@ def _parse_xlsx(file_obj):
         warnings.simplefilter('ignore')
         wb = openpyxl.load_workbook(file_obj, read_only=True, data_only=True)
     
-    # Procura a aba correta
     ws = None
     for name in wb.sheetnames:
         if "Prazos" in name:
@@ -129,7 +138,6 @@ def _parse_xlsx(file_obj):
         if ja_cumprido: perf[resp]['cumpridos'] += 1
         elif (prazo_d - today).days < 0: perf[resp]['criticos'] += 1
 
-    # Calcula taxas de performance
     perf_list = []
     for r in perf.values():
         r['taxa'] = round(r['cumpridos']/r['total']*100, 1) if r['total'] > 0 else 0
@@ -171,8 +179,6 @@ def upload_file():
     file = request.files['file']
     try:
         data = _parse_xlsx(file)
-        
-        # Salva TUDO no cache (SISTEMA ANTIGO) para garantir que apareça no Dashboard
         cache_set('stats', data['stats'])
         cache_set('performance', data['performance'])
         cache_set('proximos', data['proximos'])
@@ -180,18 +186,16 @@ def upload_file():
         cache_set('cumpridos_lista', data['cumpridos_lista'])
         cache_set('filename', file.filename)
         
-        # Tenta salvar na tabela nova (SISTEMA NOVO) sem quebrar se falhar
         try:
-            processos_bulk = []
+            bulk = []
             for p in (data['vencidos'] + data['proximos'] + data['cumpridos_lista']):
-                dt_obj = datetime.strptime(p['prazo'], '%d/%m/%Y').date()
-                processos_bulk.append({
+                dt = datetime.strptime(p['prazo'], '%d/%m/%Y').date()
+                bulk.append({
                     'numero_processo': p['processo'], 'parte_ativa': p['parte'], 'responsavel': p['responsavel'],
-                    'data_prazo': dt_obj.isoformat(), 'vara': p['vara'], 'status': 'cumprido' if p in data['cumpridos_lista'] else 'aberto'
+                    'data_prazo': dt.isoformat(), 'vara': p['vara'], 'status': 'cumprido' if p in data['cumpridos_lista'] else 'aberto'
                 })
-            _sb_upsert_bulk('prazos_processuais', processos_bulk)
+            _sb_upsert_bulk('prazos_processuais', bulk)
         except: pass
-        
         return jsonify({'success': True, 'stats': data['stats'], 'filename': file.filename})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -207,23 +211,16 @@ def get_dashboard():
 @bp.route('/api/criticos')
 @token_required
 def get_criticos():
-    # Tenta pegar do cache (SISTEMA ANTIGO) primeiro para garantir visibilidade
     vencidos = cache_get('vencidos') or []
     proximos = cache_get('proximos') or []
-    
-    # Se o cache estiver vazio, tenta o banco novo
     if not vencidos and not proximos:
         hoje = date.today().isoformat()
         db_v = _sb_get('prazos_processuais', f'status=eq.aberto&data_prazo=lt.{hoje}')
         db_p = _sb_get('prazos_processuais', f'status=eq.aberto&data_prazo=gte.{hoje}&data_prazo=lte.{(date.today()+timedelta(days=7)).isoformat()}')
-        
         def fmt(p):
             dt = date.fromisoformat(p['data_prazo'])
             return {'processo': p['numero_processo'], 'parte': p['parte_ativa'], 'responsavel': p['responsavel'], 'prazo': dt.strftime('%d/%m/%Y'), 'vara': p['vara'], 'dias': abs((dt - date.today()).days)}
-        
-        vencidos = [fmt(v) for v in db_v]
-        proximos = [fmt(p) for p in db_p]
-        
+        vencidos, proximos = [fmt(v) for v in db_v], [fmt(p) for p in db_p]
     return jsonify({'vencidos': vencidos, 'proximos': proximos})
 
 @bp.route('/api/equipe', methods=['GET', 'POST'])
@@ -231,12 +228,10 @@ def get_criticos():
 def gerenciar_equipe():
     if request.method == 'GET':
         membros = _sb_get('equipe', 'order=id.asc')
-        # Se o banco retornar vazio, o frontend usará o LocalStorage automaticamente
         return jsonify({'membros': membros})
-    
     data = request.get_json()
-    result = _sb_post('equipe', data)
-    return jsonify({'success': True, 'membro': result})
+    res = _sb_post('equipe', data)
+    return jsonify({'success': True, 'membro': res})
 
 @bp.route('/api/equipe/<int:mid>', methods=['DELETE', 'PUT'])
 @token_required
@@ -253,9 +248,10 @@ def membro_ops(mid):
 def marcar_cumprido():
     data = request.get_json()
     proc = data.get('processo')
-    # Atualiza em ambos para não dar erro
+    if not proc: return jsonify({'error': 'Processo obrigatorio'}), 400
     cache_v = cache_get('vencidos') or []
     cache_p = cache_get('proximos') or []
-    cache_set('vencidos', [x for x in cache_v if x['processo'] != proc])
-    cache_set('proximos', [x for x in cache_p if x['processo'] != proc])
-    _sb_patch('prazos_processuais', 'numero_process
+    cache_set('vencidos', [x for x in cache_v if (x.get('processo') or x.get('proc')) != proc])
+    cache_set('proximos', [x for x in cache_p if (x.get('processo') or x.get('proc')) != proc])
+    ok = _sb_patch('prazos_processuais', 'numero_processo', proc, {'status': 'cumprido'})
+    return jsonify({'success': ok})
