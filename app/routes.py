@@ -198,4 +198,55 @@ def upload_file():
             diff_info = {
                 'vencidos_delta':  data['stats']['vencidos']  - stats_ant.get('vencidos', 0),
                 'cumpridos_delta': data['stats']['cumpridos'] - stats_ant.get('cumpridos', 0),
-                'total_delta':
+                'total_delta':     data['stats']['total']     - stats_ant.get('total', 0),
+            }
+        cache_set('stats',           data['stats'])
+        cache_set('performance',     data['performance'])
+        cache_set('proximos',        data['proximos'])
+        cache_set('vencidos',        data['vencidos'])
+        cache_set('cumpridos_lista', data['cumpridos_lista'])
+        cache_set('filename',        file.filename)
+        return jsonify({'success':True,'stats':data['stats'],'diff':diff_info,'filename':file.filename})
+    except KeyError as e:
+        return jsonify({'error':f'Aba nao encontrada: {e}. Use "Prazos 2026".'}), 422
+    except Exception as e:
+        return jsonify({'error':str(e)}), 500
+
+@bp.route('/api/dashboard')
+@token_required
+def get_dashboard():
+    stats = cache_get('stats')
+    if not stats: return jsonify({'sem_dados':True})
+    return jsonify({'stats':stats,'performance':cache_get('performance') or [],
+                    'filename':cache_get('filename') or ''})
+
+@bp.route('/api/criticos')
+@token_required
+def get_criticos():
+    vencidos = cache_get('vencidos')
+    if vencidos is None: return jsonify({'sem_dados':True})
+    proximos = cache_get('proximos') or []
+    f = request.args.get('responsavel','').strip().upper()
+    if f:
+        vencidos = [v for v in vencidos if v.get('responsavel','').upper()==f]
+        proximos = [p for p in proximos if p.get('responsavel','').upper()==f]
+    return jsonify({'vencidos':vencidos,'proximos':proximos})
+
+@bp.route('/api/cumpridos')
+@token_required
+def get_cumpridos():
+    lista = cache_get('cumpridos_lista') or []
+    resp_filtro = request.args.get('responsavel','').strip().upper()
+    if resp_filtro:
+        lista = [c for c in lista if c.get('responsavel','').upper() == resp_filtro]
+    return jsonify({'cumpridos': lista})
+
+@bp.route('/api/cumprido', methods=['POST'])
+@token_required
+def marcar_cumprido():
+    data = request.get_json()
+    if not data or 'processo' not in data: return jsonify({'error':'Processo obrigatorio'}), 400
+    proc = data['processo']
+    manuais = cache_get('cumpridos_manuais') or []
+    if proc not in manuais: manuais.append(proc)
+    cache_set('cumpridos_
