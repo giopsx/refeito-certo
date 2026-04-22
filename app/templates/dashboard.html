@@ -136,4 +136,1734 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
 .kc.green .kc-glow{background:var(--green)}
 .kc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
 .kc-lbl{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em}
-.kc-ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center
+.kc-ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center}
+.kc-ico svg{width:16px;height:16px;fill:none;stroke-width:2}
+.kc.blue .kc-ico{background:rgba(59,127,255,.15)} .kc.blue .kc-ico svg{stroke:var(--accent2)}
+.kc.red  .kc-ico{background:var(--red-dim)}        .kc.red  .kc-ico svg{stroke:var(--red)}
+.kc.amber .kc-ico{background:var(--amber-dim)}     .kc.amber .kc-ico svg{stroke:var(--amber)}
+.kc.green .kc-ico{background:var(--green-dim)}     .kc.green .kc-ico svg{stroke:var(--green)}
+.kc-val{font-size:36px;font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--text)}
+.kc.red   .kc-val{color:var(--red)}
+.kc.amber .kc-val{color:var(--amber)}
+.kc.green .kc-val{color:var(--green)}
+.kc-sub{font-size:12px;color:var(--text3);margin-top:6px}
+.kc-bar{height:2px;border-radius:2px;margin-top:14px;opacity:.5}
+.kc.blue  .kc-bar{background:linear-gradient(90deg,var(--accent),transparent)}
+.kc.red   .kc-bar{background:linear-gradient(90deg,var(--red),transparent)}
+.kc.amber .kc-bar{background:linear-gradient(90deg,var(--amber),transparent)}
+.kc.green .kc-bar{background:linear-gradient(90deg,var(--green),transparent)}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px}
+.card:hover{border-color:var(--border2)}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.ct{font-size:14px;font-weight:700;color:var(--text);letter-spacing:-.01em}
+.cs{font-size:12px;color:var(--text3);margin-top:2px}
+.va{font-size:12px;color:var(--accent);font-weight:500;cursor:pointer;text-decoration:none;background:none;border:none;font-family:'Inter',sans-serif}
+
+/* TABLE */
+.tw{overflow-x:auto;border-radius:var(--r2);border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse}
+thead{background:var(--bg3)}
+th{padding:10px 14px;text-align:left;font-size:10.5px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)}
+td{padding:9px 12px;border-bottom:1px solid rgba(30,45,69,.6);font-size:12px;vertical-align:middle;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}td:last-child{white-space:nowrap;overflow:visible;max-width:none;width:80px}td:nth-child(1){max-width:160px}td:nth-child(2){max-width:150px}td:nth-child(6){max-width:160px}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:rgba(26,37,64,.5);transition:background .12s}
+td strong{font-weight:600;color:var(--text);font-size:12px}
+td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.br{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,71,87,.2)}
+.ba{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(255,179,0,.2)}
+.bg{background:var(--green-dim);color:var(--green);border:1px solid rgba(0,200,117,.2)}
+.bb{background:rgba(59,127,255,.12);color:var(--accent2);border:1px solid rgba(59,127,255,.2)}
+
+/* ALERTS */
+.alert{padding:12px 16px;border-radius:var(--r2);margin-bottom:14px;font-size:13px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border:1px solid}
+.ar{background:var(--red-dim);border-color:rgba(255,71,87,.25);color:#ff8a96}
+.aa{background:var(--amber-dim);border-color:rgba(255,179,0,.25);color:#ffd166}
+.ab{background:rgba(59,127,255,.1);border-color:rgba(59,127,255,.2);color:#7eb8ff}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:var(--r2);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .18s;font-family:'Inter',sans-serif}
+.btn-blue{background:var(--accent);color:#fff;box-shadow:0 0 12px rgba(59,127,255,.3)}
+.btn-blue:hover{background:var(--accent2);box-shadow:0 0 20px rgba(59,127,255,.45)}
+.btn-red{background:var(--red);color:#fff;box-shadow:0 0 12px rgba(255,71,87,.25)}
+.btn-red:hover{filter:brightness(1.1)}
+.btn-amber{background:var(--amber);color:#000;font-weight:700}
+.btn-amber:hover{filter:brightness(1.08)}
+.btn-ghost{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}
+.btn-ghost:hover{background:var(--bg3);color:var(--text)}
+.bia{background:none;border:1px solid var(--border);padding:6px 10px;border-radius:var(--r2);cursor:pointer;font-size:12px;color:var(--text2);transition:all .15s;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:4px}
+.bia:hover{border-color:var(--accent);color:var(--accent);background:rgba(59,127,255,.08)}
+.btn-icon{background:none;border:1px solid var(--border);padding:5px 9px;border-radius:var(--r2);cursor:pointer;font-size:14px;color:var(--text2);transition:all .15s;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;line-height:1}
+.btn-icon:hover{border-color:var(--accent);color:var(--accent);background:rgba(59,127,255,.08)}
+
+/* FILTER BAR */
+.fb{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.sw{flex:1;min-width:180px;position:relative;display:flex;align-items:center}
+.sw svg{position:absolute;left:10px;color:var(--text3);pointer-events:none}
+.sw input{width:100%;padding:8px 12px 8px 31px;border:1px solid var(--border);border-radius:var(--r2);background:var(--surface);color:var(--text);font-size:13px;font-family:'Inter',sans-serif;transition:.18s}
+.sw input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+.sw input::placeholder{color:var(--text3)}
+.fsel{padding:8px 10px;border:1px solid var(--border);border-radius:var(--r2);background:var(--surface);color:var(--text2);font-size:12px;font-family:'Inter',sans-serif;cursor:pointer}
+.fsel:focus{outline:none;border-color:var(--accent)}
+.xbtn{display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:var(--r2);background:var(--surface2);border:1px solid var(--border2);color:var(--text2);font-size:12px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:.18s}
+.xbtn:hover{background:rgba(59,127,255,.1);border-color:var(--accent);color:var(--accent)}
+
+/* PAGINACAO */
+.pbar{display:flex;align-items:center;justify-content:space-between;padding:12px 0;font-size:12px;color:var(--text3);flex-wrap:wrap;gap:8px}
+.pbtns{display:flex;gap:4px}
+.pbtn{padding:4px 10px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text2);font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;transition:.15s}
+.pbtn:hover:not(:disabled){background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 0 8px rgba(59,127,255,.35)}
+.pbtn.active{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+.pbtn:disabled{opacity:.3;cursor:default}
+
+/* FORM */
+.fg{margin-bottom:16px}
+.fl{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px}
+.fi{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--r2);background:var(--surface);color:var(--text);font-size:13px;font-family:'Inter',sans-serif;transition:.18s}
+.fi:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+.fi::placeholder{color:var(--text3)}
+
+/* PRAZO RECENTE */
+.pc{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:var(--r2);border:1px solid;margin-bottom:8px;transition:transform .15s}
+.pc:hover{transform:translateX(2px)}
+.pc.pr{background:var(--red-dim);border-color:rgba(255,71,87,.2)}
+.pc.pa{background:var(--amber-dim);border-color:rgba(255,179,0,.2)}
+.pc.pg{background:var(--green-dim);border-color:rgba(0,200,117,.2)}
+.pcdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.pc.pr .pcdot{background:var(--red);box-shadow:0 0 6px var(--red)}
+.pc.pa .pcdot{background:var(--amber);box-shadow:0 0 6px var(--amber)}
+.pc.pg .pcdot{background:var(--green);box-shadow:0 0 6px var(--green)}
+.pcproc{font-size:12px;font-weight:600;color:var(--text)}
+.pcinfo{font-size:11px;color:var(--text3);margin-top:1px}
+
+/* AVATAR */
+.av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;color:#fff}
+
+/* LIST */
+.li{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)}
+.li:last-child{border-bottom:none}
+
+/* REPORT CARDS */
+.rg{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-bottom:16px}
+.rc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:12px;transition:border-color .2s,box-shadow .2s}
+.rc:hover{border-color:var(--border2);box-shadow:0 4px 24px rgba(0,0,0,.3)}
+.ri{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.ri svg{width:18px;height:18px;fill:none;stroke-width:2}
+.rc h3{font-size:14px;font-weight:700;color:var(--text)}
+.rc p{font-size:12px;color:var(--text3);flex:1;line-height:1.5}
+
+/* PDF OVERLAY */
+#pdf-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:14px}
+#pdf-overlay.show{display:flex}
+#pdf-overlay p{color:#fff;font-size:15px;font-weight:600}
+.pdf-spinner{width:44px;height:44px;border:3px solid rgba(255,255,255,.1);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* PROGRESS */
+.pr-bar{width:100%;height:4px;border-radius:4px;background:var(--border);overflow:hidden;margin-top:4px}
+.pr-fill{height:100%;border-radius:4px;background:var(--accent);transition:width .4s}
+
+@media(max-width:900px){.sdb{display:none}.kg{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.layout{padding:16px}.hdr-in{padding:0 16px}.kg{grid-template-columns:1fr}.hdr-title{display:none}}
+</style>
+</head>
+<body>
+
+<div id="pdf-overlay"><div class="pdf-spinner"></div><p id="pdf-status">Gerando PDF...</p></div>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-in">
+    <div class="hdr-logo">
+      <div class="hdr-emblem">
+        <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 6l3 1m0 0l-3 9a5 5 0 006 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5 5 0 006 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
+      </div>
+      <div>
+        <div class="hdr-brand" style="font-size:17px;font-weight:800;letter-spacing:-.02em">Subprocuradoria Contenciosa</div>
+      </div>
+    </div>
+    <div class="hdr-divider"></div>
+    <div class="hdr-title">Controle de Prazos Processuais</div>
+    <div class="hdr-actions">
+      <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3)">
+        <div class="online-dot"></div>
+        <span>Sistema ativo</span>
+      </div>
+      <button class="hdr-pill" id="darkToggle" onclick="toggleDark()">
+        <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <span>Tema</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+
+<!-- SIDEBAR -->
+<aside class="sdb">
+  <nav class="sdb-nav">
+    <div class="sdb-section">Painel</div>
+    <button class="ni active" onclick="switchTab(event,'dashboard')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </button>
+    <button class="ni" onclick="switchTab(event,'import')">
+      <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+      Importar
+    </button>
+    <div class="sdb-section">Processos</div>
+    <button class="ni" onclick="switchTab(event,'criticos')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Criticos
+      <span class="nbadge" id="nb-c">38</span>
+    </button>
+    <button class="ni" onclick="switchTab(event,'vencidos')">
+      <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      Vencidos
+      <span class="nbadge" id="nb-v">376</span>
+    </button>
+    <div class="sdb-section">Ferramentas</div>
+    <button class="ni" onclick="switchTab(event,'relatorios')">
+      <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      Relatorios
+    </button>
+    <button class="ni" onclick="switchTab(event,'equipe')">
+      <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Equipe
+    </button>
+  </nav>
+</aside>
+
+<main class="main">
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="tab-content active">
+  <div class="ph">
+    <h2>Dashboard</h2>
+    <p>Visao geral dos prazos processuais · 17/04/2026</p>
+  </div>
+  <div class="kg">
+    <div class="kc blue">
+      <div class="kc-glow"></div>
+      <div class="kc-top">
+        <span class="kc-lbl">Total</span>
+        <div class="kc-ico"><svg viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></div>
+      </div>
+      <div class="kc-val" id="kpi-total">938</div>
+      <div class="kc-sub">processos com prazo</div>
+      <div class="kc-bar"></div>
+    </div>
+    <div class="kc red">
+      <div class="kc-glow"></div>
+      <div class="kc-top">
+        <span class="kc-lbl">Vencidos</span>
+        <div class="kc-ico"><svg viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+      </div>
+      <div class="kc-val" id="kpi-vencidos">376</div>
+      <div class="kc-sub">nao cumpridos</div>
+      <div class="kc-bar"></div>
+    </div>
+    <div class="kc amber">
+      <div class="kc-glow"></div>
+      <div class="kc-top">
+        <span class="kc-lbl">Proximos 7 dias</span>
+        <div class="kc-ico"><svg viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+      </div>
+      <div class="kc-val" id="kpi-proximos">38</div>
+      <div class="kc-sub">atencao urgente</div>
+      <div class="kc-bar"></div>
+    </div>
+    <div class="kc green">
+      <div class="kc-glow"></div>
+      <div class="kc-top">
+        <span class="kc-lbl">Cumpridos</span>
+        <div class="kc-ico"><svg viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+      </div>
+      <div class="kc-val" id="kpi-cumpridos">391</div>
+      <div class="kc-sub" id="kpi-taxa-label">41.7% de taxa</div>
+      <div class="kc-bar"></div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 320px;gap:16px">
+    <div class="card" style="margin-bottom:0">
+      <div class="ch">
+        <div><div class="ct">Performance por Responsavel</div><div class="cs">Taxa de cumprimento de prazos</div></div>
+      </div>
+      <div id="chart-wrap" style="position:relative;min-height:200px"><canvas id="chart-performance"></canvas></div>
+      <div style="margin-top:16px;overflow-x:auto">
+        <table>
+          <thead><tr><th>Responsavel</th><th>Total</th><th>Cumpridos</th><th>Taxa</th><th>Criticos</th></tr></thead>
+          <tbody id="tbody-performance"><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text3)">Carregando...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div class="ch">
+        <div><div class="ct">Proximos a Vencer</div><div class="cs">Ate 7 dias</div></div>
+        <button class="va" onclick="switchTabByName('criticos')">Ver todos</button>
+      </div>
+      <div id="prazos-recentes"><div style="color:var(--text3);font-size:13px">Carregando...</div></div>
+    </div>
+  </div>
+  <div class="ab alert" style="margin-top:16px">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    Dados carregados da planilha importada. Importe uma nova versao para atualizar os numeros.
+  </div>
+</div>
+
+<!-- IMPORTAR -->
+<div id="import" class="tab-content">
+  <div class="ph"><h2>Importar Planilha</h2><p>Carregue o arquivo XLSX com os prazos processuais.</p></div>
+  <div class="card" style="max-width:540px">
+    <form id="importForm">
+      <div class="fg"><label class="fl">Arquivo XLSX</label>
+        <input type="file" id="file" name="file" accept=".xlsx" required class="fi" style="padding:7px 12px">
+        <p style="font-size:11px;color:var(--text3);margin-top:6px">Formato: Prazos_2026_Contencioso.xlsx</p>
+      </div>
+      <button type="submit" class="btn btn-blue" style="width:100%">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+        Importar Planilha
+      </button>
+    </form>
+    <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">
+      <div class="ct" style="margin-bottom:12px">Ultima importacao</div>
+      <ul id="import-history"><li style="color:var(--text3);font-size:13px">Nenhuma planilha importada ainda.</li></ul>
+      <div id="import-diff" style="display:none;margin-top:10px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CRITICOS -->
+<div id="criticos" class="tab-content">
+  <div class="ph"><h2>Criticos — 7 Dias</h2><p>Processos com prazo vencendo nos proximos 7 dias, nao cumpridos.</p></div>
+  <div class="alert aa" style="justify-content:space-between">
+    <span style="display:flex;align-items:center;gap:8px">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <strong><span id="count-proximos-vencer">38</span> processos</strong> vencem nos proximos 7 dias
+    </span>
+    <button class="btn btn-amber" onclick="alertarTodosProximos()">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.99 1.18 2 2 0 012.98 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
+      Alertar Todos
+    </button>
+  </div>
+  <div class="fb"><div class="sw"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input id="filtro-critico" type="text" placeholder="Buscar processo, responsavel ou parte..."></div><select id="resp-critico" class="fsel"><option value="">Todos responsaveis</option><option value="AMBIENTAL">Ambiental</option><option value="BEATRIZ">Beatriz</option><option value="COMCEP">Comcep</option><option value="DISTRIBUIR">Distribuir</option><option value="ERICA">Erica</option><option value="FISCAL">Fiscal</option><option value="GECILENE">Gecilene</option><option value="JEFFERSON">Jefferson</option><option value="KAMILA">Kamila</option><option value="KARYTHA">Karytha</option><option value="LEONARDO">Leonardo</option><option value="MAURICIO">Mauricio</option><option value="MIRTON">Mirton</option><option value="REGIA">Regia</option><option value="YOUSSEF">Youssef</option></select><select id="vara-critico" class="fsel"><option value="">Todas as varas</option><option value="10ª Vara Cível">10ª Vara Cível</option><option value="11ª Turma/Gab">11ª Turma/Gab</option><option value="11ª Turma/Gab. 33 - DESEMBARGADOR FEDERA">11ª Turma/Gab. 33 - DESEMBARGADOR FEDERA</option><option value="12ª Turma/Gab. 36 - DESEMBARGADORA FEDER">12ª Turma/Gab. 36 - DESEMBARGADORA FEDER</option><option value="1ª Câmara Especial">1ª Câmara Especial</option><option value="1ª Câmara Especial/Gabinete Des. Gilbert">1ª Câmara Especial/Gabinete Des. Gilbert</option><option value="1ª Vara Cível">1ª Vara Cível</option><option value="1ª Vara Federal Cível">1ª Vara Federal Cível</option><option value="1ª Vara Federal Cível da SJRO">1ª Vara Federal Cível da SJRO</option><option value="1ª Vara de Fazenda Pública">1ª Vara de Fazenda Pública</option><option value="1ª Vara de Fazenda e Saúde Pública">1ª Vara de Fazenda e Saúde Pública</option><option value="2ª Câmara Especial">2ª Câmara Especial</option><option value="2ª Câmara Especial/Gabinete Titularidade">2ª Câmara Especial/Gabinete Titularidade</option><option value="2ª Vara Federal">2ª Vara Federal</option><option value="2ª Vara Federal Cível">2ª Vara Federal Cível</option><option value="2ª Vara Federal Cível da SJRO">2ª Vara Federal Cível da SJRO</option><option value="2ª Vara de Fazenda e Saúde Pública">2ª Vara de Fazenda e Saúde Pública</option><option value="3ª Vara Cível">3ª Vara Cível</option><option value="4ª Vara Cível">4ª Vara Cível</option><option value="4ª Vara Federal de Juizado Especial Cíve">4ª Vara Federal de Juizado Especial Cíve</option><option value="5ª Turma/Gab. 13 - DESEMBARGADOR FEDERAL">5ª Turma/Gab. 13 - DESEMBARGADOR FEDERAL</option><option value="5ª Turma/Gab. 15 - DESEMBARGADOR FEDERAL">5ª Turma/Gab. 15 - DESEMBARGADOR FEDERAL</option><option value="5ª Vara Cível">5ª Vara Cível</option><option value="6ª Turma/Gab">6ª Turma/Gab</option><option value="6ª Turma/Gab. 16 - DESEMBARGADOR FEDERAL">6ª Turma/Gab. 16 - DESEMBARGADOR FEDERAL</option><option value="6ª Vara Federal">6ª Vara Federal</option><option value="6ª Vara Federal de Juizado Especial Cíve">6ª Vara Federal de Juizado Especial Cíve</option><option value="7ª Vara Cível">7ª Vara Cível</option><option value="8ª Vara Cível">8ª Vara Cível</option><option value="9ª Vara Cível">9ª Vara Cível</option><option value="Cerejeiras - 2ª Vara Genérica">Cerejeiras - 2ª Vara Genérica</option><option value="EXECUÇÃO FISCAL">EXECUÇÃO FISCAL</option><option value="Gabinete Des. Gilberto Barbosa">Gabinete Des. Gilberto Barbosa</option><option value="Gabinete Des. Miguel Monico">Gabinete Des. Miguel Monico</option><option value="Ji-Paraná - 5ª Vara Cível">Ji-Paraná - 5ª Vara Cível</option><option value="Juizado Especial Cível e Criminal Adjunt">Juizado Especial Cível e Criminal Adjunt</option><option value="Presidência do TJRO">Presidência do TJRO</option><option value="STJ">STJ</option><option value="Vice Presidência/Gab. Vice Presidência">Vice Presidência/Gab. Vice Presidência</option></select><button onclick="exportarXlsx('critico')" class="xbtn"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Excel</button></div>
+  <div class="tw"><table>
+    <thead><tr><th>Processo</th><th>Parte</th><th>Responsavel</th><th>Prazo</th><th>Vence em</th><th>Vara</th><th>Acoes</th></tr></thead>
+    <tbody id="tbody-proximos-vencer"><tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text3)">Carregando...</td></tr></tbody>
+  </table></div>
+  <div class="pbar" id="pag-criticos"></div>
+</div>
+
+<!-- VENCIDOS -->
+<div id="vencidos" class="tab-content">
+  <div class="ph"><h2>Processos Vencidos</h2><p>Processos com prazo ja expirado e nao cumpridos.</p></div>
+  <div class="alert ar" style="justify-content:space-between">
+    <span style="display:flex;align-items:center;gap:8px">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      <strong><span id="count-vencidos">376</span> processos</strong> com prazo vencido aguardam providencias
+    </span>
+    <button class="btn btn-red" onclick="alertarTodosVencidos()">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.99 1.18 2 2 0 012.98 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
+      Alertar Todos
+    </button>
+  </div>
+  <div class="fb"><div class="sw"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input id="filtro-vencido" type="text" placeholder="Buscar processo, responsavel ou parte..."></div><select id="resp-vencido" class="fsel"><option value="">Todos responsaveis</option><option value="AMBIENTAL">Ambiental</option><option value="BEATRIZ">Beatriz</option><option value="COMCEP">Comcep</option><option value="DISTRIBUIR">Distribuir</option><option value="ERICA">Erica</option><option value="FISCAL">Fiscal</option><option value="GECILENE">Gecilene</option><option value="JEFFERSON">Jefferson</option><option value="KAMILA">Kamila</option><option value="KARYTHA">Karytha</option><option value="LEONARDO">Leonardo</option><option value="MAURICIO">Mauricio</option><option value="MIRTON">Mirton</option><option value="REGIA">Regia</option><option value="YOUSSEF">Youssef</option></select><select id="vara-vencido" class="fsel"><option value="">Todas as varas</option><option value="10ª Vara Cível">10ª Vara Cível</option><option value="11ª Turma/Gab">11ª Turma/Gab</option><option value="11ª Turma/Gab. 33 - DESEMBARGADOR FEDERA">11ª Turma/Gab. 33 - DESEMBARGADOR FEDERA</option><option value="12ª Turma/Gab. 36 - DESEMBARGADORA FEDER">12ª Turma/Gab. 36 - DESEMBARGADORA FEDER</option><option value="1ª Câmara Especial">1ª Câmara Especial</option><option value="1ª Câmara Especial/Gabinete Des. Gilbert">1ª Câmara Especial/Gabinete Des. Gilbert</option><option value="1ª Vara Cível">1ª Vara Cível</option><option value="1ª Vara Federal Cível">1ª Vara Federal Cível</option><option value="1ª Vara Federal Cível da SJRO">1ª Vara Federal Cível da SJRO</option><option value="1ª Vara de Fazenda Pública">1ª Vara de Fazenda Pública</option><option value="1ª Vara de Fazenda e Saúde Pública">1ª Vara de Fazenda e Saúde Pública</option><option value="2ª Câmara Especial">2ª Câmara Especial</option><option value="2ª Câmara Especial/Gabinete Titularidade">2ª Câmara Especial/Gabinete Titularidade</option><option value="2ª Vara Federal">2ª Vara Federal</option><option value="2ª Vara Federal Cível">2ª Vara Federal Cível</option><option value="2ª Vara Federal Cível da SJRO">2ª Vara Federal Cível da SJRO</option><option value="2ª Vara de Fazenda e Saúde Pública">2ª Vara de Fazenda e Saúde Pública</option><option value="3ª Vara Cível">3ª Vara Cível</option><option value="4ª Vara Cível">4ª Vara Cível</option><option value="4ª Vara Federal de Juizado Especial Cíve">4ª Vara Federal de Juizado Especial Cíve</option><option value="5ª Turma/Gab. 13 - DESEMBARGADOR FEDERAL">5ª Turma/Gab. 13 - DESEMBARGADOR FEDERAL</option><option value="5ª Turma/Gab. 15 - DESEMBARGADOR FEDERAL">5ª Turma/Gab. 15 - DESEMBARGADOR FEDERAL</option><option value="5ª Vara Cível">5ª Vara Cível</option><option value="6ª Turma/Gab">6ª Turma/Gab</option><option value="6ª Turma/Gab. 16 - DESEMBARGADOR FEDERAL">6ª Turma/Gab. 16 - DESEMBARGADOR FEDERAL</option><option value="6ª Vara Federal">6ª Vara Federal</option><option value="6ª Vara Federal de Juizado Especial Cíve">6ª Vara Federal de Juizado Especial Cíve</option><option value="7ª Vara Cível">7ª Vara Cível</option><option value="8ª Vara Cível">8ª Vara Cível</option><option value="9ª Vara Cível">9ª Vara Cível</option><option value="Cerejeiras - 2ª Vara Genérica">Cerejeiras - 2ª Vara Genérica</option><option value="EXECUÇÃO FISCAL">EXECUÇÃO FISCAL</option><option value="Gabinete Des. Gilberto Barbosa">Gabinete Des. Gilberto Barbosa</option><option value="Gabinete Des. Miguel Monico">Gabinete Des. Miguel Monico</option><option value="Ji-Paraná - 5ª Vara Cível">Ji-Paraná - 5ª Vara Cível</option><option value="Juizado Especial Cível e Criminal Adjunt">Juizado Especial Cível e Criminal Adjunt</option><option value="Presidência do TJRO">Presidência do TJRO</option><option value="STJ">STJ</option><option value="Vice Presidência/Gab. Vice Presidência">Vice Presidência/Gab. Vice Presidência</option></select><button onclick="exportarXlsx('vencido')" class="xbtn"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Excel</button></div>
+  <div class="tw"><table>
+    <thead><tr><th>Processo</th><th>Parte</th><th>Responsavel</th><th>Prazo</th><th>Dias Vencido</th><th>Vara</th><th>Acoes</th></tr></thead>
+    <tbody id="tbody-vencidos"><tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text3)">Carregando...</td></tr></tbody>
+  </table></div>
+  <div class="pbar" id="pag-vencidos"></div>
+</div>
+
+<!-- RELATORIOS -->
+<div id="relatorios" class="tab-content">
+  <div class="ph"><h2>Relatorios</h2><p>Exporte relatorios em PDF para compartilhamento e analise.</p></div>
+  <div class="rg">
+    <div class="rc"><div class="ri" style="background:rgba(59,127,255,.12)"><svg viewBox="0 0 24 24" stroke="var(--accent2)"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div><h3>Relatorio Semanal</h3><p>Resumo de prazos cumpridos, vencidos e proximos da semana.</p><button class="btn btn-blue" onclick="generateReport('semanal')">Gerar PDF</button></div>
+    <div class="rc"><div class="ri" style="background:var(--green-dim)"><svg viewBox="0 0 24 24" stroke="var(--green)"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></div><h3>Relatorio Mensal</h3><p>Analise detalhada do mes com performance por procurador.</p><button class="btn btn-blue" onclick="generateReport('mensal')">Gerar PDF</button></div>
+    <div class="rc"><div class="ri" style="background:var(--amber-dim)"><svg viewBox="0 0 24 24" stroke="var(--amber)"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg></div><h3>Relatorio Individual</h3><p>Performance de um responsavel especifico.</p><select id="select-relatorio-individual" class="fi" style="margin-bottom:4px"><option value="">Selecione...</option><option>Jefferson</option><option>Mirton</option><option>Beatriz</option><option>Leonardo</option><option>Kamila</option><option>Gecilene</option><option>Mauricio</option></select><button class="btn btn-blue" onclick="generateReport('individual')">Gerar PDF</button></div>
+    <div class="rc"><div class="ri" style="background:var(--red-dim)"><svg viewBox="0 0 24 24" stroke="var(--red)"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><h3>Relatorio Criticos</h3><p>Todos os vencidos e proximos de vencer.</p><button class="btn btn-blue" onclick="generateReport('criticos')">Gerar PDF</button></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">Historico</div></div>
+    <div class="li"><div><strong style="font-size:13px">Relatorio Semanal — Semana 15</strong><div style="font-size:11px;color:var(--text3);margin-top:2px">Gerado em 15/04/2026</div></div><button class="btn btn-ghost" style="font-size:12px;padding:6px 12px">Baixar</button></div>
+    <div class="li"><div><strong style="font-size:13px">Relatorio Mensal — Marco/2026</strong><div style="font-size:11px;color:var(--text3);margin-top:2px">Gerado em 01/04/2026</div></div><button class="btn btn-ghost" style="font-size:12px;padding:6px 12px">Baixar</button></div>
+  </div>
+</div>
+
+<!-- EQUIPE -->
+<div id="equipe" class="tab-content">
+  <div class="ph"><h2>Equipe</h2><p>Gerencie os membros e seus contatos para alertas via WhatsApp.</p></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="card">
+      <div class="ch"><div class="ct" id="equipe-form-titulo">Novo Membro</div></div>
+      <input type="hidden" id="equipe-edit-id" value="">
+      <div class="fg"><label class="fl">Nome</label><input type="text" id="eq-nome" placeholder="Ex: Jefferson" class="fi"></div>
+      <div class="fg"><label class="fl">Funcao</label><select id="eq-funcao" class="fi"><option>Procurador(a)</option><option>Procurador(a)-Adjunto(a)</option><option>Assessor(a) Juridico(a)</option><option>Estagiario(a)</option></select></div>
+      <div class="fg"><label class="fl">E-mail</label><input type="email" id="eq-email" placeholder="jefferson@pgm.porto-velho.br" class="fi"></div>
+      <div class="fg"><label class="fl">WhatsApp</label><input type="tel" id="eq-whatsapp" placeholder="+5569999999999" class="fi"><p style="font-size:11px;color:var(--text3);margin-top:5px">Formato: +55 + DDD + numero</p></div>
+      <div style="display:flex;gap:8px"><button onclick="equipe_salvar()" class="btn btn-blue" style="flex:1">Salvar Membro</button><button id="equipe-btn-cancelar" onclick="equipe_cancelarEdicao()" class="btn btn-ghost" style="display:none">Cancelar</button></div>
+    </div>
+    <div class="card"><div class="ch"><div class="ct">Membros</div></div><ul id="equipe-lista" style="list-style:none"><li style="color:var(--text3);font-size:13px">Nenhum membro ainda.</li></ul></div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<footer style="text-align:center;padding:18px;font-size:11px;color:var(--text3);border-top:1px solid var(--border)">
+  Procuradoria-Geral do Municipio de Porto Velho · Subprocuradoria Contenciosa · 2026 · Painel protegido por token
+</footer>
+
+<script>
+
+
+
+        /* ── Tabs ── */
+        /* ── Modo Noturno ── */
+        // Restaurar preferência salva
+        if (localStorage.getItem('pgm-dark') === '1') {
+            document.body.classList.add('dark-mode');
+            document.addEventListener('DOMContentLoaded', () => {
+                const btn = document.getElementById('darkToggle');
+                if (btn) btn.textContent = '☀️ Modo Claro';
+            });
+        }
+
+        /* ── PDF Real ── */
+        async function generateReport(type) {
+            const overlay  = document.getElementById('pdf-overlay');
+            const statusEl = document.getElementById('pdf-status');
+            overlay.classList.add('show');
+            statusEl.textContent = 'Gerando PDF...';
+            try {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+                const pageW = pdf.internal.pageSize.getWidth();
+                const pageH = pdf.internal.pageSize.getHeight();
+                const margin = 14;
+                const hoje = new Date().toLocaleDateString('pt-BR');
+
+                function cabecalho(titulo) {
+                    pdf.setFillColor(8,12,20);
+                    pdf.rect(0,0,pageW,26,'F');
+                    pdf.setTextColor(255,255,255);
+                    pdf.setFontSize(12); pdf.setFont('helvetica','bold');
+                    pdf.text('Subprocuradoria Contenciosa - PGM Porto Velho', margin, 10);
+                    pdf.setFontSize(9); pdf.setFont('helvetica','normal');
+                    pdf.text(titulo + ' - Gerado em ' + hoje, margin, 19);
+                    return 32;
+                }
+
+                function rodape() {
+                    const n = pdf.internal.getNumberOfPages();
+                    for (let i=1;i<=n;i++) {
+                        pdf.setPage(i);
+                        pdf.setFontSize(7); pdf.setTextColor(150,150,170);
+                        pdf.text('Subprocuradoria Contenciosa - PGM Porto Velho - Uso interno', margin, pageH-5);
+                        pdf.text('Pag. '+i+'/'+n, pageW-margin, pageH-5, {align:'right'});
+                    }
+                }
+
+                const statsKpis = {
+                    total:     document.getElementById('kpi-total')?.textContent     || '938',
+                    vencidos:  document.getElementById('kpi-vencidos')?.textContent  || VENCIDOS_DATA.length,
+                    proximos:  document.getElementById('kpi-proximos')?.textContent  || PROXIMOS7.length,
+                    cumpridos: document.getElementById('kpi-cumpridos')?.textContent || '391',
+                    taxa:      (document.getElementById('kpi-taxa-label')?.textContent || '41.7% de taxa').replace('% de taxa','') + '%',
+                };
+
+                const tituloRel = type === 'semanal' ? 'Relatorio Semanal'
+                        : type === 'mensal' ? 'Relatorio Mensal'
+                        : type === 'individual' ? ('Relatorio Individual')
+                        : 'Relatorio de Criticos';
+                    let y = cabecalho(tituloRel);
+
+                if (type === 'semanal' || type === 'mensal') {
+                    pdf.autoTable({ startY:y,
+                        head:[['Indicador','Valor']],
+                        body:[
+                            ['Total de processos', statsKpis.total],
+                            ['Vencidos (nao cumpridos)', statsKpis.vencidos],
+                            ['Vencendo nos proximos 7 dias', statsKpis.proximos],
+                            ['Cumpridos', statsKpis.cumpridos],
+                            ['Taxa de cumprimento', statsKpis.taxa],
+                        ],
+                        theme:'striped',
+                        headStyles:{fillColor:[8,12,20],textColor:255,fontStyle:'bold',fontSize:9},
+                        bodyStyles:{fontSize:9}, margin:{left:margin,right:margin}
+                    });
+                    y = pdf.lastAutoTable.finalY + 8;
+
+                    pdf.setFontSize(10); pdf.setFont('helvetica','bold'); pdf.setTextColor(180,100,0);
+                    pdf.text('Vencendo nos Proximos 7 Dias (' + PROXIMOS7.length + ')', margin, y); y += 4;
+                    pdf.autoTable({ startY:y,
+                        head:[['Processo','Parte','Responsavel','Prazo','Vence em']],
+                        body:PROXIMOS7.map(r => { const d=r.dias||0; return [r.proc||'',r.parte||'',r.resp||'',r.prazo||'',d===0?'Hoje':d===1?'Amanha':d+' dias']; }),
+                        theme:'striped',
+                        headStyles:{fillColor:[180,100,0],textColor:255,fontStyle:'bold',fontSize:8},
+                        bodyStyles:{fontSize:7}, margin:{left:margin,right:margin}
+                    });
+
+                    if (type === 'mensal') {
+                        y = pdf.lastAutoTable.finalY + 8;
+                        pdf.setFontSize(10); pdf.setFont('helvetica','bold'); pdf.setTextColor(200,30,30);
+                        pdf.text('Prazos Vencidos (' + VENCIDOS_DATA.length + ')', margin, y); y += 4;
+                        pdf.autoTable({ startY:y,
+                            head:[['Processo','Parte','Responsavel','Prazo','Dias']],
+                            body:VENCIDOS_DATA.map(r => [r.proc||'',r.parte||'',r.resp||'',r.prazo||'',r.dias+'d']),
+                            theme:'striped',
+                            headStyles:{fillColor:[200,30,30],textColor:255,fontStyle:'bold',fontSize:8},
+                            bodyStyles:{fontSize:7}, margin:{left:margin,right:margin}
+                        });
+                    }
+
+                } else if (type === 'individual') {
+                    const respEl = document.getElementById('select-relatorio-individual');
+                    const resp = respEl ? respEl.value.trim() : '';
+                    if (!resp) { alert('Selecione um responsavel.'); overlay.classList.remove('show'); return; }
+
+                    statusEl.textContent = 'Buscando dados...';
+
+                    // Buscar performance e cumpridos direto da API
+                    var perfDados = { total:0, cumpridos:0, taxa:0, criticos:0 };
+                    var meusCumpridos = [];
+                    try {
+                        var token = getToken();
+                        var dashRes = await fetch('/api/dashboard?token=' + token);
+                        if (dashRes.ok) {
+                            var dashJson = await dashRes.json();
+                            var perfList = dashJson.performance || [];
+                            var found = perfList.find(function(p) {
+                                return p.responsavel && p.responsavel.toUpperCase() === resp.toUpperCase();
+                            });
+                            if (found) perfDados = found;
+                        }
+                        var cumprRes = await fetch('/api/cumpridos?responsavel=' + encodeURIComponent(resp) + '&token=' + token);
+                        if (cumprRes.ok) {
+                            var cumprJson = await cumprRes.json();
+                            meusCumpridos = cumprJson.cumpridos || [];
+                        }
+                    } catch(e) { console.warn('Erro ao buscar dados:', e); }
+
+                    var meusV = VENCIDOS_DATA.filter(function(r2){
+                        return (r2.resp||r2.responsavel||'').toUpperCase() === resp.toUpperCase();
+                    });
+                    var meusP = PROXIMOS7.filter(function(r2){
+                        return (r2.resp||r2.responsavel||'').toUpperCase() === resp.toUpperCase();
+                    });
+
+                    statusEl.textContent = 'Gerando PDF...';
+
+                    // Nome do responsavel abaixo do cabecalho
+                    pdf.setFontSize(14); pdf.setFont('helvetica','bold');
+                    pdf.setTextColor(20,30,60);
+                    pdf.text('Responsavel: ' + resp, margin, y);
+                    y += 10;
+
+                    // 4 cards de indicadores
+                    const cardW2 = (pageW - margin*2 - 9) / 4;
+                    const taxaC = perfDados.taxa >= 60 ? [5,122,85] : perfDados.taxa >= 40 ? [194,120,3] : [224,36,36];
+                    [
+                        { label:'TOTAL',     val: String(perfDados.total||0),                color:[26,86,219]  },
+                        { label:'CUMPRIDOS', val: String(perfDados.cumpridos||meusCumpridos.length||0), color:[5,122,85]   },
+                        { label:'TAXA',      val: (perfDados.taxa||0).toFixed(1)+'%',         color:taxaC        },
+                        { label:'CRITICOS',  val: String(perfDados.criticos||meusV.length||0), color:[224,36,36] },
+                    ].forEach(function(card, ci) {
+                        const cx = margin + ci * (cardW2 + 3);
+                        pdf.setFillColor(240,244,252);
+                        pdf.rect(cx, y, cardW2, 22, 'F');
+                        pdf.setFillColor(card.color[0], card.color[1], card.color[2]);
+                        pdf.rect(cx, y, cardW2, 3, 'F');
+                        pdf.setFontSize(18); pdf.setFont('helvetica','bold');
+                        pdf.setTextColor(card.color[0], card.color[1], card.color[2]);
+                        pdf.text(card.val, cx + cardW2/2, y + 15, {align:'center'});
+                        pdf.setFontSize(7); pdf.setFont('helvetica','normal');
+                        pdf.setTextColor(100,116,139);
+                        pdf.text(card.label, cx + cardW2/2, y + 20, {align:'center'});
+                    });
+                    y += 28;
+
+                    // Barra de progresso da taxa
+                    const taxa2 = perfDados.taxa || 0;
+                    pdf.setFillColor(220,226,238);
+                    pdf.rect(margin, y, pageW-margin*2, 5, 'F');
+                    pdf.setFillColor(taxaC[0], taxaC[1], taxaC[2]);
+                    pdf.rect(margin, y, (pageW-margin*2) * Math.min(taxa2/100, 1), 5, 'F');
+                    pdf.setFontSize(7); pdf.setTextColor(100,116,139);
+                    pdf.text('Taxa de cumprimento: ' + taxa2.toFixed(1) + '%', margin, y+9);
+                    y += 14;
+
+                    // CUMPRIDOS (verde)
+                    if (meusCumpridos.length) {
+                        pdf.setFontSize(10); pdf.setFont('helvetica','bold');
+                        pdf.setTextColor(5,122,85);
+                        pdf.text('Processos Cumpridos (' + meusCumpridos.length + ')', margin, y); y += 4;
+                        pdf.autoTable({ startY:y,
+                            head:[['Processo','Parte','Prazo','Vara']],
+                            body: meusCumpridos.map(function(r2){
+                                return [r2.processo||'', (r2.parte||'').slice(0,35), r2.prazo||'', (r2.vara||'').slice(0,25)];
+                            }),
+                            theme:'striped',
+                            headStyles:{fillColor:[5,122,85],textColor:255,fontStyle:'bold',fontSize:8},
+                            bodyStyles:{fontSize:7}, margin:{left:margin,right:margin}
+                        });
+                        y = pdf.lastAutoTable.finalY + 8;
+                    }
+
+                    // PROXIMOS 7 DIAS (amarelo)
+                    if (meusP.length) {
+                        pdf.setFontSize(10); pdf.setFont('helvetica','bold'); pdf.setTextColor(180,100,0);
+                        pdf.text('Vencendo nos Proximos 7 Dias (' + meusP.length + ')', margin, y); y += 4;
+                        pdf.autoTable({ startY:y,
+                            head:[['Processo','Parte','Prazo','Vence em']],
+                            body: meusP.map(function(r2){ var d=r2.dias||0; return [r2.proc||'',( r2.parte||'').slice(0,35),r2.prazo||'',d===0?'Hoje':d+' dias']; }),
+                            theme:'striped',
+                            headStyles:{fillColor:[180,100,0],textColor:255,fontStyle:'bold',fontSize:8},
+                            bodyStyles:{fontSize:7}, margin:{left:margin,right:margin}
+                        });
+                        y = pdf.lastAutoTable.finalY + 8;
+                    }
+
+                    // VENCIDOS (vermelho)
+                    if (meusV.length) {
+                        pdf.setFontSize(10); pdf.setFont('helvetica','bold'); pdf.setTextColor(200,30,30);
+                        pdf.text('Prazos Vencidos (' + meusV.length + ')', margin, y); y += 4;
+                        pdf.autoTable({ startY:y,
+                            head:[['Processo','Parte','Prazo','Dias']],
+                            body: meusV.map(function(r2){ return [r2.proc||'',(r2.parte||'').slice(0,35),r2.prazo||'',r2.dias+'d']; }),
+                            theme:'striped',
+                            headStyles:{fillColor:[200,30,30],textColor:255,fontStyle:'bold',fontSize:8},
+                            bodyStyles:{fontSize:7}, margin:{left:margin,right:margin}
+                        });
+                    }
+
+                    if (!meusCumpridos.length && !meusP.length && !meusV.length) {
+                        pdf.setFontSize(11); pdf.setTextColor(100,116,139);
+                        pdf.text('Nenhum processo encontrado para este responsavel.', margin, y);
+                    }
+
+                    const selOpt   = respEl ? respEl.options[respEl.selectedIndex] : null;
+                    const perfTotal    = parseInt(selOpt ? selOpt.getAttribute('data-total')     : 0) || 0;
+                    const perfCumpr    = parseInt(selOpt ? selOpt.getAttribute('data-cumpridos') : 0) || 0;
+                    const perfTaxa     = parseFloat(selOpt ? selOpt.getAttribute('data-taxa')    : 0) || 0;
+                    const perfCriticos = parseInt(selOpt ? selOpt.getAttribute('data-criticos')  : 0) || 0;
+
+                    statusEl.textContent = 'Buscando dados...';
+
+                    // Buscar cumpridos do responsavel na API
+                    var meusCumpridos = [];
+                    try {
+                        var cr = await fetch('/api/cumpridos?responsavel=' + encodeURIComponent(resp) + '&token=' + getToken());
+                        if (cr.ok) { var cj = await cr.json(); meusCumpridos = cj.cumpridos || []; }
+                    } catch(e) { console.warn('Nao foi possivel buscar cumpridos:', e); }
+
+                    var meusV = VENCIDOS_DATA.filter(function(r2){ return (r2.resp||r2.responsavel||'').toUpperCase() === resp.toUpperCase(); });
+                    var meusP = PROXIMOS7.filter(function(r2){ return (r2.resp||r2.responsavel||'').toUpperCase() === resp.toUpperCase(); });
+
+                    // y ja definido pelo cabecalho() chamado antes do if/else
+                    // Adicionar nome do responsavel abaixo do cabecalho
+                    pdf.setFontSize(13); pdf.setFont('helvetica','bold');
+                    pdf.setTextColor(30,40,80);
+                    pdf.text('Responsavel: ' + resp, margin, y);
+                    y += 8;
+
+                    // Cards de indicadores
+                    const cardW = (pageW - margin*2 - 6) / 4;
+                    const taxaColor = perfTaxa >= 60 ? [5,122,85] : perfTaxa >= 40 ? [194,120,3] : [224,36,36];
+                    const indicadores = [
+                        { label: 'TOTAL',     val: String(perfTotal),           color: [26,86,219] },
+                        { label: 'CUMPRIDOS', val: String(perfCumpr),           color: [5,122,85] },
+                        { label: 'TAXA',      val: perfTaxa.toFixed(1) + '%',   color: taxaColor },
+                        { label: 'CRITICOS',  val: String(perfCriticos),        color: [224,36,36] },
+                    ];
+                    indicadores.forEach(function(card, idx2) {
+                        const cx = margin + idx2 * (cardW + 2);
+                        pdf.setFillColor(245,248,252);
+                        pdf.roundedRect(cx, y, cardW, 22, 2, 2, 'F');
+                        pdf.setFillColor(card.color[0], card.color[1], card.color[2]);
+                        pdf.rect(cx, y, cardW, 3, 'F');
+                        pdf.setFontSize(16); pdf.setFont('helvetica','bold');
+                        pdf.setTextColor(card.color[0], card.color[1], card.color[2]);
+                        pdf.text(card.val, cx + cardW/2, y + 14, {align:'center'});
+                        pdf.setFontSize(7); pdf.setFont('helvetica','normal');
+                        pdf.setTextColor(100,116,139);
+                        pdf.text(card.label, cx + cardW/2, y + 20, {align:'center'});
+                    });
+                    y += 28;
+
+                    // Barra de progresso
+                    pdf.setFillColor(225,230,240);
+                    pdf.rect(margin, y, pageW - margin*2, 5, 'F');
+                    pdf.setFillColor(taxaColor[0], taxaColor[1], taxaColor[2]);
+                    pdf.rect(margin, y, (pageW - margin*2) * Math.min(perfTaxa/100, 1), 5, 'F');
+                    pdf.setFontSize(7); pdf.setTextColor(100,116,139);
+                    pdf.text('Taxa de cumprimento: ' + perfTaxa.toFixed(1) + '%', margin, y + 9);
+                    y += 14;
+
+                    // Secao CUMPRIDOS (em verde)
+                    if (meusCumpridos.length) {
+                        pdf.setFontSize(10); pdf.setFont('helvetica','bold');
+                        pdf.setTextColor(5,122,85);
+                        pdf.text('Processos Cumpridos (' + meusCumpridos.length + ')', margin, y); y += 4;
+                        pdf.autoTable({ startY: y,
+                            head: [['Processo','Parte','Prazo','Vara']],
+                            body: meusCumpridos.map(function(r2){
+                                return [r2.processo||'', r2.parte||'', r2.prazo||'', (r2.vara||'').slice(0,30)];
+                            }),
+                            theme: 'striped',
+                            headStyles: { fillColor:[5,122,85], textColor:255, fontStyle:'bold', fontSize:8 },
+                            bodyStyles: { fontSize:7 },
+                            margin: { left:margin, right:margin }
+                        });
+                        y = pdf.lastAutoTable.finalY + 8;
+                    }
+
+                    // Secao CRITICOS (em amarelo)
+                    if (meusP.length) {
+                        pdf.setFontSize(10); pdf.setFont('helvetica','bold'); pdf.setTextColor(180,100,0);
+                        pdf.text('Vencendo nos Proximos 7 Dias (' + meusP.length + ')', margin, y); y += 4;
+                        pdf.autoTable({ startY: y,
+                            head: [['Processo','Parte','Prazo','Vence em']],
+                            body: meusP.map(function(r2){ var d=r2.dias||0; return [r2.proc||'',r2.parte||'',r2.prazo||'',d===0?'Hoje':d+' dias']; }),
+                            theme: 'striped',
+                            headStyles: { fillColor:[180,100,0], textColor:255, fontStyle:'bold', fontSize:8 },
+                            bodyStyles: { fontSize:7 },
+                            margin: { left:margin, right:margin }
+                        });
+                        y = pdf.lastAutoTable.finalY + 8;
+                    }
+
+                    // Secao VENCIDOS (em vermelho)
+                    if (meusV.length) {
+                        pdf.setFontSize(10); pdf.setFont('helvetica','bold'); pdf.setTextColor(200,30,30);
+                        pdf.text('Prazos Vencidos (' + meusV.length + ')', margin, y); y += 4;
+                        pdf.autoTable({ startY: y,
+                            head: [['Processo','Parte','Prazo','Dias']],
+                            body: meusV.map(function(r2){ return [r2.proc||'',r2.parte||'',r2.prazo||'',r2.dias+'d']; }),
+                            theme: 'striped',
+                            headStyles: { fillColor:[200,30,30], textColor:255, fontStyle:'bold', fontSize:8 },
+                            bodyStyles: { fontSize:7 },
+                            margin: { left:margin, right:margin }
+                        });
+                    }
+
+                    if (!meusCumpridos.length && !meusP.length && !meusV.length) {
+                        pdf.setFontSize(11); pdf.setTextColor(100,116,139);
+                        pdf.text('Nenhum processo encontrado para este responsavel.', margin, y);
+                    }
+                    var meusV = VENCIDOS_DATA.filter(function(r){ return (r.resp||r.responsavel||'').toUpperCase() === resp.toUpperCase(); });
+                    var meusP = PROXIMOS7.filter(function(r){ return (r.resp||r.responsavel||'').toUpperCase() === resp.toUpperCase(); });
+                    pdf.autoTable({ startY:y,
+                        head:[['Indicador','Valor']],
+                        body:[['Responsavel',resp],['Vencidos',meusV.length],['Criticos (7 dias)',meusP.length]],
+                        theme:'striped', headStyles:{fillColor:[8,12,20],textColor:255,fontSize:9},
+                        bodyStyles:{fontSize:9}, margin:{left:margin,right:margin}
+                    });
+                    if (meusP.length) {
+                        y = pdf.lastAutoTable.finalY + 6;
+                        pdf.setFontSize(10); pdf.setFont('helvetica','bold'); pdf.setTextColor(180,100,0);
+                        pdf.text('Vencendo nos Proximos 7 Dias', margin, y); y += 4;
+                        pdf.autoTable({ startY:y,
+                            head:[['Processo','Parte','Prazo','Vence em']],
+                            body:meusP.map(function(r){ var d=r.dias||0; return [r.proc||'',r.parte||'',r.prazo||'',d===0?'Hoje':d+' dias']; }),
+                            theme:'striped', headStyles:{fillColor:[180,100,0],textColor:255,fontSize:8},
+                            bodyStyles:{fontSize:8}, margin:{left:margin,right:margin}
+                        });
+                    }
+                    if (meusV.length) {
+                        y = pdf.lastAutoTable.finalY + 6;
+                        pdf.setFontSize(10); pdf.setFont('helvetica','bold'); pdf.setTextColor(200,30,30);
+                        pdf.text('Prazos Vencidos', margin, y); y += 4;
+                        pdf.autoTable({ startY:y,
+                            head:[['Processo','Parte','Prazo','Dias']],
+                            body:meusV.map(function(r){ return [r.proc||'',r.parte||'',r.prazo||'',r.dias+'d']; }),
+                            theme:'striped', headStyles:{fillColor:[200,30,30],textColor:255,fontSize:8},
+                            bodyStyles:{fontSize:8}, margin:{left:margin,right:margin}
+                        });
+                    }
+
+                } else if (type === 'criticos') {
+                    pdf.setFontSize(10); pdf.setFont('helvetica','bold'); pdf.setTextColor(180,100,0);
+                    pdf.text('Vencendo nos Proximos 7 Dias (' + PROXIMOS7.length + ')', margin, y); y += 4;
+                    pdf.autoTable({ startY:y,
+                        head:[['Processo','Parte','Responsavel','Prazo','Vence em']],
+                        body:PROXIMOS7.map(r => { const d=r.dias||0; return [r.proc||'',r.parte||'',r.resp||'',r.prazo||'',d===0?'Hoje':d===1?'Amanha':d+' dias']; }),
+                        theme:'striped', headStyles:{fillColor:[180,100,0],textColor:255,fontSize:8},
+                        bodyStyles:{fontSize:7}, margin:{left:margin,right:margin}
+                    });
+                    y = pdf.lastAutoTable.finalY + 8;
+                    pdf.setFontSize(10); pdf.setFont('helvetica','bold'); pdf.setTextColor(200,30,30);
+                    pdf.text('Prazos Vencidos (' + VENCIDOS_DATA.length + ')', margin, y); y += 4;
+                    pdf.autoTable({ startY:y,
+                        head:[['Processo','Parte','Responsavel','Prazo','Dias']],
+                        body:VENCIDOS_DATA.map(r => [r.proc||'',r.parte||'',r.resp||'',r.prazo||'',r.dias+'d']),
+                        theme:'striped', headStyles:{fillColor:[200,30,30],textColor:255,fontSize:8},
+                        bodyStyles:{fontSize:7}, margin:{left:margin,right:margin}
+                    });
+                }
+
+                rodape();
+                await new Promise(res => setTimeout(res, 200));
+                pdf.save('PGM_' + type + '_' + hoje.replace(/\//g,'-') + '.pdf');
+
+            } catch(err) {
+                console.error(err);
+                alert('Erro ao gerar PDF: ' + err.message);
+            } finally {
+                overlay.classList.remove('show');
+            }
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // ── Cache de contatos da equipe (evita multiplas chamadas API) ────
+        var _contatosCache = null;
+
+        function limparCacheContatos() { _contatosCache = null; }
+
+        async function carregarContatos() {
+            if (_contatosCache) return _contatosCache;
+            var contatos = {};
+            // 1. API do servidor
+            try {
+                var res = await fetch('/api/equipe?token=' + getToken());
+                if (res.ok) {
+                    var json = await res.json();
+                    (json.membros || []).forEach(function(m) {
+                        if (m.nome && m.whatsapp) contatos[m.nome.toUpperCase()] = m.whatsapp;
+                    });
+                }
+            } catch(e) {}
+            // 2. Complementar com localStorage
+            try {
+                var lista = JSON.parse(localStorage.getItem('pgm_equipe_v1')) || [];
+                lista.forEach(function(m) {
+                    if (m.nome && m.whatsapp && !contatos[m.nome.toUpperCase()]) {
+                        contatos[m.nome.toUpperCase()] = m.whatsapp;
+                    }
+                });
+            } catch(e) {}
+            _contatosCache = contatos;
+            return contatos;
+        }
+
+        function abrirWhatsApp(numero, mensagem) {
+            var num = numero.replace(/[^0-9]/g, '');
+            var url = 'https://wa.me/' + num + '?text=' + encodeURIComponent(mensagem);
+            // Criar link invisivel e simular clique - unica forma garantida
+            var a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('target', '_blank');
+            a.setAttribute('rel', 'noopener noreferrer');
+            a.style.display = 'none';
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(function() { document.body.removeChild(a); }, 500);
+        }
+
+        function _wppModal(responsavel, mensagem) {
+            var old = document.getElementById('_wppM'); if(old) old.remove();
+            var ov = document.createElement('div');
+            ov.id = '_wppM';
+            ov.setAttribute('style', 'position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9998;display:flex;align-items:center;justify-content:center');
+            var box = document.createElement('div');
+            box.setAttribute('style', 'background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:28px;width:340px;max-width:92vw');
+            var tit = document.createElement('p');
+            tit.setAttribute('style', 'font-size:15px;font-weight:700;color:var(--text);margin:0 0 6px');
+            tit.textContent = 'WhatsApp nao cadastrado';
+            var sub = document.createElement('p');
+            sub.setAttribute('style', 'font-size:12px;color:var(--text3);margin:0 0 14px;line-height:1.5');
+            sub.textContent = 'Responsavel: ' + responsavel + '. Cadastre na aba Equipe para salvar.';
+            var inp = document.createElement('input');
+            inp.type = 'tel'; inp.placeholder = '5569987654321';
+            inp.setAttribute('style', 'width:100%;padding:10px;border:1px solid var(--border2);border-radius:8px;background:var(--surface2);color:var(--text);font-size:14px;margin-bottom:14px;box-sizing:border-box;font-family:Inter,sans-serif');
+            var row = document.createElement('div');
+            row.setAttribute('style', 'display:flex;gap:8px');
+            var btnOk = document.createElement('button');
+            btnOk.textContent = 'Abrir WhatsApp';
+            btnOk.setAttribute('style', 'flex:1;padding:10px;background:#25d366;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif');
+            var btnX = document.createElement('button');
+            btnX.textContent = 'Cancelar';
+            btnX.setAttribute('style', 'padding:10px 14px;background:var(--surface2);color:var(--text2);border:1px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer;font-family:Inter,sans-serif');
+            row.appendChild(btnOk); row.appendChild(btnX);
+            box.appendChild(tit); box.appendChild(sub); box.appendChild(inp); box.appendChild(row);
+            ov.appendChild(box); document.body.appendChild(ov);
+            setTimeout(function(){ inp.focus(); }, 30);
+            function fechar(){ ov.remove(); }
+            btnOk.onclick = function() {
+                var num = inp.value.replace(/[^0-9]/g,'');
+                if(num.length < 10){ inp.style.borderColor='var(--red)'; inp.focus(); return; }
+                if(!_contatosCache) _contatosCache={};
+                _contatosCache[responsavel.toUpperCase()] = num;
+                var url = 'https://wa.me/' + num + '?text=' + encodeURIComponent(mensagem);
+                fechar();
+                window.open(url, '_blank', 'noopener,noreferrer') || (window.location.href = url);
+            };
+            btnX.onclick  = fechar;
+            inp.onkeydown = function(e){ if(e.key==='Enter') enviar(); if(e.key==='Escape') fechar(); };
+            ov.onclick    = function(e){ if(e.target===ov) fechar(); };
+        }
+
+        function enviarAlerta(processo, responsavel, prazo, tipo) {
+            var resp = (responsavel||'').trim().toUpperCase();
+            var msg  = montarMensagem(processo, responsavel, prazo, tipo);
+            var numero = null;
+
+            // 1. Cache em memoria (ja carregado pelo equipe_renderizar)
+            if (_contatosCache && _contatosCache[resp]) {
+                numero = _contatosCache[resp];
+                abrirWhatsApp(numero, msg);
+                return;
+            }
+
+            // 2. localStorage (backup local)
+            try {
+                var lista = JSON.parse(localStorage.getItem('pgm_equipe_v1')||'[]');
+                var mb = lista.find(function(m){
+                    return m.nome && m.nome.trim().toUpperCase() === resp;
+                });
+                if (mb && mb.whatsapp) {
+                    numero = mb.whatsapp;
+                    if (!_contatosCache) _contatosCache = {};
+                    _contatosCache[resp] = numero;
+                    abrirWhatsApp(numero, msg);
+                    return;
+                }
+            } catch(e){}
+
+            // 3. Buscar da API em tempo real e abrir modal com o numero preenchido
+            fetch('/api/equipe?token=' + getToken())
+                .then(function(r){ return r.json(); })
+                .then(function(json){
+                    var membros = json.membros || [];
+                    // Popular cache completo
+                    if (!_contatosCache) _contatosCache = {};
+                    membros.forEach(function(m){
+                        if (m.nome && m.whatsapp)
+                            _contatosCache[m.nome.trim().toUpperCase()] = m.whatsapp;
+                    });
+                    // Salvar no localStorage para proximas vezes
+                    try { localStorage.setItem('pgm_equipe_v1', JSON.stringify(membros)); } catch(e){}
+                    // Tentar de novo com cache atualizado
+                    var num2 = _contatosCache[resp] || null;
+                    if (num2) {
+                        abrirWhatsApp(num2, msg);
+                    } else {
+                        _wppModal(responsavel, msg);
+                    }
+                })
+                .catch(function(){
+                    _wppModal(responsavel, msg);
+                });
+        }
+
+        function montarMensagem(processo, responsavel, prazo, tipo) {
+            var emoji = tipo === 'vencido' ? '🔴' : '🟠';
+            var sit   = tipo === 'vencido' ? 'VENCIDO em ' + prazo : 'vencendo em ' + prazo;
+            return emoji + ' *ALERTA DE PRAZO*\n'
+                + 'Subprocuradoria Contenciosa - PGM Porto Velho\n\n'
+                + 'Ola, ' + responsavel + '!\n\n'
+                + 'Processo: *' + processo + '*\n'
+                + 'Situacao: prazo ' + sit + '\n\n'
+                + 'Por favor, tome as providencias necessarias.';
+        }
+
+        
+
+        async function alertarTodosProximos() {
+            var f       = filtroState.critico;
+            var filtrado = filtrarDados(PROXIMOS7, f);
+            if (!filtrado.length) { alert('Nenhum processo encontrado.'); return; }
+            if (!confirm('Abrir WhatsApp para os ' + filtrado.length + ' processos criticos?\nSera aberto um por vez.')) return;
+
+            var contatos = await carregarContatos();
+            var semNumero = [];
+            var idx = 0;
+
+            function enviarProximo() {
+                if (idx >= filtrado.length) {
+                    if (semNumero.length) {
+                        alert('Concluido!\n\nSem numero cadastrado para:\n' + semNumero.join(', ') + '\n\nCadastre na aba Equipe.');
+                    }
+                    return;
+                }
+                var r    = filtrado[idx++];
+                var proc = r.proc || r.processo || '';
+                var resp = r.resp || r.responsavel || '';
+                var prazo = r.prazo || '';
+                var num  = resp ? contatos[resp.toUpperCase()] : null;
+                if (num) {
+                    abrirWhatsApp(num, montarMensagem(proc, resp, prazo, 'proximo'));
+                    setTimeout(enviarProximo, 2000);
+                } else {
+                    if (resp && semNumero.indexOf(resp) < 0) semNumero.push(resp);
+                    enviarProximo();
+                }
+            }
+            enviarProximo();
+        }
+
+        async function alertarTodosVencidos() {
+            var f        = filtroState.vencido;
+            var filtrado = filtrarDados(VENCIDOS_DATA, f);
+            if (!filtrado.length) { alert('Nenhum processo encontrado.'); return; }
+            if (!confirm('Abrir WhatsApp para os ' + filtrado.length + ' processos vencidos?\nSera aberto um por vez.')) return;
+
+            var contatos = await carregarContatos();
+            var semNumero = [];
+            var idx = 0;
+
+            function enviarProximo() {
+                if (idx >= filtrado.length) {
+                    if (semNumero.length) {
+                        alert('Concluido!\n\nSem numero cadastrado para:\n' + semNumero.join(', ') + '\n\nCadastre na aba Equipe.');
+                    }
+                    return;
+                }
+                var r    = filtrado[idx++];
+                var proc = r.proc || r.processo || '';
+                var resp = r.resp || r.responsavel || '';
+                var prazo = r.prazo || '';
+                var num  = resp ? contatos[resp.toUpperCase()] : null;
+                if (num) {
+                    abrirWhatsApp(num, montarMensagem(proc, resp, prazo, 'vencido'));
+                    setTimeout(enviarProximo, 2000);
+                } else {
+                    if (resp && semNumero.indexOf(resp) < 0) semNumero.push(resp);
+                    enviarProximo();
+                }
+            }
+            enviarProximo();
+        }
+
+
+        // ─── Utilitário: pega o token da URL ──────────────────────────────
+        function getToken() {
+            return new URLSearchParams(window.location.search).get('token') || '';
+        }
+
+        // ─── Renderiza KPIs e tabela de performance ───────────────────────
+        // ─── Renderiza tabelas de críticos ────────────────────────────────
+        // ─── Carrega dados da API ao abrir o painel ───────────────────────
+        async function loadDashboard() {
+            var token = getToken();
+            var apiOk = false;
+            try {
+                var dashRes = await fetch('/api/dashboard?token=' + token);
+                var critRes = await fetch('/api/criticos?token=' + token);
+                var dashData = dashRes.ok ? await dashRes.json() : null;
+                var critData = critRes.ok ? await critRes.json() : null;
+                if (dashData && !dashData.sem_dados) {
+                    renderDashboard(dashData);
+                    apiOk = true;
+                    try { localStorage.setItem('pgm_dash_cache', JSON.stringify(dashData)); } catch(e){}
+                }
+                if (critData && !critData.sem_dados) {
+                    renderCriticos(critData);
+                    try { localStorage.setItem('pgm_crit_cache', JSON.stringify(critData)); } catch(e){}
+                }
+            } catch(e) {
+                console.warn('API indisponivel:', e.message);
+            }
+            if (!apiOk) {
+                try {
+                    var dl = JSON.parse(localStorage.getItem('pgm_dash_cache') || 'null');
+                    var cl = JSON.parse(localStorage.getItem('pgm_crit_cache') || 'null');
+                    if (dl) { renderDashboard(dl); } else { renderDashboard({sem_dados:true}); }
+                    if (cl) renderCriticos(cl);
+                } catch(e) { renderDashboard({sem_dados:true}); }
+            }
+        }
+
+
+        // ── DADOS EMBUTIDOS (fallback se API falhar) ──────────────────────
+        var PROXIMOS7 = [];
+        var VENCIDOS_DATA = [];
+        // Dados carregados via API pelo loadDashboard()
+
+        // ── TOKEN ─────────────────────────────────────────────────────────
+        function getToken() {
+            return new URLSearchParams(window.location.search).get('token') || '';
+        }
+
+        // ── PAGINAÇÃO E FILTRO ────────────────────────────────────────────
+        var POR_PAG = 25;
+        var pagState = { critico: 1, vencido: 1 };
+        var filtroState = {
+            critico: { texto: '', resp: '', vara: '' },
+            vencido: { texto: '', resp: '', vara: '' }
+        };
+
+        function filtrarDados(dados, f) {
+            return dados.filter(function(r) {
+                var hay = ((r.proc||r.processo) + (r.parte||'') + (r.resp||r.responsavel||'') + (r.vara||'')).toLowerCase();
+                var txt = f.texto ? hay.indexOf(f.texto.toLowerCase()) >= 0 : true;
+                var resp = f.resp ? (r.resp||r.responsavel||'') === f.resp : true;
+                var vara = f.vara ? (r.vara||'').indexOf(f.vara) >= 0 : true;
+                return txt && resp && vara;
+            });
+        }
+
+        function urgenciaCor(dias, tipo) {
+            return '';
+        }
+
+        function buildBtn(tipo, page, label, disabled, active) {
+            var bg  = active ? 'var(--primary)' : 'var(--card-bg)';
+            var col = active ? 'white' : 'var(--text)';
+            var dis = disabled ? ' disabled' : '';
+            return '<button onclick="mudarPag(\u0022' + tipo + '\u0022,' + page + ')" style="padding:4px 10px;border:1px solid var(--border);border-radius:5px;cursor:pointer;font-size:12px;background:' + bg + ';color:' + col + ';"' + dis + '>' + label + '</button>';
+        }
+
+        function mudarPag(tipo, p) {
+            var dados = tipo === 'critico' ? PROXIMOS7 : VENCIDOS_DATA;
+            var f = filtroState[tipo];
+            var total = filtrarDados(dados, f).length;
+            var maxP = Math.max(1, Math.ceil(total / POR_PAG));
+            pagState[tipo] = Math.min(Math.max(1, p), maxP);
+            renderPagina(tipo);
+        }
+
+        // ── MARCAR COMO CUMPRIDO ──────────────────────────────────────────
+        function confirmarCumprido(proc, btn) {
+            if (!confirm('Marcar processo ' + proc + ' como cumprido?\n\nEle sera removido das listas de pendentes.')) return;
+            var token = getToken();
+            btn.disabled = true;
+            btn.textContent = '...';
+            fetch('/api/cumprido?token=' + token, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ processo: proc })
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(json) {
+                if (json.success) {
+                    PROXIMOS7   = PROXIMOS7.filter(function(x)   { return (x.proc||x.processo) !== proc; });
+                    VENCIDOS_DATA = VENCIDOS_DATA.filter(function(x) { return (x.proc||x.processo) !== proc; });
+                    renderPagina('critico');
+                    renderPagina('vencido');
+                    var tr = btn.closest('tr');
+                    if (tr) {
+                        tr.style.transition = 'opacity .4s';
+                        tr.style.opacity = '0';
+                        setTimeout(function() { tr.remove(); }, 400);
+                    }
+                } else {
+                    alert('Erro: ' + (json.error || 'Falha'));
+                    btn.disabled = false;
+                    btn.textContent = 'v';
+                }
+            })
+            .catch(function() {
+                // Fallback offline: remove so do frontend
+                PROXIMOS7   = PROXIMOS7.filter(function(x)   { return (x.proc||x.processo) !== proc; });
+                VENCIDOS_DATA = VENCIDOS_DATA.filter(function(x) { return (x.proc||x.processo) !== proc; });
+                renderPagina('critico');
+                renderPagina('vencido');
+                var tr = btn.closest('tr');
+                if (tr) { tr.style.opacity='0'; setTimeout(function(){tr.remove();},400); }
+            });
+        }
+
+        // ── EXPORTAR XLSX ─────────────────────────────────────────────────
+        function exportarXlsx(tipo) {
+            var isCritico = tipo === 'critico';
+            var dados = isCritico ? PROXIMOS7 : VENCIDOS_DATA;
+            var f = filtroState[tipo];
+            var filtrado = filtrarDados(dados, f);
+            var cabecalho = ['Processo','Parte Ativa','Responsavel','Prazo', isCritico?'Vence em':'Dias Vencido','Vara'];
+            var linhas = filtrado.map(function(r) {
+                var proc = r.proc||r.processo||'';
+                var dias = r.dias||0;
+                var dLabel = isCritico ? (dias===0?'Hoje':dias===1?'Amanha':dias+' dias') : dias+'d';
+                return [proc, r.parte||'', r.resp||r.responsavel||'', r.prazo||'', dLabel, r.vara||''];
+            });
+            var wb = XLSX.utils.book_new();
+            var ws = XLSX.utils.aoa_to_sheet([cabecalho].concat(linhas));
+            ws['!cols'] = [{wch:24},{wch:40},{wch:16},{wch:12},{wch:10},{wch:36}];
+            XLSX.utils.book_append_sheet(wb, ws, isCritico?'Criticos 7 dias':'Vencidos');
+            var nome = (isCritico ? 'criticos_7dias' : 'vencidos') + '_' + new Date().toLocaleDateString('pt-BR').replace(/\//g,'-') + '.xlsx';
+            XLSX.writeFile(wb, nome);
+        }
+
+        // ── ALERTAS ───────────────────────────────────────────────────────
+
+
+        // ── CHART DE PERFORMANCE ──────────────────────────────────────────
+        var _chartInstance = null;
+        function renderChart(perf) {
+            var canvas = document.getElementById('chart-performance');
+            if (!canvas || !perf || perf.length === 0) return;
+            if (_chartInstance) { _chartInstance.destroy(); }
+            var wrap = document.getElementById('chart-wrap');
+            if (wrap) wrap.style.height = Math.max(200, perf.length * 34) + 'px';
+
+            // Usar criticos se taxa for 0 (fallback sem dados de cumpridos)
+            var usarTaxa = perf.some(function(p){ return (p.taxa||0) > 0; });
+            var labels = perf.map(function(p){ return p.responsavel || p.resp || ''; });
+            var valores = usarTaxa
+                ? perf.map(function(p){ return p.taxa || 0; })
+                : perf.map(function(p){ return p.criticos || 0; });
+            var maxVal = usarTaxa ? 100 : Math.max.apply(null, valores.concat([1]));
+
+            var cores = valores.map(function(v) {
+                if (usarTaxa) {
+                    if (v >= 80) return 'rgba(0,200,117,0.8)';
+                    if (v >= 50) return 'rgba(255,179,0,0.8)';
+                    return 'rgba(255,71,87,0.8)';
+                }
+                // Para criticos: mais criticos = mais vermelho
+                if (v <= 5)  return 'rgba(0,200,117,0.8)';
+                if (v <= 15) return 'rgba(255,179,0,0.8)';
+                return 'rgba(255,71,87,0.8)';
+            });
+
+            var borderCores = cores.map(function(c){ return c.replace('0.8','1'); });
+
+            _chartInstance = new Chart(canvas, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: usarTaxa ? 'Taxa de cumprimento (%)' : 'Processos criticos',
+                        data: valores,
+                        backgroundColor: cores,
+                        borderColor: borderCores,
+                        borderWidth: 1,
+                        borderRadius: 5,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(ctx) {
+                                    return usarTaxa
+                                        ? ctx.parsed.x.toFixed(1) + '% cumprimento'
+                                        : ctx.parsed.x + ' processos criticos';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            min: 0,
+                            max: maxVal,
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: {
+                                color: '#4a607a',
+                                font: { size: 10 },
+                                callback: function(v){ return usarTaxa ? v+'%' : v; }
+                            }
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: {
+                                color: '#8899bb',
+                                font: { size: 11, weight: '500' }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ── FILTROS ───────────────────────────────────────────────────────
+        // ── renderCriticos e renderDashboard (override) ───────────────────
+        var _origRD = renderDashboard;
+        // ── UPLOAD COM DIFF ───────────────────────────────────────────────
+        var _origUpload = null;
+
+        function initUploadMelhorado() {
+            var form = document.getElementById('importForm');
+            if (!form) return;
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                var token = getToken();
+                var fileInput = document.getElementById('file');
+                var btn = this.querySelector('button[type=submit]') || this.querySelector('.btn-primary');
+                if (!fileInput || !fileInput.files[0]) { alert('Selecione um arquivo.'); return; }
+                if (btn) { btn.textContent = 'Importando...'; btn.disabled = true; }
+                var formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+                try {
+                    var res = await fetch('/api/upload?token=' + token, { method:'POST', body:formData });
+                    var json = await res.json();
+                    if (res.ok && json.success) {
+                        var s = json.stats;
+                        var d = json.diff || {};
+                        var difTxt = '';
+                        if (d.total_delta !== undefined) {
+                            var sinal = function(n) { return n > 0 ? '+'+n : n; };
+                            difTxt = '<div style="margin-top:10px;padding:10px;background:#f0fdf4;border-radius:6px;font-size:13px;color:#166534;">'
+                                + '<strong>Comparando com importacao anterior:</strong><br>'
+                                + 'Processos: ' + sinal(d.total_delta) + ' | '
+                                + 'Vencidos: '  + sinal(d.vencidos_delta) + ' | '
+                                + 'Cumpridos: ' + sinal(d.cumpridos_delta)
+                                + '</div>';
+                        }
+                        alert('Planilha importada!\n\n' + s.total + ' processos | ' + s.vencidos + ' vencidos | ' + s.proximos + ' proximos | ' + s.taxa + '% cumpridos');
+                        var diffEl = document.getElementById('import-diff');
+                        if (diffEl && difTxt) { diffEl.innerHTML = difTxt; diffEl.style.display='block'; }
+                        var hist = document.getElementById('import-history');
+                        if (hist) hist.innerHTML = '<li class="list-group-item"><div><strong>' + json.filename + '</strong><br><small style="color:#64748b;">' + new Date().toLocaleDateString('pt-BR') + ' — ' + s.total + ' processos</small></div><span class="badge badge-success">Ok</span></li>';
+                        await loadDashboard();
+                        this.reset();
+                    } else {
+                        alert('Erro: ' + (json.error || 'Falha'));
+                    }
+                } catch(err) {
+                    alert('Erro de rede: ' + err.message);
+                } finally {
+                    if (btn) { btn.textContent = 'Importar Planilha'; btn.disabled = false; }
+                }
+            }, { once: false });
+        }
+
+        // ── EQUIPE COM API REAL ───────────────────────────────────────────
+        async function equipe_carregar_api() {
+            var token = getToken();
+            try {
+                var res = await fetch('/api/equipe?token=' + token);
+                if (!res.ok) throw new Error('API indisponivel');
+                var json = await res.json();
+                return json.membros || [];
+            } catch(e) {
+                try { return JSON.parse(localStorage.getItem('pgm_equipe_v1')) || []; } catch { return []; }
+            }
+        }
+
+        async function equipe_renderizar() {
+            var lista = [];
+            // 1. Tentar API
+            try {
+                var r = await fetch('/api/equipe?token=' + getToken());
+                if (r.ok) { var j = await r.json(); lista = j.membros || []; }
+            } catch(e) {}
+
+            // 2. Mesclar com localStorage - fonte permanente
+            try {
+                var local = JSON.parse(localStorage.getItem('pgm_equipe_v1') || '[]');
+                // Usar localStorage se tiver mais membros (API pode ter perdido dados)
+                if (local.length > lista.length) { lista = local; }
+                // Sincronizar API com localStorage se API estiver vazia
+                if (lista.length > 0 && local.length === 0) {
+                    localStorage.setItem('pgm_equipe_v1', JSON.stringify(lista));
+                }
+            } catch(e) {}
+
+            // 3. Popular cache de contatos para WhatsApp
+            if (!_contatosCache) _contatosCache = {};
+            lista.forEach(function(m) {
+                if (m.nome && m.whatsapp) _contatosCache[m.nome.toUpperCase()] = m.whatsapp;
+            });
+
+            var ul = document.getElementById('equipe-lista');
+            if (!ul) return;
+            if (!lista.length) {
+                ul.innerHTML = '<li style="color:var(--text3);font-size:13px;padding:8px 0">Nenhum membro cadastrado ainda.</li>';
+                return;
+            }
+            var cores = ['#3b7fff','#00c875','#ffb300','#ff4757','#8b5cf6','#06b6d4'];
+            ul.innerHTML = lista.map(function(m, i) {
+                var ini = (m.nome || '?').slice(0, 2).toUpperCase();
+                var id  = m.id != null ? m.id : i;
+                var idf = JSON.stringify(id);
+                var nomef = JSON.stringify(m.nome || '');
+                return '<div class="li">' +
+                    '<div style="display:flex;align-items:center;gap:10px">' +
+                    '<div class="av" style="background:' + cores[i % cores.length] + '">' + ini + '</div>' +
+                    '<div>' +
+                    '<div style="font-size:13px;font-weight:600;color:var(--text)">' + m.nome + '</div>' +
+                    '<div style="font-size:11px;color:var(--text3)">' + m.funcao + (m.whatsapp ? ' · ' + m.whatsapp : '') + '</div>' +
+                    '</div></div>' +
+                    '<div style="display:flex;gap:6px">' +
+                    '<button class="bia" onclick="equipe_editar_local(' + idf + ')">Editar</button>' +
+                    '<button class="bia" onclick="equipe_excluir_local(' + idf + ',' + nomef + ')" style="color:var(--red)">Remover</button>' +
+                    '</div></div>';
+            }).join('');
+        }
+
+        function equipe_editar_local(id) {
+            try {
+                var lista = JSON.parse(localStorage.getItem('pgm_equipe_v1') || '[]');
+                var m = lista.find(function(x) { return String(x.id) === String(id); });
+                if (!m) return alert('Membro nao encontrado.');
+                document.getElementById('eq-nome').value     = m.nome    || '';
+                document.getElementById('eq-funcao').value   = m.funcao  || '';
+                document.getElementById('eq-email').value    = m.email   || '';
+                document.getElementById('eq-whatsapp').value = m.whatsapp|| '';
+                document.getElementById('equipe-edit-id').value = id;
+                var t = document.getElementById('equipe-form-titulo');
+                if (t) t.textContent = 'Editar Membro';
+                var b = document.getElementById('equipe-btn-cancelar');
+                if (b) b.style.display = 'inline-flex';
+                document.getElementById('eq-nome').scrollIntoView({ behavior:'smooth' });
+            } catch(e) { alert('Erro ao editar: ' + e.message); }
+        }
+
+        function equipe_excluir_local(id, nome) {
+            if (!confirm('Remover "' + nome + '" da equipe?')) return;
+            try {
+                var lista = JSON.parse(localStorage.getItem('pgm_equipe_v1') || '[]');
+                lista = lista.filter(function(x) { return String(x.id) !== String(id); });
+                localStorage.setItem('pgm_equipe_v1', JSON.stringify(lista));
+                if (_contatosCache && nome) delete _contatosCache[nome.toUpperCase()];
+                fetch('/api/equipe/' + id + '?token=' + getToken(), { method: 'DELETE' }).catch(function(){});
+                equipe_renderizar();
+            } catch(e) { alert('Erro ao remover: ' + e.message); }
+        }
+
+        async function equipe_salvar() {
+            var token    = getToken();
+            var nome     = document.getElementById('eq-nome').value.trim();
+            var funcao   = document.getElementById('eq-funcao').value;
+            var email    = document.getElementById('eq-email').value.trim();
+            var whatsapp = document.getElementById('eq-whatsapp').value.trim();
+            var editId   = document.getElementById('equipe-edit-id').value;
+            if (!nome) { alert('Informe o nome do membro.'); return; }
+            var body = { nome: nome, funcao: funcao, email: email, whatsapp: whatsapp };
+
+            // Tentar salvar na API
+            var savedViaAPI = false;
+            try {
+                var url    = editId ? '/api/equipe/' + editId + '?token=' + token : '/api/equipe?token=' + token;
+                var method = editId ? 'PUT' : 'POST';
+                var res  = await fetch(url, { method: method, headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) });
+                var json = await res.json();
+                if (json.success) savedViaAPI = true;
+                else console.warn('API retornou erro:', json.error);
+            } catch(e) {
+                console.warn('API indisponivel, usando localStorage:', e.message);
+            }
+
+            // SEMPRE salvar no localStorage como backup permanente
+            try {
+                var lista = JSON.parse(localStorage.getItem('pgm_equipe_v1') || '[]');
+                var membro = Object.assign({ id: Date.now() }, body);
+                if (editId) {
+                    var found = false;
+                    lista = lista.map(function(m) {
+                        if (String(m.id) === String(editId)) { found = true; return Object.assign({}, m, body); }
+                        return m;
+                    });
+                    if (!found) lista.push(membro);
+                } else {
+                    lista.push(membro);
+                }
+                localStorage.setItem('pgm_equipe_v1', JSON.stringify(lista));
+                // Atualizar cache de contatos imediatamente
+                if (!_contatosCache) _contatosCache = {};
+                lista.forEach(function(m) {
+                    if (m.nome && m.whatsapp) _contatosCache[m.nome.toUpperCase()] = m.whatsapp;
+                });
+            } catch(e) {
+                console.error('Erro localStorage:', e);
+            }
+
+            equipe_limparForm();
+            await equipe_renderizar();
+            alert('Membro salvo com sucesso!' + (savedViaAPI ? '' : '\n(Salvo localmente — API indisponivel)'));
+        }
+
+        function equipe_salvar_storage_fallback(body, editId) {
+            var lista = [];
+            try { lista = JSON.parse(localStorage.getItem('pgm_equipe_v1')) || []; } catch {}
+            if (editId) { lista = lista.map(function(m) { return m.id == editId ? Object.assign({},m,body) : m; }); }
+            else { lista.push(Object.assign({id: Date.now()}, body)); }
+            localStorage.setItem('pgm_equipe_v1', JSON.stringify(lista));
+        }
+
+        async function equipe_editar_api(id) {
+            var lista = await equipe_carregar_api();
+            var m = lista.find(function(x){ return x.id == id; });
+            if (!m) return;
+            document.getElementById('eq-nome').value     = m.nome;
+            document.getElementById('eq-funcao').value   = m.funcao;
+            document.getElementById('eq-email').value    = m.email||'';
+            document.getElementById('eq-whatsapp').value = m.whatsapp||'';
+            document.getElementById('equipe-edit-id').value = m.id;
+            document.getElementById('equipe-form-titulo').textContent = 'Editar Membro';
+            document.getElementById('equipe-btn-cancelar').style.display = 'inline-flex';
+            document.getElementById('eq-nome').focus();
+            document.getElementById('equipe-form-titulo').scrollIntoView({behavior:'smooth'});
+        }
+
+        async function equipe_excluir_api(id, nome) {
+            if (!confirm('Remover "' + nome + '" da equipe?')) return;
+            var token = getToken();
+            try {
+                await fetch('/api/equipe/' + id + '?token=' + token, { method:'DELETE' });
+            } catch(e) {
+                var lista = [];
+                try { lista = JSON.parse(localStorage.getItem('pgm_equipe_v1'))||[]; } catch {}
+                localStorage.setItem('pgm_equipe_v1', JSON.stringify(lista.filter(function(m){return m.id!=id;})));
+            }
+            await equipe_renderizar();
+        }
+
+        initFiltros();
+        setTimeout(initUploadMelhorado, 200);
+
+        loadDashboard();
+
+        var PROXIMOS7 = [];
+        var VENCIDOS_DATA = [];
+        // Dados carregados via API pelo loadDashboard()
+        var POR_PAG = 25;
+        var pagState = { critico: 1, vencido: 1 };
+        var filtroState = { critico:{texto:'',resp:'',vara:''}, vencido:{texto:'',resp:'',vara:''} };
+
+        function filtrarDados(dados,f){
+            return dados.filter(function(r){
+                var hay=((r.proc||r.processo||'')+(r.parte||'')+(r.resp||r.responsavel||'')+(r.vara||'')).toLowerCase();
+                return (!f.texto||hay.indexOf(f.texto.toLowerCase())>=0)&&(!f.resp||(r.resp||r.responsavel||'')===f.resp)&&(!f.vara||(r.vara||'').indexOf(f.vara)>=0);
+            });
+        }
+
+        function buildPB(tipo,page,label,dis,active){
+            return '<button class="pbtn'+(active?' active':'')+'" onclick="mudarPag(\"'+tipo+'\",'+page+')"'+(dis?' disabled':'')+'>'+label+'<\/button>';
+        }
+
+        function renderPagina(tipo){
+            var ic=tipo==='critico';
+            var dados=ic?PROXIMOS7:VENCIDOS_DATA;
+            var f=filtroState[tipo];
+            var fl=filtrarDados(dados,f);
+            var tp=Math.max(1,Math.ceil(fl.length/POR_PAG));
+            if(pagState[tipo]>tp) pagState[tipo]=tp;
+            var ini=(pagState[tipo]-1)*POR_PAG;
+            var pg=fl.slice(ini,ini+POR_PAG);
+            var cntEl=document.getElementById(ic?'count-proximos-vencer':'count-vencidos');
+            if(cntEl) cntEl.textContent=fl.length;
+            var tb=document.getElementById(ic?'tbody-proximos-vencer':'tbody-vencidos');
+            if(!tb) return;
+            if(!pg.length){
+                tb.innerHTML='<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text3)">Nenhum processo encontrado.<\/td><\/tr>';
+            } else {
+                var rows='';
+                for(var i=0;i<pg.length;i++){
+                    var r=pg[i];
+                    var proc=r.proc||r.processo||'';
+                    var parte=r.parte||'';
+                    var resp=r.resp||r.responsavel||'';
+                    var prazo=r.prazo||'';
+                    var vara=r.vara||'';
+                    var dias=r.dias||0;
+                    var pj2=JSON.stringify(proc);
+                    var rj2=JSON.stringify(resp);
+                    var prj2=JSON.stringify(prazo);
+                    var tipo2=JSON.stringify(ic?'proximo':'vencido');
+                    var dl=ic?(dias===0?'Hoje':dias===1?'Amanha':dias+' dias'):dias+'d';
+                    var bc=ic?'ba':'br';
+                    // Escapar aspas simples nos dados para nao quebrar HTML
+                    var procE  = proc.replace(/'/g, '&#39;');
+                    var respE  = resp.replace(/'/g, '&#39;');
+                    var prazoE = prazo.replace(/'/g, '&#39;');
+                    var tipoS  = ic ? 'proximo' : 'vencido';
+                    rows+='<tr>'+
+                        '<td><strong>'+proc+'<\/strong><\/td>'+
+                        '<td style="font-size:11px">'+parte+'<\/td>'+
+                        '<td>'+resp+'<\/td>'+
+                        '<td>'+prazo+'<\/td>'+
+                        '<td><span class="badge '+bc+'">'+dl+'<\/span><\/td>'+
+                        '<td style="font-size:11px;color:var(--text3)">'+vara+'<\/td>'+
+                        '<td>'+
+                            '<div style="display:flex;gap:4px;align-items:center">'+
+                            '<button class="btn-icon btn-wpp"'+
+                                ' data-proc="'+procE+'"'+
+                                ' data-resp="'+respE+'"'+
+                                ' data-prazo="'+prazoE+'"'+
+                                ' data-tipo="'+tipoS+'"'+
+                                ' title="Enviar WhatsApp">&#128241;<\/button>'+
+                            '<button class="btn-icon btn-cumprido"'+
+                                ' data-proc="'+procE+'"'+
+                                ' title="Marcar cumprido" style="color:var(--green)">&#10003;<\/button>'+
+                            '<\/div>'+
+                        '<\/td>'+
+                    '<\/tr>';
+                }
+                tb.innerHTML=rows;
+            }
+            var pe=document.getElementById('pag-'+tipo); if(!pe) return;
+            var s=Math.max(1,pagState[tipo]-2),e=Math.min(tp,s+4);
+            var btns=buildPB(tipo,pagState[tipo]-1,'&#8249;',pagState[tipo]===1,false);
+            for(var k=s;k<=e;k++) btns+=buildPB(tipo,k,k,false,k===pagState[tipo]);
+            btns+=buildPB(tipo,pagState[tipo]+1,'&#8250;',pagState[tipo]===tp,false);
+            pe.innerHTML='<span>'+fl.length+' processos - pag. '+pagState[tipo]+' de '+tp+'<\/span><div class="pbtns">'+btns+'<\/div>';
+        }
+
+        function mudarPag(tipo,p){
+            var total=filtrarDados(tipo==='critico'?PROXIMOS7:VENCIDOS_DATA,filtroState[tipo]).length;
+            pagState[tipo]=Math.min(Math.max(1,p),Math.max(1,Math.ceil(total/POR_PAG)));
+            renderPagina(tipo);
+        }
+
+        // Event delegation no document - funciona mesmo apos innerHTML ser substituido
+        function initTabelaEvents() {
+            document.addEventListener('click', function(e) {
+                var btn = e.target.closest('button.btn-wpp, button.btn-cumprido');
+                if (!btn) return;
+                if (btn.classList.contains('btn-wpp')) {
+                    var proc  = btn.getAttribute('data-proc')  || '';
+                    var resp  = btn.getAttribute('data-resp')  || '';
+                    var prazo = btn.getAttribute('data-prazo') || '';
+                    var tipo  = btn.getAttribute('data-tipo')  || 'proximo';
+                    enviarAlerta(proc, resp, prazo, tipo);
+                } else if (btn.classList.contains('btn-cumprido')) {
+                    var proc2 = btn.getAttribute('data-proc') || '';
+                    confirmarCumprido(proc2, btn);
+                }
+            });
+        }
+
+        function initFiltros(){
+            [['filtro-critico','resp-critico','vara-critico','critico'],['filtro-vencido','resp-vencido','vara-vencido','vencido']].forEach(function(g){
+                var ft=document.getElementById(g[0]),rs=document.getElementById(g[1]),vs=document.getElementById(g[2]),t=g[3];
+                if(ft) ft.addEventListener('input',function(){ filtroState[t].texto=this.value; pagState[t]=1; renderPagina(t); });
+                if(rs) rs.addEventListener('change',function(){ filtroState[t].resp=this.value; pagState[t]=1; renderPagina(t); });
+                if(vs) vs.addEventListener('change',function(){ filtroState[t].vara=this.value; pagState[t]=1; renderPagina(t); });
+            });
+        }
+
+        function renderCriticos(data){
+            if(data&&data.proximos) PROXIMOS7=data.proximos.map(function(r){return{proc:r.processo,parte:r.parte||'',resp:r.responsavel,prazo:r.prazo,vara:r.vara,dias:r.dias};});
+            if(data&&data.vencidos) VENCIDOS_DATA=data.vencidos.map(function(r){return{proc:r.processo,parte:r.parte||'',resp:r.responsavel,prazo:r.prazo,vara:r.vara,dias:r.dias};});
+            renderPagina('critico'); renderPagina('vencido');
+        }
+
+        function renderTabelaPerf(perf){
+            var tb=document.getElementById('tbody-performance'); if(!tb) return;
+            if(!perf||!perf.length){ tb.innerHTML='<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text3)">Sem dados<\/td><\/tr>'; return; }
+            tb.innerHTML=perf.map(function(p){
+                var resp=p.responsavel||p.resp||'';
+                var cls=p.criticos===0?'bg':p.criticos<=3?'ba':'br';
+                return '<tr><td><strong>'+resp+'<\/strong><\/td><td>'+(p.total||0)+'<\/td><td>'+(p.cumpridos||0)+'<\/td>'+
+                    '<td><div class="pr-bar"><div class="pr-fill" style="width:'+(p.taxa||0)+'%"><\/div><\/div><\/td>'+
+                    '<td><span class="badge '+cls+'">'+(p.criticos||0)+'<\/span><\/td><\/tr>';
+            }).join('');
+        }
+
+        function renderDashboard(data){
+            var kpis={total:938,vencidos:VENCIDOS_DATA.length,proximos:PROXIMOS7.length,cumpridos:391,taxa:41.7};
+            if(data&&!data.sem_dados&&data.stats){
+                kpis=data.stats;
+                if(data.performance){ renderChart(data.performance); renderTabelaPerf(data.performance); }
+                if(data.filename){ var hh=document.getElementById('import-history'); if(hh) hh.innerHTML='<li style="font-size:13px;color:var(--text)"><strong>'+data.filename+'<\/strong><\/li>'; }
+            } else {
+                var perf={};
+                VENCIDOS_DATA.forEach(function(r){ var n=(r.resp||'').trim(); if(!n||n.length>20) return; if(!perf[n]) perf[n]={responsavel:n,total:0,cumpridos:0,criticos:0,taxa:0}; perf[n].total++; perf[n].criticos++; });
+                PROXIMOS7.forEach(function(r){ var n=(r.resp||'').trim(); if(!n||n.length>20) return; if(!perf[n]) perf[n]={responsavel:n,total:0,cumpridos:0,criticos:0,taxa:0}; perf[n].total++; });
+                var pl=Object.values(perf).sort(function(a,b){return b.criticos-a.criticos;}).slice(0,10);
+                renderChart(pl); renderTabelaPerf(pl);
+            }
+            ['total','vencidos','proximos','cumpridos'].forEach(function(k){ var el=document.getElementById('kpi-'+k); if(el) el.textContent=kpis[k]; });
+            var tx=document.getElementById('kpi-taxa-label'); if(tx) tx.textContent=(kpis.taxa||41.7)+'% de taxa';
+            renderPagina('critico'); renderPagina('vencido'); renderPrazosRecentes();
+            var nc=document.getElementById('nb-c'),nv=document.getElementById('nb-v');
+            if(nc) nc.textContent=PROXIMOS7.length;
+            if(nv) nv.textContent=VENCIDOS_DATA.length;
+        }
+
+        function renderPrazosRecentes(){
+            var c=document.getElementById('prazos-recentes'); if(!c) return;
+            var list=PROXIMOS7.slice(0,6);
+            if(!list.length){ c.innerHTML='<p style="color:var(--text3);font-size:13px">Nenhum prazo critico.<\/p>'; return; }
+            c.innerHTML=list.map(function(r){
+                var d=r.dias||0;
+                var cls=d<=2?'pr':d<=4?'pa':'pg';
+                var lbl=d===0?'Hoje':d===1?'Amanha':d+' dias';
+                var bc=d<=2?'br':d<=4?'ba':'bg';
+                return '<div class="pc '+cls+'"><div class="pcdot"><\/div><div style="flex:1;min-width:0"><div class="pcproc">'+(r.proc||r.processo||'')+'<\/div><div class="pcinfo">'+(r.resp||r.responsavel||'')+'<\/div><\/div><span class="badge '+bc+'">'+lbl+'<\/span><\/div>';
+            }).join('');
+        }
+
+        function switchTab(e,n){
+            document.querySelectorAll('.tab-content').forEach(function(t){t.classList.remove('active');});
+            document.querySelectorAll('.ni').forEach(function(b){b.classList.remove('active');});
+            document.getElementById(n).classList.add('active');
+            e.currentTarget.classList.add('active');
+        }
+        function switchTabByName(n){
+            document.querySelectorAll('.tab-content').forEach(function(t){t.classList.remove('active');});
+            document.getElementById(n).classList.add('active');
+        }
+
+        var _isDark=true;
+        function toggleDark(){
+            _isDark=!_isDark;
+            var d=document.documentElement;
+            if(_isDark){
+                d.style.setProperty('--bg','#080c14'); d.style.setProperty('--bg3','#111827');
+                d.style.setProperty('--surface','#131c2e'); d.style.setProperty('--surface2','#1a2540');
+                d.style.setProperty('--border','#1e2d45'); d.style.setProperty('--border2','#263554');
+                d.style.setProperty('--text','#f0f4ff'); d.style.setProperty('--text2','#8899bb'); d.style.setProperty('--text3','#4a607a');
+            } else {
+                d.style.setProperty('--bg','#f0f4f8'); d.style.setProperty('--bg3','#f1f5f9');
+                d.style.setProperty('--surface','#ffffff'); d.style.setProperty('--surface2','#f8fafc');
+                d.style.setProperty('--border','#e4e9f0'); d.style.setProperty('--border2','#d0d7e3');
+                d.style.setProperty('--text','#0d1117'); d.style.setProperty('--text2','#4a5568'); d.style.setProperty('--text3','#8492a6');
+            }
+            localStorage.setItem('pgm-dark',_isDark?'1':'0');
+        }
+        if(localStorage.getItem('pgm-dark')==='0') toggleDark();
+
+        async function equipe_renderizar(){
+            var lista=[];
+            try{
+                var r=await fetch('/api/equipe?token='+getToken());
+                if(r.ok){ var j=await r.json(); lista=j.membros||[]; }
+            }catch(e){
+                try{ lista=JSON.parse(localStorage.getItem('pgm_equipe_v1'))||[]; }catch(e2){}
+            }
+            var ul=document.getElementById('equipe-lista'); if(!ul) return;
+            if(!lista.length){ ul.innerHTML='<li style="color:var(--text3);font-size:13px">Nenhum membro cadastrado ainda.<\/li>'; return; }
+            var cores=['#3b7fff','#00c875','#ffb300','#ff4757','#8b5cf6','#06b6d4'];
+            ul.innerHTML=lista.map(function(m,i){
+                var ini=(m.nome||'?').slice(0,2).toUpperCase();
+                var id=m.id!=null?m.id:i;
+                var idf=JSON.stringify(id);
+                var nomef=JSON.stringify(m.nome||'');
+                return '<div class="li"><div style="display:flex;align-items:center;gap:10px">'+
+                    '<div class="av" style="background:'+cores[i%cores.length]+'">'+ini+'<\/div>'+
+                    '<div><div style="font-size:13px;font-weight:600;color:var(--text)">'+m.nome+'<\/div>'+
+                    '<div style="font-size:11px;color:var(--text3)">'+m.funcao+(m.whatsapp?' - '+m.whatsapp:'')+'<\/div><\/div><\/div>'+
+                    '<div style="display:flex;gap:6px">'+
+                    '<button class="bia" onclick="equipe_editar_api('+idf+')">Editar<\/button>'+
+                    '<button class="bia" onclick="equipe_excluir_api('+idf+','+nomef+')" style="color:var(--red)">Remover<\/button>'+
+                    '<\/div><\/div>';
+            }).join('');
+        }
+
+        function equipe_cancelarEdicao() { equipe_limparForm(); }
+        function equipe_limparForm() {
+            document.getElementById("eq-nome").value="";
+            document.getElementById("eq-email").value="";
+            document.getElementById("eq-whatsapp").value="";
+            document.getElementById("equipe-edit-id").value="";
+            var t=document.getElementById("equipe-form-titulo"); if(t) t.textContent="Novo Membro";
+            var b=document.getElementById("equipe-btn-cancelar"); if(b) b.style.display="none";
+        }
+
+        initFiltros();
+        initTabelaEvents();
+        loadDashboard();
+        // Pre-carregar contatos no cache para WhatsApp funcionar sem delay
+        equipe_renderizar().then(function() {
+            // Cache ja populado pelo equipe_renderizar
+        }).catch(function(){});
+</script>
+</body>
+</html>
