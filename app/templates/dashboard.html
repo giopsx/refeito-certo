@@ -1359,9 +1359,6 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
         // Dados carregados via API pelo loadDashboard()
 
         // ── TOKEN ─────────────────────────────────────────────────────────
-        function getToken() {
-            return new URLSearchParams(window.location.search).get('token') || '';
-        }
 
         // ── PAGINAÇÃO E FILTRO ────────────────────────────────────────────
         var POR_PAG = 25;
@@ -1401,14 +1398,6 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
             return '<button onclick="mudarPag(\u0022' + tipo + '\u0022,' + page + ')" style="padding:4px 10px;border:1px solid var(--border);border-radius:5px;cursor:pointer;font-size:12px;background:' + bg + ';color:' + col + ';"' + dis + '>' + label + '</button>';
         }
 
-        function mudarPag(tipo, p) {
-            var dados = tipo === 'critico' ? PROXIMOS7 : VENCIDOS_DATA;
-            var f = filtroState[tipo];
-            var total = filtrarDados(dados, f).length;
-            var maxP = Math.max(1, Math.ceil(total / POR_PAG));
-            pagState[tipo] = Math.min(Math.max(1, p), maxP);
-            renderPagina(tipo);
-        }
 
         // ── MARCAR COMO CUMPRIDO ──────────────────────────────────────────
         function confirmarCumprido(proc, btn) {
