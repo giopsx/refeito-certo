@@ -97,7 +97,7 @@ def _eh_pessoa(nome):
     if '/' in nome or '&' in nome or '\n' in nome: return False
     return True
 
-def _parse_xlsx(file_obj):
+def _parse_xlsx(file_obj, inativos=None):
     import openpyxl, warnings
     with warnings.catch_warnings():
         warnings.simplefilter('ignore')
@@ -143,9 +143,13 @@ def _parse_xlsx(file_obj):
         if not ja_cumprido and diff < 0: perf[resp]['criticos'] += 1
 
     taxa = round(cumpr/total*100,1) if total > 0 else 0
+    # Filtrar inativos da performance
+    inativos_upper = set(n.upper() for n in (inativos or []))
+
     perf_list = []
     for r2, d in sorted(perf.items()):
         if not _eh_pessoa(r2): continue
+        if r2.upper() in inativos_upper: continue  # ocultar inativos
         t, c = d['total'], d['cumpridos']
         perf_list.append({'responsavel':r2,'total':t,'cumpridos':c,
                           'taxa':round(c/t*100,1) if t>0 else 0,'criticos':d['criticos']})
@@ -191,7 +195,10 @@ def upload_file():
     file = request.files['file']
     if not file.filename.lower().endswith('.xlsx'): return jsonify({'error':'Apenas XLSX'}), 400
     try:
-        data = _parse_xlsx(file)
+        # Buscar servidores inativos do Supabase
+        membros_raw = _sb_get('equipe', 'select=nome,ativo')
+        inativos = [m['nome'] for m in membros_raw if isinstance(m, dict) and m.get('ativo') is False]
+        data = _parse_xlsx(file, inativos=inativos)
         stats_ant = cache_get('stats') or {}
         diff_info = {}
         if stats_ant:
@@ -217,20 +224,70 @@ def upload_file():
 def get_dashboard():
     stats = cache_get('stats')
     if not stats: return jsonify({'sem_dados':True})
-    return jsonify({'stats':stats,'performance':cache_get('performance') or [],
+    perf = cache_get('performance') or []
+    # Mostrar APENAS servidores cadastrados na equipe E ativos
+    try:
+        membros_raw = _sb_get('equipe', 'select=nome,ativo')
+        if membros_raw:
+            ativos = set(
+                m['nome'].upper() for m in membros_raw
+                if isinstance(m, dict) and m.get('ativo') is not False
+            )
+            perf = [p for p in perf if p.get('responsavel','').upper() in ativos]
+    except Exception:
+        pass
+    return jsonify({'stats':stats,'performance':perf,
                     'filename':cache_get('filename') or ''})
 
 @bp.route('/api/criticos')
 @token_required
 def get_criticos():
-    vencidos = cache_get('vencidos')
-    if vencidos is None: return jsonify({'sem_dados':True})
-    proximos = cache_get('proximos') or []
+    from datetime import datetime
+    hoje = date.today()
+
+    # Recalcular dias dinamicamente baseado na data atual
+    todos_proximos = cache_get('proximos') or []
+    todos_vencidos = cache_get('vencidos') or []
+
+    proximos_atualizados = []
+    vencidos_atualizados = []
+
+    # Reprocessar proximos (podem ter vencido desde a importacao)
+    for p in todos_proximos:
+        try:
+            prazo_d = datetime.strptime(p['prazo'], '%d/%m/%Y').date()
+            diff = (prazo_d - hoje).days
+            entry = dict(p)
+            entry['dias'] = abs(diff)
+            if diff < 0:
+                # Virou vencido depois da importacao
+                vencidos_atualizados.append(entry)
+            elif diff <= 7:
+                proximos_atualizados.append(entry)
+        except Exception:
+            proximos_atualizados.append(p)
+
+    # Reprocessar vencidos (atualizar quantos dias vencido)
+    for v in todos_vencidos:
+        try:
+            prazo_d = datetime.strptime(v['prazo'], '%d/%m/%Y').date()
+            diff = (prazo_d - hoje).days
+            entry = dict(v)
+            entry['dias'] = abs(diff)
+            vencidos_atualizados.append(entry)
+        except Exception:
+            vencidos_atualizados.append(v)
+
+    # Ordenar
+    proximos_atualizados.sort(key=lambda x: x['dias'])
+    vencidos_atualizados.sort(key=lambda x: x['dias'], reverse=True)
+
     f = request.args.get('responsavel','').strip().upper()
     if f:
-        vencidos = [v for v in vencidos if v.get('responsavel','').upper()==f]
-        proximos = [p for p in proximos if p.get('responsavel','').upper()==f]
-    return jsonify({'vencidos':vencidos,'proximos':proximos})
+        proximos_atualizados = [p for p in proximos_atualizados if p.get('responsavel','').upper()==f]
+        vencidos_atualizados = [v for v in vencidos_atualizados if v.get('responsavel','').upper()==f]
+
+    return jsonify({'vencidos': vencidos_atualizados, 'proximos': proximos_atualizados})
 
 @bp.route('/api/cumpridos')
 @token_required
@@ -268,7 +325,7 @@ def marcar_cumprido():
 @bp.route('/api/equipe')
 @token_required
 def get_equipe():
-    membros = _sb_get('equipe', 'select=id,nome,funcao,email,whatsapp&order=id.asc')
+    membros = _sb_get('equipe', 'select=id,nome,funcao,email,whatsapp,ativo&order=id.asc')
     return jsonify({'membros': membros if isinstance(membros, list) else []})
 
 @bp.route('/api/equipe', methods=['POST'])
@@ -288,7 +345,7 @@ def add_membro():
 @token_required
 def update_membro(mid):
     data = request.get_json()
-    campos = {k:v for k,v in data.items() if k in ('nome','funcao','email','whatsapp')}
+    campos = {k:v for k,v in data.items() if k in ('nome','funcao','email','whatsapp','ativo')}
     ok = _sb_patch('equipe','id',mid,campos)
     return jsonify({'success':ok}) if ok else (jsonify({'error':'Nao encontrado'}),404)
 
