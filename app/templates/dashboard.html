@@ -65,4 +65,781 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
   display:flex;align-items:center;gap:5px;
   padding:5px 11px;border-radius:20px;
   background:var(--surface);border:1px solid var(--border);
-  font-size:11px;color:var(--text
+  font-size:11px;color:var(--text2);cursor:pointer;
+  transition:all .18s;font-family:'Inter',sans-serif;
+}
+.hdr-pill:hover{border-color:var(--accent);color:var(--accent)}
+.hdr-pill svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2}
+.online-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green)}
+
+/* LAYOUT */
+.layout{display:flex;max-width:1400px;margin:0 auto;padding:24px 28px;gap:20px}
+
+/* SIDEBAR */
+.sdb{width:210px;flex-shrink:0}
+.sdb-nav{display:flex;flex-direction:column;gap:2px;position:sticky;top:86px}
+.sdb-section{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;padding:16px 10px 6px}
+.ni{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 12px;border-radius:var(--r2);
+  color:var(--text2);font-size:13px;font-weight:500;
+  cursor:pointer;transition:all .15s;border:none;background:none;
+  font-family:'Inter',sans-serif;width:100%;text-align:left;
+  position:relative;
+}
+.ni svg{width:15px;height:15px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:1.8}
+.ni:hover{background:var(--surface);color:var(--text)}
+.ni.active{
+  background:var(--surface2);color:var(--accent2);font-weight:600;
+  border:1px solid var(--border2);
+}
+.ni.active::before{
+  content:'';position:absolute;left:0;top:20%;bottom:20%;
+  width:2px;background:var(--accent);border-radius:0 2px 2px 0;
+}
+.nbadge{
+  margin-left:auto;font-size:10px;font-weight:700;
+  padding:1px 7px;border-radius:10px;
+  background:var(--red-dim);color:var(--red);
+  border:1px solid rgba(255,71,87,.2);
+}
+.ni.active .nbadge{background:rgba(59,127,255,.15);color:var(--accent2);border-color:rgba(59,127,255,.25)}
+
+/* MAIN */
+.main{flex:1;min-width:0}
+.tab-content{display:none}
+.tab-content.active{display:block;animation:fu .22s ease}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* PAGE HEAD */
+.ph{margin-bottom:24px}
+.ph h2{font-size:24px;font-weight:800;letter-spacing:-.03em;color:var(--text)}
+.ph p{font-size:13px;color:var(--text3);margin-top:4px}
+
+/* KPI */
+.kg{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.kc{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:20px;
+  position:relative;overflow:hidden;
+  transition:border-color .2s,box-shadow .2s;cursor:default;
+}
+.kc:hover{border-color:var(--border2);box-shadow:0 4px 24px rgba(0,0,0,.3)}
+.kc-glow{
+  position:absolute;top:-40px;right:-40px;
+  width:100px;height:100px;border-radius:50%;
+  opacity:.6;filter:blur(30px);pointer-events:none;
+}
+.kc.blue .kc-glow{background:var(--accent)}
+.kc.red .kc-glow{background:var(--red)}
+.kc.amber .kc-glow{background:var(--amber)}
+.kc.green .kc-glow{background:var(--green)}
+.kc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.kc-lbl{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em}
+.kc-ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center}
+.kc-ico svg{width:16px;height:16px;fill:none;stroke-width:2}
+.kc.blue .kc-ico{background:rgba(59,127,255,.15)} .kc.blue .kc-ico svg{stroke:var(--accent2)}
+.kc.red  .kc-ico{background:var(--red-dim)}        .kc.red  .kc-ico svg{stroke:var(--red)}
+.kc.amber .kc-ico{background:var(--amber-dim)}     .kc.amber .kc-ico svg{stroke:var(--amber)}
+.kc.green .kc-ico{background:var(--green-dim)}     .kc.green .kc-ico svg{stroke:var(--green)}
+.kc-val{font-size:36px;font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--text)}
+.kc.red   .kc-val{color:var(--red)}
+.kc.amber .kc-val{color:var(--amber)}
+.kc.green .kc-val{color:var(--green)}
+.kc-sub{font-size:12px;color:var(--text3);margin-top:6px}
+.kc-bar{height:2px;border-radius:2px;margin-top:14px;opacity:.5}
+.kc.blue  .kc-bar{background:linear-gradient(90deg,var(--accent),transparent)}
+.kc.red   .kc-bar{background:linear-gradient(90deg,var(--red),transparent)}
+.kc.amber .kc-bar{background:linear-gradient(90deg,var(--amber),transparent)}
+.kc.green .kc-bar{background:linear-gradient(90deg,var(--green),transparent)}
+
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:16px}
+.card:hover{border-color:var(--border2)}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.ct{font-size:14px;font-weight:700;color:var(--text);letter-spacing:-.01em}
+.cs{font-size:12px;color:var(--text3);margin-top:2px}
+.va{font-size:12px;color:var(--accent);font-weight:500;cursor:pointer;text-decoration:none;background:none;border:none;font-family:'Inter',sans-serif}
+
+/* TABLE */
+.tw{overflow-x:auto;border-radius:var(--r2);border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse}
+thead{background:var(--bg3)}
+th{padding:10px 14px;text-align:left;font-size:10.5px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)}
+td{padding:9px 12px;border-bottom:1px solid rgba(30,45,69,.6);font-size:12px;vertical-align:middle;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}td:last-child{white-space:nowrap;overflow:visible;max-width:none;width:80px}td:nth-child(1){max-width:160px}td:nth-child(2){max-width:150px}td:nth-child(6){max-width:160px}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:rgba(26,37,64,.5);transition:background .12s}
+td strong{font-weight:600;color:var(--text);font-size:12px}
+td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.br{background:var(--red-dim);color:var(--red);border:1px solid rgba(255,71,87,.2)}
+.ba{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(255,179,0,.2)}
+.bg{background:var(--green-dim);color:var(--green);border:1px solid rgba(0,200,117,.2)}
+.bb{background:rgba(59,127,255,.12);color:var(--accent2);border:1px solid rgba(59,127,255,.2)}
+
+/* ALERTS */
+.alert{padding:12px 16px;border-radius:var(--r2);margin-bottom:14px;font-size:13px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border:1px solid}
+.ar{background:var(--red-dim);border-color:rgba(255,71,87,.25);color:#ff8a96}
+.aa{background:var(--amber-dim);border-color:rgba(255,179,0,.25);color:#ffd166}
+.ab{background:rgba(59,127,255,.1);border-color:rgba(59,127,255,.2);color:#7eb8ff}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;border-radius:var(--r2);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .18s;font-family:'Inter',sans-serif}
+.btn-blue{background:var(--accent);color:#fff;box-shadow:0 0 12px rgba(59,127,255,.3)}
+.btn-blue:hover{background:var(--accent2);box-shadow:0 0 20px rgba(59,127,255,.45)}
+.btn-red{background:var(--red);color:#fff;box-shadow:0 0 12px rgba(255,71,87,.25)}
+.btn-red:hover{filter:brightness(1.1)}
+.btn-amber{background:var(--amber);color:#000;font-weight:700}
+.btn-amber:hover{filter:brightness(1.08)}
+.btn-ghost{background:var(--surface2);color:var(--text2);border:1px solid var(--border2)}
+.btn-ghost:hover{background:var(--bg3);color:var(--text)}
+.bia{background:none;border:1px solid var(--border);padding:6px 10px;border-radius:var(--r2);cursor:pointer;font-size:12px;color:var(--text2);transition:all .15s;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;gap:4px}
+.bia:hover{border-color:var(--accent);color:var(--accent);background:rgba(59,127,255,.08)}
+.btn-icon{background:none;border:1px solid var(--border);padding:5px 9px;border-radius:var(--r2);cursor:pointer;font-size:14px;color:var(--text2);transition:all .15s;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;line-height:1}
+.btn-icon:hover{border-color:var(--accent);color:var(--accent);background:rgba(59,127,255,.08)}
+
+/* FILTER BAR */
+.fb{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.sw{flex:1;min-width:180px;position:relative;display:flex;align-items:center}
+.sw svg{position:absolute;left:10px;color:var(--text3);pointer-events:none}
+.sw input{width:100%;padding:8px 12px 8px 31px;border:1px solid var(--border);border-radius:var(--r2);background:var(--surface);color:var(--text);font-size:13px;font-family:'Inter',sans-serif;transition:.18s}
+.sw input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+.sw input::placeholder{color:var(--text3)}
+.fsel{padding:8px 10px;border:1px solid var(--border);border-radius:var(--r2);background:var(--surface);color:var(--text2);font-size:12px;font-family:'Inter',sans-serif;cursor:pointer}
+.fsel:focus{outline:none;border-color:var(--accent)}
+.xbtn{display:inline-flex;align-items:center;gap:5px;padding:8px 12px;border-radius:var(--r2);background:var(--surface2);border:1px solid var(--border2);color:var(--text2);font-size:12px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:.18s}
+.xbtn:hover{background:rgba(59,127,255,.1);border-color:var(--accent);color:var(--accent)}
+
+/* PAGINACAO */
+.pbar{display:flex;align-items:center;justify-content:space-between;padding:12px 0;font-size:12px;color:var(--text3);flex-wrap:wrap;gap:8px}
+.pbtns{display:flex;gap:4px}
+.pbtn{padding:4px 10px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--text2);font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;transition:.15s}
+.pbtn:hover:not(:disabled){background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 0 8px rgba(59,127,255,.35)}
+.pbtn.active{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+.pbtn:disabled{opacity:.3;cursor:default}
+
+/* FORM */
+.fg{margin-bottom:16px}
+.fl{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px}
+.fi{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--r2);background:var(--surface);color:var(--text);font-size:13px;font-family:'Inter',sans-serif;transition:.18s}
+.fi:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+.fi::placeholder{color:var(--text3)}
+
+/* PRAZO RECENTE */
+.pc{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:var(--r2);border:1px solid;margin-bottom:8px;transition:transform .15s}
+.pc:hover{transform:translateX(2px)}
+.pc.pr{background:var(--red-dim);border-color:rgba(255,71,87,.2)}
+.pc.pa{background:var(--amber-dim);border-color:rgba(255,179,0,.2)}
+.pc.pg{background:var(--green-dim);border-color:rgba(0,200,117,.2)}
+.pcdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.pc.pr .pcdot{background:var(--red);box-shadow:0 0 6px var(--red)}
+.pc.pa .pcdot{background:var(--amber);box-shadow:0 0 6px var(--amber)}
+.pc.pg .pcdot{background:var(--green);box-shadow:0 0 6px var(--green)}
+.pcproc{font-size:12px;font-weight:600;color:var(--text)}
+.pcinfo{font-size:11px;color:var(--text3);margin-top:1px}
+
+/* AVATAR */
+.av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;color:#fff}
+
+/* LIST */
+.li{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)}
+.li:last-child{border-bottom:none}
+
+/* REPORT CARDS */
+.rg{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-bottom:16px}
+.rc{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:12px;transition:border-color .2s,box-shadow .2s}
+.rc:hover{border-color:var(--border2);box-shadow:0 4px 24px rgba(0,0,0,.3)}
+.ri{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.ri svg{width:18px;height:18px;fill:none;stroke-width:2}
+.rc h3{font-size:14px;font-weight:700;color:var(--text)}
+.rc p{font-size:12px;color:var(--text3);flex:1;line-height:1.5}
+
+/* PDF OVERLAY */
+#pdf-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:14px}
+#pdf-overlay.show{display:flex}
+#pdf-overlay p{color:#fff;font-size:15px;font-weight:600}
+.pdf-spinner{width:44px;height:44px;border:3px solid rgba(255,255,255,.1);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* PROGRESS */
+.pr-bar{width:100%;height:4px;border-radius:4px;background:var(--border);overflow:hidden;margin-top:4px}
+.pr-fill{height:100%;border-radius:4px;background:var(--accent);transition:width .4s}
+
+@media(max-width:900px){.sdb{display:none}.kg{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.layout{padding:16px}.hdr-in{padding:0 16px}.kg{grid-template-columns:1fr}.hdr-title{display:none}}
+</style>
+</head>
+<body>
+
+<div id="pdf-overlay"><div class="pdf-spinner"></div><p id="pdf-status">Gerando PDF...</p></div>
+
+<header class="hdr">
+  <div class="hdr-in">
+    <div class="hdr-logo">
+      <div class="hdr-emblem">
+        <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 6l3 1m0 0l-3 9a5 5 0 006 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5 5 0 006 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg>
+      </div>
+      <div>
+        <div class="hdr-brand" style="font-size:17px;font-weight:800;letter-spacing:-.02em">Subprocuradoria Contenciosa</div>
+      </div>
+    </div>
+    <div class="hdr-divider"></div>
+    <div class="hdr-title">Controle de Prazos Processuais</div>
+    <div class="hdr-actions">
+      <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3)">
+        <div class="online-dot"></div>
+        <span>Sistema ativo</span>
+      </div>
+      <button class="hdr-pill" id="darkToggle" onclick="toggleDark()">
+        <svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        <span>Tema</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+
+<aside class="sdb">
+  <nav class="sdb-nav">
+    <div class="sdb-section">Painel</div>
+    <button class="ni active" onclick="switchTab(event,'dashboard')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </button>
+    <button class="ni" onclick="switchTab(event,'import')">
+      <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+      Importar
+    </button>
+    <div class="sdb-section">Processos</div>
+    <button class="ni" onclick="switchTab(event,'criticos')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Criticos
+      <span class="nbadge" id="nb-c">38</span>
+    </button>
+    <button class="ni" onclick="switchTab(event,'vencidos')">
+      <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      Vencidos
+      <span class="nbadge" id="nb-v">376</span>
+    </button>
+    <div class="sdb-section">Ferramentas</div>
+    <button class="ni" onclick="switchTab(event,'relatorios')">
+      <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      Relatorios
+    </button>
+    <button class="ni" onclick="switchTab(event,'equipe')">
+      <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Equipe
+    </button>
+  </nav>
+</aside>
+
+<main class="main">
+
+<div id="dashboard" class="tab-content active">
+  <div class="ph">
+    <h2>Dashboard</h2>
+    <p>Visao geral dos prazos processuais · 17/04/2026</p>
+  </div>
+  <div class="kg">
+    <div class="kc blue">
+      <div class="kc-glow"></div>
+      <div class="kc-top">
+        <span class="kc-lbl">Total</span>
+        <div class="kc-ico"><svg viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg></div>
+      </div>
+      <div class="kc-val" id="kpi-total">938</div>
+      <div class="kc-sub">processos com prazo</div>
+      <div class="kc-bar"></div>
+    </div>
+    <div class="kc red">
+      <div class="kc-glow"></div>
+      <div class="kc-top">
+        <span class="kc-lbl">Vencidos</span>
+        <div class="kc-ico"><svg viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+      </div>
+      <div class="kc-val" id="kpi-vencidos">376</div>
+      <div class="kc-sub">nao cumpridos</div>
+      <div class="kc-bar"></div>
+    </div>
+    <div class="kc amber">
+      <div class="kc-glow"></div>
+      <div class="kc-top">
+        <span class="kc-lbl">Proximos 7 dias</span>
+        <div class="kc-ico"><svg viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+      </div>
+      <div class="kc-val" id="kpi-proximos">38</div>
+      <div class="kc-sub">atencao urgente</div>
+      <div class="kc-bar"></div>
+    </div>
+    <div class="kc green">
+      <div class="kc-glow"></div>
+      <div class="kc-top">
+        <span class="kc-lbl">Cumpridos</span>
+        <div class="kc-ico"><svg viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+      </div>
+      <div class="kc-val" id="kpi-cumpridos">391</div>
+      <div class="kc-sub" id="kpi-taxa-label">41.7% de taxa</div>
+      <div class="kc-bar"></div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 320px;gap:16px">
+    <div class="card" style="margin-bottom:0">
+      <div class="ch">
+        <div><div class="ct">Performance por Responsavel</div><div class="cs">Taxa de cumprimento de prazos</div></div>
+      </div>
+      <div id="chart-wrap" style="position:relative;min-height:200px"><canvas id="chart-performance"></canvas></div>
+      <div style="margin-top:16px;overflow-x:auto">
+        <table>
+          <thead><tr><th>Responsavel</th><th>Total</th><th>Cumpridos</th><th>Taxa</th><th>Criticos</th></tr></thead>
+          <tbody id="tbody-performance"><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--text3)">Carregando...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div class="ch">
+        <div><div class="ct">Proximos a Vencer</div><div class="cs">Ate 7 dias</div></div>
+        <button class="va" onclick="switchTabByName('criticos')">Ver todos</button>
+      </div>
+      <div id="prazos-recentes"><div style="color:var(--text3);font-size:13px">Carregando...</div></div>
+    </div>
+  </div>
+  <div class="ab alert" style="margin-top:16px">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    Dados carregados da planilha importada. Importe uma nova versao para atualizar os numeros.
+  </div>
+</div>
+
+<div id="import" class="tab-content">
+  <div class="ph"><h2>Importar Planilha</h2><p>Carregue o arquivo XLSX com os prazos processuais.</p></div>
+  <div class="card" style="max-width:540px">
+    <form id="importForm">
+      <div class="fg"><label class="fl">Arquivo XLSX</label>
+        <input type="file" id="file" name="file" accept=".xlsx" required class="fi" style="padding:7px 12px">
+        <p style="font-size:11px;color:var(--text3);margin-top:6px">Formato: Prazos_2026_Contencioso.xlsx</p>
+      </div>
+      <button type="submit" class="btn btn-blue" style="width:100%">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+        Importar Planilha
+      </button>
+    </form>
+    <div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">
+      <div class="ct" style="margin-bottom:12px">Ultima importacao</div>
+      <ul id="import-history"><li style="color:var(--text3);font-size:13px">Nenhuma planilha importada ainda.</li></ul>
+      <div id="import-diff" style="display:none;margin-top:10px"></div>
+    </div>
+  </div>
+</div>
+
+<div id="criticos" class="tab-content">
+  <div class="ph"><h2>Criticos — 7 Dias</h2><p>Processos com prazo vencendo nos proximos 7 dias, nao cumpridos.</p></div>
+  <div class="alert aa" style="justify-content:space-between">
+    <span style="display:flex;align-items:center;gap:8px">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <strong><span id="count-proximos-vencer">38</span> processos</strong> vencem nos proximos 7 dias
+    </span>
+    <button class="btn btn-amber" onclick="alertarTodosProximos()">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.99 1.18 2 2 0 012.98 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
+      Alertar Todos
+    </button>
+  </div>
+  <div class="fb"><div class="sw"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input id="filtro-critico" type="text" placeholder="Buscar processo, responsavel ou parte..."></div><select id="resp-critico" class="fsel"><option value="">Todos responsaveis</option><option value="AMBIENTAL">Ambiental</option><option value="BEATRIZ">Beatriz</option><option value="COMCEP">Comcep</option><option value="DISTRIBUIR">Distribuir</option><option value="ERICA">Erica</option><option value="FISCAL">Fiscal</option><option value="GECILENE">Gecilene</option><option value="JEFFERSON">Jefferson</option><option value="KAMILA">Kamila</option><option value="KARYTHA">Karytha</option><option value="LEONARDO">Leonardo</option><option value="MAURICIO">Mauricio</option><option value="MIRTON">Mirton</option><option value="REGIA">Regia</option><option value="YOUSSEF">Youssef</option></select><select id="vara-critico" class="fsel"><option value="">Todas as varas</option><option value="10ª Vara Cível">10ª Vara Cível</option><option value="11ª Turma/Gab">11ª Turma/Gab</option><option value="11ª Turma/Gab. 33 - DESEMBARGADOR FEDERA">11ª Turma/Gab. 33 - DESEMBARGADOR FEDERA</option><option value="12ª Turma/Gab. 36 - DESEMBARGADORA FEDER">12ª Turma/Gab. 36 - DESEMBARGADORA FEDER</option><option value="1ª Câmara Especial">1ª Câmara Especial</option><option value="1ª Câmara Especial/Gabinete Des. Gilbert">1ª Câmara Especial/Gabinete Des. Gilbert</option><option value="1ª Vara Cível">1ª Vara Cível</option><option value="1ª Vara Federal Cível">1ª Vara Federal Cível</option><option value="1ª Vara Federal Cível da SJRO">1ª Vara Federal Cível da SJRO</option><option value="1ª Vara de Fazenda Pública">1ª Vara de Fazenda Pública</option><option value="1ª Vara de Fazenda e Saúde Pública">1ª Vara de Fazenda e Saúde Pública</option><option value="2ª Câmara Especial">2ª Câmara Especial</option><option value="2ª Câmara Especial/Gabinete Titularidade">2ª Câmara Especial/Gabinete Titularidade</option><option value="2ª Vara Federal">2ª Vara Federal</option><option value="2ª Vara Federal Cível">2ª Vara Federal Cível</option><option value="2ª Vara Federal Cível da SJRO">2ª Vara Federal Cível da SJRO</option><option value="2ª Vara de Fazenda e Saúde Pública">2ª Vara de Fazenda e Saúde Pública</option><option value="3ª Vara Cível">3ª Vara Cível</option><option value="4ª Vara Cível">4ª Vara Cível</option><option value="4ª Vara Federal de Juizado Especial Cíve">4ª Vara Federal de Juizado Especial Cíve</option><option value="5ª Turma/Gab. 13 - DESEMBARGADOR FEDERAL">5ª Turma/Gab. 13 - DESEMBARGADOR FEDERAL</option><option value="5ª Turma/Gab. 15 - DESEMBARGADOR FEDERAL">5ª Turma/Gab. 15 - DESEMBARGADOR FEDERAL</option><option value="5ª Vara Cível">5ª Vara Cível</option><option value="6ª Turma/Gab">6ª Turma/Gab</option><option value="6ª Turma/Gab. 16 - DESEMBARGADOR FEDERAL">6ª Turma/Gab. 16 - DESEMBARGADOR FEDERAL</option><option value="6ª Vara Federal">6ª Vara Federal</option><option value="6ª Vara Federal de Juizado Especial Cíve">6ª Vara Federal de Juizado Especial Cíve</option><option value="7ª Vara Cível">7ª Vara Cível</option><option value="8ª Vara Cível">8ª Vara Cível</option><option value="9ª Vara Cível">9ª Vara Cível</option><option value="Cerejeiras - 2ª Vara Genérica">Cerejeiras - 2ª Vara Genérica</option><option value="EXECUÇÃO FISCAL">EXECUÇÃO FISCAL</option><option value="Gabinete Des. Gilberto Barbosa">Gabinete Des. Gilberto Barbosa</option><option value="Gabinete Des. Miguel Monico">Gabinete Des. Miguel Monico</option><option value="Ji-Paraná - 5ª Vara Cível">Ji-Paraná - 5ª Vara Cível</option><option value="Juizado Especial Cível e Criminal Adjunt">Juizado Especial Cível e Criminal Adjunt</option><option value="Presidência do TJRO">Presidência do TJRO</option><option value="STJ">STJ</option><option value="Vice Presidência/Gab. Vice Presidência">Vice Presidência/Gab. Vice Presidência</option></select><button onclick="exportarXlsx('critico')" class="xbtn"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Excel</button></div>
+  <div class="tw"><table>
+    <thead><tr><th>Processo</th><th>Parte</th><th>Responsavel</th><th>Prazo</th><th>Vence em</th><th>Vara</th><th>Acoes</th></tr></thead>
+    <tbody id="tbody-proximos-vencer"><tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text3)">Carregando...</td></tr></tbody>
+  </table></div>
+  <div class="pbar" id="pag-criticos"></div>
+</div>
+
+<div id="vencidos" class="tab-content">
+  <div class="ph"><h2>Processos Vencidos</h2><p>Processos com prazo ja expirado e nao cumpridos.</p></div>
+  <div class="alert ar" style="justify-content:space-between">
+    <span style="display:flex;align-items:center;gap:8px">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      <strong><span id="count-vencidos">376</span> processos</strong> com prazo vencido aguardam providencias
+    </span>
+    <button class="btn btn-red" onclick="alertarTodosVencidos()">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.99 1.18 2 2 0 012.98 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z"/></svg>
+      Alertar Todos
+    </button>
+  </div>
+  <div class="fb"><div class="sw"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg><input id="filtro-vencido" type="text" placeholder="Buscar processo, responsavel ou parte..."></div><select id="resp-vencido" class="fsel"><option value="">Todos responsaveis</option><option value="AMBIENTAL">Ambiental</option><option value="BEATRIZ">Beatriz</option><option value="COMCEP">Comcep</option><option value="DISTRIBUIR">Distribuir</option><option value="ERICA">Erica</option><option value="FISCAL">Fiscal</option><option value="GECILENE">Gecilene</option><option value="JEFFERSON">Jefferson</option><option value="KAMILA">Kamila</option><option value="KARYTHA">Karytha</option><option value="LEONARDO">Leonardo</option><option value="MAURICIO">Mauricio</option><option value="MIRTON">Mirton</option><option value="REGIA">Regia</option><option value="YOUSSEF">Youssef</option></select><select id="vara-vencido" class="fsel"><option value="">Todas as varas</option><option value="10ª Vara Cível">10ª Vara Cível</option><option value="11ª Turma/Gab">11ª Turma/Gab</option><option value="11ª Turma/Gab. 33 - DESEMBARGADOR FEDERA">11ª Turma/Gab. 33 - DESEMBARGADOR FEDERA</option><option value="12ª Turma/Gab. 36 - DESEMBARGADORA FEDER">12ª Turma/Gab. 36 - DESEMBARGADORA FEDER</option><option value="1ª Câmara Especial">1ª Câmara Especial</option><option value="1ª Câmara Especial/Gabinete Des. Gilbert">1ª Câmara Especial/Gabinete Des. Gilbert</option><option value="1ª Vara Cível">1ª Vara Cível</option><option value="1ª Vara Federal Cível">1ª Vara Federal Cível</option><option value="1ª Vara Federal Cível da SJRO">1ª Vara Federal Cível da SJRO</option><option value="1ª Vara de Fazenda Pública">1ª Vara de Fazenda Pública</option><option value="1ª Vara de Fazenda e Saúde Pública">1ª Vara de Fazenda e Saúde Pública</option><option value="2ª Câmara Especial">2ª Câmara Especial</option><option value="2ª Câmara Especial/Gabinete Titularidade">2ª Câmara Especial/Gabinete Titularidade</option><option value="2ª Vara Federal">2ª Vara Federal</option><option value="2ª Vara Federal Cível">2ª Vara Federal Cível</option><option value="2ª Vara Federal Cível da SJRO">2ª Vara Federal Cível da SJRO</option><option value="2ª Vara de Fazenda e Saúde Pública">2ª Vara de Fazenda e Saúde Pública</option><option value="3ª Vara Cível">3ª Vara Cível</option><option value="4ª Vara Cível">4ª Vara Cível</option><option value="4ª Vara Federal de Juizado Especial Cíve">4ª Vara Federal de Juizado Especial Cíve</option><option value="5ª Turma/Gab. 13 - DESEMBARGADOR FEDERAL">5ª Turma/Gab. 13 - DESEMBARGADOR FEDERAL</option><option value="5ª Turma/Gab. 15 - DESEMBARGADOR FEDERAL">5ª Turma/Gab. 15 - DESEMBARGADOR FEDERAL</option><option value="5ª Vara Cível">5ª Vara Cível</option><option value="6ª Turma/Gab">6ª Turma/Gab</option><option value="6ª Turma/Gab. 16 - DESEMBARGADOR FEDERAL">6ª Turma/Gab. 16 - DESEMBARGADOR FEDERAL</option><option value="6ª Vara Federal">6ª Vara Federal</option><option value="6ª Vara Federal de Juizado Especial Cíve">6ª Vara Federal de Juizado Especial Cíve</option><option value="7ª Vara Cível">7ª Vara Cível</option><option value="8ª Vara Cível">8ª Vara Cível</option><option value="9ª Vara Cível">9ª Vara Cível</option><option value="Cerejeiras - 2ª Vara Genérica">Cerejeiras - 2ª Vara Genérica</option><option value="EXECUÇÃO FISCAL">EXECUÇÃO FISCAL</option><option value="Gabinete Des. Gilberto Barbosa">Gabinete Des. Gilberto Barbosa</option><option value="Gabinete Des. Miguel Monico">Gabinete Des. Miguel Monico</option><option value="Ji-Paraná - 5ª Vara Cível">Ji-Paraná - 5ª Vara Cível</option><option value="Juizado Especial Cível e Criminal Adjunt">Juizado Especial Cível e Criminal Adjunt</option><option value="Presidência do TJRO">Presidência do TJRO</option><option value="STJ">STJ</option><option value="Vice Presidência/Gab. Vice Presidência">Vice Presidência/Gab. Vice Presidência</option></select><button onclick="exportarXlsx('vencido')" class="xbtn"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Excel</button></div>
+  <div class="tw"><table>
+    <thead><tr><th>Processo</th><th>Parte</th><th>Responsavel</th><th>Prazo</th><th>Dias Vencido</th><th>Vara</th><th>Acoes</th></tr></thead>
+    <tbody id="tbody-vencidos"><tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text3)">Carregando...</td></tr></tbody>
+  </table></div>
+  <div class="pbar" id="pag-vencidos"></div>
+</div>
+
+<div id="relatorios" class="tab-content">
+  <div class="ph"><h2>Relatorios</h2><p>Exporte relatorios em PDF para compartilhamento e analise.</p></div>
+  <div class="rg">
+    <div class="rc"><div class="ri" style="background:rgba(59,127,255,.12)"><svg viewBox="0 0 24 24" stroke="var(--accent2)"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div><h3>Relatorio Semanal</h3><p>Resumo de prazos cumpridos, vencidos e proximos da semana.</p><button class="btn btn-blue" onclick="generateReport('semanal')">Gerar PDF</button></div>
+    <div class="rc"><div class="ri" style="background:var(--green-dim)"><svg viewBox="0 0 24 24" stroke="var(--green)"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg></div><h3>Relatorio Mensal</h3><p>Analise detalhada do mes com performance por procurador.</p><button class="btn btn-blue" onclick="generateReport('mensal')">Gerar PDF</button></div>
+    <div class="rc"><div class="ri" style="background:var(--amber-dim)"><svg viewBox="0 0 24 24" stroke="var(--amber)"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg></div><h3>Relatorio Individual</h3><p>Performance de um responsavel especifico.</p><select id="select-relatorio-individual" class="fi" style="margin-bottom:4px"><option value="">Selecione...</option><option>Jefferson</option><option>Mirton</option><option>Beatriz</option><option>Leonardo</option><option>Kamila</option><option>Gecilene</option><option>Mauricio</option></select><button class="btn btn-blue" onclick="generateReport('individual')">Gerar PDF</button></div>
+    <div class="rc"><div class="ri" style="background:var(--red-dim)"><svg viewBox="0 0 24 24" stroke="var(--red)"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><h3>Relatorio Criticos</h3><p>Todos os vencidos e proximos de vencer.</p><button class="btn btn-blue" onclick="generateReport('criticos')">Gerar PDF</button></div>
+  </div>
+  <div class="card">
+    <div class="ch"><div class="ct">Historico</div></div>
+    <div class="li"><div><strong style="font-size:13px">Relatorio Semanal — Semana 15</strong><div style="font-size:11px;color:var(--text3);margin-top:2px">Gerado em 15/04/2026</div></div><button class="btn btn-ghost" style="font-size:12px;padding:6px 12px">Baixar</button></div>
+    <div class="li"><div><strong style="font-size:13px">Relatorio Mensal — Marco/2026</strong><div style="font-size:11px;color:var(--text3);margin-top:2px">Gerado em 01/04/2026</div></div><button class="btn btn-ghost" style="font-size:12px;padding:6px 12px">Baixar</button></div>
+  </div>
+</div>
+
+<div id="equipe" class="tab-content">
+  <div class="ph"><h2>Equipe</h2><p>Gerencie os membros e seus contatos para alertas via WhatsApp.</p></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="card">
+      <div class="ch"><div class="ct" id="equipe-form-titulo">Novo Membro</div></div>
+      <input type="hidden" id="equipe-edit-id" value="">
+      <div class="fg"><label class="fl">Nome</label><input type="text" id="eq-nome" placeholder="Ex: Jefferson" class="fi"></div>
+      <div class="fg"><label class="fl">Funcao</label><select id="eq-funcao" class="fi"><option>Procurador(a)</option><option>Procurador(a)-Adjunto(a)</option><option>Assessor(a) Juridico(a)</option><option>Estagiario(a)</option></select></div>
+      <div class="fg"><label class="fl">E-mail</label><input type="email" id="eq-email" placeholder="jefferson@pgm.porto-velho.br" class="fi"></div>
+      <div class="fg"><label class="fl">WhatsApp</label><input type="tel" id="eq-whatsapp" placeholder="+5569999999999" class="fi"><p style="font-size:11px;color:var(--text3);margin-top:5px">Formato: +55 + DDD + numero</p></div>
+      <div style="display:flex;gap:8px"><button onclick="equipe_salvar()" class="btn btn-blue" style="flex:1">Salvar Membro</button><button id="equipe-btn-cancelar" onclick="equipe_cancelarEdicao()" class="btn btn-ghost" style="display:none">Cancelar</button></div>
+    </div>
+    <div class="card"><div class="ch"><div class="ct">Membros</div></div><ul id="equipe-lista" style="list-style:none"><li style="color:var(--text3);font-size:13px">Nenhum membro ainda.</li></ul></div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<footer style="text-align:center;padding:18px;font-size:11px;color:var(--text3);border-top:1px solid var(--border)">
+  Procuradoria-Geral do Municipio de Porto Velho · Subprocuradoria Contenciosa · 2026 · Painel protegido por token
+</footer>
+
+<script>
+        /* ── Tabs ── */
+        /* ── Modo Noturno ── */
+        // Restaurar preferência salva
+        if (localStorage.getItem('pgm-dark') === '1') {
+            document.body.classList.add('dark-mode');
+            document.addEventListener('DOMContentLoaded', () => {
+                const btn = document.getElementById('darkToggle');
+                if (btn) btn.textContent = '☀️ Modo Claro';
+            });
+        }
+
+        /* ── PDF Real ── */
+        async function generateReport(type) {
+            const overlay  = document.getElementById('pdf-overlay');
+            const statusEl = document.getElementById('pdf-status');
+            overlay.classList.add('show');
+            statusEl.textContent = 'Gerando PDF...';
+            try {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+                const pageW = pdf.internal.pageSize.getWidth();
+                const pageH = pdf.internal.pageSize.getHeight();
+                const margin = 14;
+                const hoje = new Date().toLocaleDateString('pt-BR');
+
+                function cabecalho(titulo) {
+                    pdf.setFillColor(8,12,20);
+                    pdf.rect(0,0,pageW,26,'F');
+                    pdf.setTextColor(255,255,255);
+                    pdf.setFontSize(12); pdf.setFont('helvetica','bold');
+                    pdf.text('Subprocuradoria Contenciosa - PGM Porto Velho', margin, 10);
+                    pdf.setFontSize(9); pdf.setFont('helvetica','normal');
+                    pdf.text(titulo + ' - Gerado em ' + hoje, margin, 19);
+                    return 32;
+                }
+
+                function rodape() {
+                    const n = pdf.internal.getNumberOfPages();
+                    for (let i=1;i<=n;i++) {
+                        pdf.setPage(i);
+                        pdf.setFontSize(7); pdf.setTextColor(150,150,170);
+                        pdf.text('Subprocuradoria Contenciosa - PGM Porto Velho - Uso interno', margin, pageH-5);
+                        pdf.text('Pag. '+i+'/'+n, pageW-margin, pageH-5, {align:'right'});
+                    }
+                }
+
+                const statsKpis = {
+                    total:     document.getElementById('kpi-total')?.textContent     || '938',
+                    vencidos:  document.getElementById('kpi-vencidos')?.textContent  || VENCIDOS_DATA.length,
+                    proximos:  document.getElementById('kpi-proximos')?.textContent  || PROXIMOS7.length,
+                    cumpridos: document.getElementById('kpi-cumpridos')?.textContent || '391',
+                    taxa:      (document.getElementById('kpi-taxa-label')?.textContent || '41.7% de taxa').replace('% de taxa','') + '%',
+                };
+
+                const tituloRel = type === 'semanal' ? 'Relatorio Semanal'
+                        : type === 'mensal' ? 'Relatorio Mensal'
+                        : type === 'individual' ? ('Relatorio Individual')
+                        : 'Relatorio de Criticos';
+                    let y = cabecalho(tituloRel);
+
+                if (type === 'semanal' || type === 'mensal') {
+                    pdf.autoTable({ startY:y,
+                        head:[['Indicador','Valor']],
+                        body:[
+                            ['Total de processos', statsKpis.total],
+                            ['Vencidos (nao cumpridos)', statsKpis.vencidos],
+                            ['Vencendo nos proximos 7 dias', statsKpis.proximos],
+                            ['Cumpridos', statsKpis.cumpridos],
+                            ['Taxa de cumprimento', statsKpis.taxa],
+                        ],
+                        theme:'striped',
+                        headStyles:{fillColor:[8,12,20],textColor:255,fontStyle:'bold',fontSize:9},
+                        bodyStyles:{fontSize:9}, margin:{left:margin,right:margin}
+                    });
+                    y = pdf.lastAutoTable.finalY + 8;
+
+                    pdf.setFontSize(10); pdf.setFont('helvetica','bold'); pdf.setTextColor(180,100,0);
+                    pdf.text('Vencendo nos Proximos 7 Dias (' + PROXIMOS7.length + ')', margin, y); y += 4;
+                    pdf.autoTable({ startY:y,
+                        head:[['Processo','Parte','Responsavel','Prazo','Vence em']],
+                        body:PROXIMOS7.map(r => { const d=r.dias||0; return [r.proc||'',r.parte||'',r.resp||'',r.prazo||'',d===0?'Hoje':d===1?'Amanha':d+' dias']; }),
+                        theme:'striped',
+                        headStyles:{fillColor:[180,100,0],textColor:255,fontStyle:'bold',fontSize:8},
+                        bodyStyles:{fontSize:7}, margin:{left:margin,right:margin}
+                    });
+
+                    if (type === 'mensal') {
+                        y = pdf.lastAutoTable.finalY + 8;
+                        pdf.setFontSize(10); pdf.setFont('helvetica','bold'); pdf.setTextColor(200,30,30);
+                        pdf.text('Prazos Vencidos (' + VENCIDOS_DATA.length + ')', margin, y); y += 4;
+                        pdf.autoTable({ startY:y,
+                            head:[['Processo','Parte','Responsavel','Prazo','Dias']],
+                            body:VENCIDOS_DATA.map(r => [r.proc||'',r.parte||'',r.resp||'',r.prazo||'',r.dias+'d']),
+                            theme:'striped',
+                            headStyles:{fillColor:[200,30,30],textColor:255,fontStyle:'bold',fontSize:8},
+                            bodyStyles:{fontSize:7}, margin:{left:margin,right:margin}
+                        });
+                    }
+
+                } else if (type === 'individual') {
+                    const respEl = document.getElementById('select-relatorio-individual');
+                    const resp = respEl ? respEl.value.trim() : '';
+                    if (!resp) { alert('Selecione um responsavel.'); overlay.classList.remove('show'); return; }
+
+                    statusEl.textContent = 'Buscando dados...';
+
+                    // Buscar performance e cumpridos direto da API
+                    var perfDados = { total:0, cumpridos:0, taxa:0, criticos:0 };
+                    var meusCumpridos = [];
+                    try {
+                        var token = getToken();
+                        var dashRes = await fetch('/api/dashboard?token=' + token);
+                        if (dashRes.ok) {
+                            var dashJson = await dashRes.json();
+                            var perfList = dashJson.performance || [];
+                            var found = perfList.find(function(p) {
+                                return p.responsavel && p.responsavel.toUpperCase() === resp.toUpperCase();
+                            });
+                            if (found) perfDados = found;
+                        }
+                        var cumprRes = await fetch('/api/cumpridos?responsavel=' + encodeURIComponent(resp) + '&token=' + token);
+                        if (cumprRes.ok) {
+                            var cumprJson = await cumprRes.json();
+                            meusCumpridos = cumprJson.cumpridos || [];
+                        }
+                    } catch(e) { console.warn('Erro ao buscar dados:', e); }
+
+                    var meusV = VENCIDOS_DATA.filter(function(r2){
+                        return (r2.resp||r2.responsavel||'').toUpperCase() === resp.toUpperCase();
+                    });
+                    var meusP = PROXIMOS7.filter(function(r2){
+                        return (r2.resp||r2.responsavel||'').toUpperCase() === resp.toUpperCase();
+                    });
+
+                    statusEl.textContent = 'Gerando PDF...';
+
+                    // Nome do responsavel abaixo do cabecalho
+                    pdf.setFontSize(14); pdf.setFont('helvetica','bold');
+                    pdf.setTextColor(20,30,60);
+                    pdf.text('Responsavel: ' + resp, margin, y);
+                    y += 10;
+
+                    // 4 cards de indicadores
+                    const cardW2 = (pageW - margin*2 - 9) / 4;
+                    const taxaC = perfDados.taxa >= 60 ? [5,122,85] : perfDados.taxa >= 40 ? [194,120,3] : [224,36,36];
+                    [
+                        { label:'TOTAL',     val: String(perfDados.total||0),                color:[26,86,219]  },
+                        { label:'CUMPRIDOS', val: String(perfDados.cumpridos||meusCumpridos.length||0), color:[5,122,85]   },
+                        { label:'TAXA',      val: (perfDados.taxa||0).toFixed(1)+'%',         color:taxaC        },
+                        { label:'CRITICOS',  val: String(perfDados.criticos||meusV.length||0), color:[224,36,36] },
+                    ].forEach(function(card, ci) {
+                        const cx = margin + ci * (cardW2 + 3);
+                        pdf.setFillColor(240,244,252);
+                        pdf.rect(cx, y, cardW2, 22, 'F');
+                        pdf.setFillColor(card.color[0], card.color[1], card.color[2]);
+                        pdf.rect(cx, y, cardW2, 3, 'F');
+                        pdf.setFontSize(18); pdf.setFont('helvetica','bold');
+                        pdf.setTextColor(card.color[0], card.color[1], card.color[2]);
+                        pdf.text(card.val, cx + cardW2/2, y + 15, {align:'center'});
+                        pdf.setFontSize(7); pdf.setFont('helvetica','normal');
+                        pdf.setTextColor(100,116,139);
+                        pdf.text(card.label, cx + cardW2/2, y + 20, {align:'center'});
+                    });
+                    y += 28;
+
+                    // Barra de progresso da taxa
+                    const taxa2 = perfDados.taxa || 0;
+                    pdf.setFillColor(220,226,238);
+                    pdf.rect(margin, y, pageW-margin*2, 5, 'F');
+                    pdf.setFillColor(taxaC[0], taxaC[1], taxaC[2]);
+                    pdf.rect(margin, y, (pageW-margin*2) * Math.min(taxa2/100, 1), 5, 'F');
+                    pdf.setFontSize(7); pdf.setTextColor(100,116,139);
+                    pdf.text('Taxa de cumprimento: ' + taxa2.toFixed(1) + '%', margin, y+9);
+                    y += 14;
+
+                    // CUMPRIDOS (verde)
+                    if (meusCumpridos.length) {
+                        pdf.setFontSize(10); pdf.setFont('helvetica','bold');
+                        pdf.setTextColor(5,122,85);
+                        pdf.text('Processos Cumpridos (' + meusCumpridos.length + ')', margin, y); y += 4;
+                        pdf.autoTable({ startY:y,
+                            head:[['Processo','Parte','Prazo','Vara']],
+                            body: meusCumpridos.map(function(r2){
+                                return [r2.processo||'', (r2.parte||'').slice(0,35), r2.prazo||'', (r2.vara||'').slice(0,25)];
+                            }),
+                            theme:'striped',
+                            headStyles:{fillColor:[5,122,85],textColor:255,fontStyle:'bold',fontSize:8},
+                            bodyStyles:{fontSize:7}, margin:{left:margin,right:margin}
+                        });
+                        y = pdf.lastAutoTable.finalY + 8;
+                    }
+
+                    // PROXIMOS 7 DIAS (amarelo)
+                    if (meusP.length) {
+                        pdf.setFontSize(10); pdf.setFont('helvetica','bold'); pdf.setTextColor(180,100,0);
+                        pdf.text('Vencendo nos Proximos 7 Dias (' + meusP.length + ')', margin, y); y += 4;
+                        pdf.autoTable({ startY:y,
+                            head:[['Processo','Parte','Prazo','Vence em']],
+                            body: meusP.map(function(r2){ var d=r2.dias||0; return [r2.proc||'',( r2.parte||'').slice(0,35),r2.prazo||'',d===0?'Hoje':d+' dias']; }),
+                            theme:'striped',
+                            headStyles:{fillColor:[180,100,0],textColor:255,fontStyle:'bold',fontSize:8},
+                            bodyStyles:{fontSize:7}, margin:{left:margin,right:margin}
+                        });
+                        y = pdf.lastAutoTable.finalY + 8;
+                    }
+
+                    // VENCIDOS (vermelho)
+                    if (meusV.length) {
+                        pdf.setFontSize(10); pdf.setFont('helvetica','bold'); pdf.setTextColor(200,30,30);
+                        pdf.text('Prazos Vencidos (' + meusV.length + ')', margin, y); y += 4;
+                        pdf.autoTable({ startY:y,
+                            head:[['Processo','Parte','Prazo','Dias']],
+                            body: meusV.map(function(r2){ return [r2.proc||'',( r2.parte||'').slice(0,35),r2.prazo||'',r2.dias+'d']; }),
+                            theme:'striped',
+                            headStyles:{fillColor:[200,30,30],textColor:255,fontStyle:'bold',fontSize:8},
+                            bodyStyles:{fontSize:7}, margin:{left:margin,right:margin}
+                        });
+                    }
+
+                } else if (type === 'criticos') {
+                    pdf.setFontSize(10); pdf.setFont('helvetica','bold'); pdf.setTextColor(180,100,0);
+                    pdf.text('Vencendo nos Proximos 7 Dias (' + PROXIMOS7.length + ')', margin, y); y += 4;
+                    pdf.autoTable({ startY:y,
+                        head:[['Processo','Parte','Responsavel','Prazo','Vence em']],
+                        body:PROXIMOS7.map(r => { const d=r.dias||0; return [r.proc||'',r.parte||'',r.resp||'',r.prazo||'',d===0?'Hoje':d===1?'Amanha':d+' dias']; }),
+                        theme:'striped',
+                        headStyles:{fillColor:[180,100,0],textColor:255,fontStyle:'bold',fontSize:8},
+                        bodyStyles:{fontSize:7}, margin:{left:margin,right:margin}
+                    });
+                    y = pdf.lastAutoTable.finalY + 8;
+                    pdf.setFontSize(10); pdf.setFont('helvetica','bold'); pdf.setTextColor(200,30,30);
+                    pdf.text('Prazos Vencidos (' + VENCIDOS_DATA.length + ')', margin, y); y += 4;
+                    pdf.autoTable({ startY:y,
+                        head:[['Processo','Parte','Responsavel','Prazo','Dias']],
+                        body:VENCIDOS_DATA.map(r => [r.proc||'',r.parte||'',r.resp||'',r.prazo||'',r.dias+'d']),
+                        theme:'striped',
+                        headStyles:{fillColor:[200,30,30],textColor:255,fontStyle:'bold',fontSize:8},
+                        bodyStyles:{fontSize:7}, margin:{left:margin,right:margin}
+                    });
+                }
+                rodape();
+                pdf.save('PGM_' + type + '_' + hoje.replace(/\//g,'-') + '.pdf');
+            } catch(err) {
+                console.error(err);
+                alert('Erro ao gerar PDF: ' + err.message);
+            } finally {
+                overlay.classList.remove('show');
+            }
+        }
+
+        // ── Cache de contatos da equipe ────
+        var _contatosCache = null;
+        async function carregarContatos() {
+            if (_contatosCache) return _contatosCache;
+            var contatos = {};
+            try {
+                var res = await fetch('/api/equipe?token=' + getToken());
+                if (res.ok) {
+                    var json = await res.json();
+                    (json.membros || []).forEach(m => { if (m.nome && m.whatsapp) contatos[m.nome.toUpperCase()] = m.whatsapp; });
+                }
+            } catch(e) {}
+            _contatosCache = contatos;
+            return contatos;
+        }
+
+        function abrirWhatsApp(numero, mensagem) {
+            var num = numero.replace(/[^0-9]/g, '');
+            var url = 'https://wa.me/' + num + '?text=' + encodeURIComponent(mensagem);
+            window.open(url, '_blank');
+        }
+
+        function enviarAlerta(processo, responsavel, prazo, tipo) {
+            var resp = (responsavel||'').trim().toUpperCase();
+            var msg  = montarMensagem(processo, responsavel, prazo, tipo);
+            carregarContatos().then(contatos => {
+                var numero = contatos[resp];
+                if (numero) abrirWhatsApp(numero, msg);
+                else alert('WhatsApp nao cadastrado para: ' + responsavel);
+            });
+        }
+
+        function montarMensagem(processo, responsavel, prazo, tipo) {
+            var emoji = tipo === 'vencido' ? '🔴' : '🟠';
+            return emoji + ' *ALERTA DE PRAZO*\n' + 'PGM Porto Velho\n\n' + 'Ola, ' + responsavel + '!\n' + 'Processo: *' + processo + '*\n' + 'Prazo: ' + prazo + '\n\nFavor verificar.';
+        }
+
+        // ── Dashboard e Listas ────
+        async function loadDashboard() {
+            var token = getToken();
+            try {
+                var res = await fetch('/api/dashboard?token=' + token);
+                var data = await res.json();
+                if (data && !data.sem_dados) {
+                    renderDashboard(data);
+                    renderChart(data.performance || []);
+                }
+            } catch(e) {}
+        }
+
+        function getToken() { return new URLSearchParams(window.location.search).get('token') || ''; }
+
+        function renderDashboard(data) {
+            if (!data.stats) return;
+            var s = data.stats;
+            document.getElementById('kpi-total').textContent = s.total;
+            document.getElementById('kpi-vencidos').textContent = s.vencidos;
+            document.getElementById('kpi-proximos').textContent = s.proximos;
+            document.getElementById('kpi-cumpridos').textContent = s.cumpridos;
+            document.getElementById('kpi-taxa-label').textContent = s.taxa + '% de taxa';
+        }
+
+        function switchTab(e, n) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.ni').forEach(b => b.classList.remove('active'));
+            document.getElementById(n).classList.add('active');
+            e.currentTarget.classList.add('active');
+        }
+
+        function toggleDark() {
+            var isDark = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('pgm-dark', isDark ? '1' : '0');
+            document.getElementById('darkToggle').textContent = isDark ? '☀️ Modo Claro' : '🌙 Modo Escuro';
+        }
+
+        // Inicialização
+        loadDashboard();
+        equipe_renderizar();
+</script>
+</body>
+</html>
