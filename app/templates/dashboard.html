@@ -1208,25 +1208,7 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
             if(btn)  btn.style.display = total > 0 ? 'inline-flex' : 'none';
         }
 
-        async function alertarSelecionados(tipo) {
-            var sels = Object.values(_selecoes[tipo]);
-            if(!sels.length) { alert('Selecione ao menos um processo.'); return; }
-            if(!confirm('Enviar alerta para '+sels.length+' processo(s) selecionado(s)?')) return;
-            var contatos = await carregarContatos();
-            var semNumero = [];
-            var idx3 = 0;
-            function enviarProx() {
-                if(idx3 >= sels.length) {
-                    if(semNumero.length) alert('Sem numero cadastrado para: '+semNumero.join(', '));
-                    return;
-                }
-                var s = sels[idx3++];
-                var num = s.resp ? contatos[(s.resp||'').toUpperCase()] : null;
-                if(num) { abrirWhatsApp(num, montarMensagem(s.proc, s.resp, s.prazo, s.tipo)); setTimeout(enviarProx, 2000); }
-                else { if(s.resp && semNumero.indexOf(s.resp)<0) semNumero.push(s.resp); enviarProx(); }
-            }
-            enviarProx();
-        }
+        async
 
         async function alertarHoje() {
             var f = filtroState.hoje;
@@ -1860,12 +1842,6 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
         var pagState = { hoje: 1, critico: 1, vencido: 1 };
         var filtroState = { hoje:{texto:'',resp:'',vara:''}, critico:{texto:'',resp:'',vara:'',data:''}, vencido:{texto:'',resp:'',vara:''} };
 
-        function filtrarDados(dados,f){
-            return dados.filter(function(r){
-                var hay=((r.proc||r.processo||'')+(r.parte||'')+(r.resp||r.responsavel||'')+(r.vara||'')).toLowerCase();
-                return (!f.texto||hay.indexOf(f.texto.toLowerCase())>=0)&&(!f.resp||(r.resp||r.responsavel||'')===f.resp)&&(!f.vara||(r.vara||'').indexOf(f.vara)>=0);
-            });
-        }
 
         function buildPB(tipo,page,label,dis,active){
             return '<button class="pbtn'+(active?' active':'')+'" onclick="mudarPag(\"'+tipo+'\",'+page+')"'+(dis?' disabled':'')+'>'+label+'<\/button>';
@@ -1987,22 +1963,6 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
             atualizarBarraSel(tipo);
         }
 
-        function selecionarTodos(tipo, checked) {
-            _selecoes[tipo] = {};
-            var dados = tipo==='hoje' ? HOJE_DATA : PROXIMOS7;
-            var f = filtroState[tipo];
-            var filtrado = filtrarDados(dados, f);
-            if (checked) {
-                filtrado.forEach(function(r) {
-                    _selecoes[tipo][r.proc] = { resp:r.resp, prazo:r.prazo, tipo:'proximo' };
-                });
-            }
-            // Atualizar checkboxes visiveis
-            document.querySelectorAll('.chk-row[data-tipo="'+tipo+'"]').forEach(function(c){
-                c.checked = checked;
-            });
-            atualizarBarraSel(tipo);
-        }
 
         function limparSelecao(tipo) {
             _selecoes[tipo] = {};
@@ -2220,32 +2180,7 @@ td small{font-size:11px;color:var(--text3);display:block;margin-top:1px}
         }
         if(localStorage.getItem('pgm-dark')==='0') toggleDark();
 
-        async function equipe_renderizar(){
-            var lista=[];
-            try{
-                var r=await fetch('/api/equipe?token='+getToken());
-                if(r.ok){ var j=await r.json(); lista=j.membros||[]; }
-            }catch(e){
-                try{ lista=JSON.parse(localStorage.getItem('pgm_equipe_v1'))||[]; }catch(e2){}
-            }
-            var ul=document.getElementById('equipe-lista'); if(!ul) return;
-            if(!lista.length){ ul.innerHTML='<li style="color:var(--text3);font-size:13px">Nenhum membro cadastrado ainda.<\/li>'; return; }
-            var cores=['#3b7fff','#00c875','#ffb300','#ff4757','#8b5cf6','#06b6d4'];
-            ul.innerHTML=lista.map(function(m,i){
-                var ini=(m.nome||'?').slice(0,2).toUpperCase();
-                var id=m.id!=null?m.id:i;
-                var idf=JSON.stringify(id);
-                var nomef=JSON.stringify(m.nome||'');
-                return '<div class="li"><div style="display:flex;align-items:center;gap:10px">'+
-                    '<div class="av" style="background:'+cores[i%cores.length]+'">'+ini+'<\/div>'+
-                    '<div><div style="font-size:13px;font-weight:600;color:var(--text)">'+m.nome+'<\/div>'+
-                    '<div style="font-size:11px;color:var(--text3)">'+m.funcao+(m.whatsapp?' - '+m.whatsapp:'')+'<\/div><\/div><\/div>'+
-                    '<div style="display:flex;gap:6px">'+
-                    '<button class="bia" onclick="equipe_editar_api('+idf+')">Editar<\/button>'+
-                    '<button class="bia" onclick="equipe_excluir_api('+idf+','+nomef+')" style="color:var(--red)">Remover<\/button>'+
-                    '<\/div><\/div>';
-            }).join('');
-        }
+        async
 
         function equipe_cancelarEdicao() { equipe_limparForm(); }
         function equipe_limparForm() {
