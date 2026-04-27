@@ -137,6 +137,9 @@ def _parse_xlsx(file_obj, inativos=None):
         total += 1
         prazo_str = prazo_d.strftime('%d/%m/%Y')
 
+        # Se a planilha nao marca como cumprido, remove do manuais (permite "desmarcar")
+        if proc in manuais and cumpr_val not in ('SIM', 'PARCIAL', 'PREJUDICADO'):
+            manuais.remove(proc)
         ja_cumprido = cumpr_val in ('SIM', 'PARCIAL', 'PREJUDICADO') or proc in manuais
 
         if ja_cumprido:
@@ -202,6 +205,7 @@ def _parse_xlsx(file_obj, inativos=None):
         'proximos': prox,
         'vencidos': venc,
         'cumpridos_lista': cumpridos_lista,
+        'manuais': manuais,
     }
 
 # Auth
@@ -261,6 +265,7 @@ def upload_file():
         cache_set('proximos',        data['proximos'])
         cache_set('vencidos',        data['vencidos'])
         cache_set('cumpridos_lista', data['cumpridos_lista'])
+        cache_set('cumpridos_manuais', data['manuais'])
         cache_set('filename',        file.filename)
         return jsonify({'success': True, 'stats': data['stats'], 'diff': diff_info, 'filename': file.filename})
     except KeyError as e:
