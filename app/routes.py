@@ -125,14 +125,20 @@ def _parse_xlsx(file_obj, inativos=None):
     total = venc_nc = prox_count = cumpr = 0
     manuais = cache_get('cumpridos_manuais') or []
 
-    # Primeira passagem: coletar todos os processos que tem SIM em qualquer linha
-    procs_cumpridos = set()
+    # Primeira passagem: para cada processo, guardar o maior prazo que tem SIM
+    proc_maior_prazo_cumprido = {}  # proc -> maior prazo com SIM
     for row in ws.iter_rows(min_row=2, values_only=True):
         proc = str(row[4]).strip() if row[4] else ''
+        if not proc: continue
         cumpr_raw = row[13]
         cumpr_val = ''.join(c for c in str(cumpr_raw).strip().upper() if c.isprintable()).strip() if cumpr_raw is not None else ''
         if cumpr_val in ('SIM', 'PARCIAL', 'PREJUDICADO') or proc in manuais:
-            procs_cumpridos.add(proc)
+            prazo_raw = row[1]
+            prazo_d = prazo_raw.date() if isinstance(prazo_raw, datetime) else prazo_raw if isinstance(prazo_raw, date) else None
+            if prazo_d:
+                atual = proc_maior_prazo_cumprido.get(proc)
+                if atual is None or prazo_d > atual:
+                    proc_maior_prazo_cumprido[proc] = prazo_d
 
     cumpridos_lista = []
     for row in ws.iter_rows(min_row=2, values_only=True):
@@ -164,7 +170,12 @@ def _parse_xlsx(file_obj, inativos=None):
         # Se a planilha nao marca como cumprido, remove do manuais (permite "desmarcar")
         if proc in manuais and cumpr_val not in ('SIM', 'PARCIAL', 'PREJUDICADO'):
             manuais.remove(proc)
-        ja_cumprido = cumpr_val in ('SIM', 'PARCIAL', 'PREJUDICADO') or proc in manuais or proc in procs_cumpridos
+        # Cumprido se: tem SIM nessa linha, ou esta no manuais,
+        # ou existe outra linha do mesmo processo com SIM e prazo >= prazo desta linha
+        maior_prazo_sim = proc_maior_prazo_cumprido.get(proc)
+        ja_cumprido = (cumpr_val in ('SIM', 'PARCIAL', 'PREJUDICADO') or
+                       proc in manuais or
+                       (maior_prazo_sim is not None and prazo_d is not None and maior_prazo_sim >= prazo_d))
 
         if ja_cumprido:
             cumpr += 1
