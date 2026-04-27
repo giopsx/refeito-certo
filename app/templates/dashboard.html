@@ -504,7 +504,7 @@ var POR_PAG = 25;
 var pagState    = { hoje:1, critico:1, vencido:1 };
 var filtroState = { hoje:{texto:'',resp:'',vara:''}, critico:{texto:'',resp:'',vara:'',data:''}, proximos:{texto:'',resp:'',data:''}, vencido:{texto:'',resp:'',vara:''} };
 var _chartInstance = null;
-var _isDark = true;
+var _isDark = false;
 
 // ── TOKEN ─────────────────────────────────────────────────────────────────────
 function getToken(){
@@ -906,7 +906,7 @@ function abrirWhatsApp(numero,mensagem){
 }
 
 function montarMensagem(processo,responsavel,prazo,tipo,parte,vara){
-    var emoji=tipo==='vencido'?'🔴':'🟠';
+    var emoji=tipo==='vencido'?'\uD83D\uDD34':'\uD83D\uDFE0';
     var sit=tipo==='vencido'?'VENCIDO':'A VENCER';
     return emoji+' *ALERTA DE PRAZO*\nSubprocuradoria Contenciosa - PGM Porto Velho\n\nOlá, '+responsavel+'!\n\nProcesso: *'+processo+'*\nParte: '+(parte||'—')+'\nVara: '+(vara||'—')+'\nPrazo: '+prazo+(tipo==='vencido'?' *(VENCIDO)*':'')+'\n\n_Esta é uma mensagem automática._';
 }
@@ -968,7 +968,7 @@ async function alertarHoje(){
    Prazo: '+d.prazo; }).join('
 
 ');
-            var msg='🟠 *ALERTA DE PRAZO*
+            var msg='\uD83D\uDFE0 *ALERTA DE PRAZO*
 Subprocuradoria Contenciosa - PGM Porto Velho
 
 Olá, '+grupo.resp+'!
@@ -1007,7 +1007,7 @@ async function alertarTodosProximos(){
    Prazo: '+d.prazo+(d.dias===0?'':' ('+d.dias+'d)'); }).join('
 
 ');
-            var msg='🟠 *ALERTA DE PRAZO*
+            var msg='\uD83D\uDFE0 *ALERTA DE PRAZO*
 Subprocuradoria Contenciosa - PGM Porto Velho
 
 Olá, '+grupo.resp+'!
@@ -1046,7 +1046,7 @@ async function alertarTodosVencidos(){
    Prazo: '+d.prazo+' *(VENCIDO)*'; }).join('
 
 ');
-            var msg='🔴 *ALERTA DE PRAZO*
+            var msg='\uD83D\uDD34 *ALERTA DE PRAZO*
 Subprocuradoria Contenciosa - PGM Porto Velho
 
 Olá, '+grupo.resp+'!
@@ -1091,7 +1091,7 @@ async function alertarSelecionados(tipo){
         var num=resp?contatos[resp.toUpperCase()]:null;
         if(num){
             // Montar mensagem unica com todos os processos do responsavel
-            var emoji=tipo==='vencido'?'🔴':'🟠';
+            var emoji=tipo==='vencido'?'\uD83D\uDD34':'\uD83D\uDFE0';
             var sit=tipo==='vencido'?'VENCIDO':'A VENCER';
             var linhas=grupo.processos.map(function(d,i){
                 return (i+1)+'. *'+(d.proc||d.processo||'')+'*\n   Parte: '+(d.parte||'—')+'\n   Vara: '+(d.vara||'—')+'\n   Prazo: '+d.prazo+(tipo==='vencido'?' *(VENCIDO)*':'');
@@ -1335,7 +1335,7 @@ function toggleDark(){
     }
     localStorage.setItem('pgm-dark',_isDark?'1':'0');
 }
-if(localStorage.getItem('pgm-dark')==='0'){ _isDark=true; toggleDark(); }
+if(localStorage.getItem('pgm-dark')==='1'){ _isDark=false; toggleDark(); } else if(localStorage.getItem('pgm-dark')===null){ toggleDark(); }
 
 // ── PDF ───────────────────────────────────────────────────────────────────────
 async function generateReport(type){
