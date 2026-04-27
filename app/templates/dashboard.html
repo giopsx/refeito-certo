@@ -814,7 +814,7 @@ function renderPagina(tipo){
                 '<td><input type="checkbox" class="chk-row" data-tipo="'+selTipo+'" data-proc="'+procE+'" data-resp="'+respE+'" data-prazo="'+prazoE+'" data-ttype="'+tipoS+'" data-parte="'+parteE+'" data-vara="'+varaE+'" style="cursor:pointer;width:15px;height:15px" '+(_selecoes[selTipo]&&_selecoes[selTipo][proc]?'checked':'')+' onchange="toggleSel(this)"></td>'
                 :'<td></td>';
             var acoesTd='<td><div style="display:flex;gap:4px;align-items:center">'+
-                '<button class="btn-icon btn-wpp" data-proc="'+procE+'" data-resp="'+respE+'" data-prazo="'+prazoE+'" data-tipo="'+tipoS+'" title="Enviar WhatsApp">&#128241;</button>'+
+                '<button class="btn-icon btn-wpp" data-proc="'+procE+'" data-resp="'+respE+'" data-prazo="'+prazoE+'" data-tipo="'+tipoS+'" data-parte="'+parteE+'" data-vara="'+varaE+'" title="Enviar WhatsApp">&#128241;</button>'+
                 '<button class="btn-icon btn-cumprido" data-proc="'+procE+'" title="Marcar cumprido" style="color:var(--green)">&#10003;</button>'+
                 '</div></td>';
             if(isHoje){
@@ -905,10 +905,10 @@ function abrirWhatsApp(numero,mensagem){
     setTimeout(function(){ document.body.removeChild(a); },500);
 }
 
-function montarMensagem(processo,responsavel,prazo,tipo){
+function montarMensagem(processo,responsavel,prazo,tipo,parte,vara){
     var emoji=tipo==='vencido'?'🔴':'🟠';
-    var sit=tipo==='vencido'?'VENCIDO em '+prazo:'vencendo em '+prazo;
-    return emoji+' *ALERTA DE PRAZO*\nSubprocuradoria Contenciosa - PGM Porto Velho\n\nOla, '+responsavel+'!\n\nProcesso: *'+processo+'*\nSituacao: prazo '+sit+'\n\nPor favor, tome as providencias necessarias.';
+    var sit=tipo==='vencido'?'VENCIDO':'A VENCER';
+    return emoji+' *ALERTA DE PRAZO*\nSubprocuradoria Contenciosa - PGM Porto Velho\n\nOlá, '+responsavel+'!\n\nProcesso: *'+processo+'*\nParte: '+(parte||'—')+'\nVara: '+(vara||'—')+'\nPrazo: '+prazo+(tipo==='vencido'?' *(VENCIDO)*':'')+'\n\n_Esta é uma mensagem automática._';
 }
 
 function _wppModal(responsavel,mensagem){
@@ -929,9 +929,9 @@ function _wppModal(responsavel,mensagem){
     ov.onclick=function(e){ if(e.target===ov) ov.remove(); };
 }
 
-function enviarAlerta(processo,responsavel,prazo,tipo){
+function enviarAlerta(processo,responsavel,prazo,tipo,parte,vara){
     var resp=(responsavel||'').trim().toUpperCase();
-    var msg=montarMensagem(processo,responsavel,prazo,tipo);
+    var msg=montarMensagem(processo,responsavel,prazo,tipo,parte,vara);
     if(_contatosCache&&_contatosCache[resp]){ abrirWhatsApp(_contatosCache[resp],msg); return; }
     fetch('/api/equipe?token='+getToken())
         .then(function(r){return r.json();})
@@ -1227,7 +1227,7 @@ function initTabelaEvents(){
         var btn=e.target.closest('button.btn-wpp, button.btn-cumprido');
         if(!btn) return;
         if(btn.classList.contains('btn-wpp')){
-            enviarAlerta(btn.getAttribute('data-proc')||'',btn.getAttribute('data-resp')||'',btn.getAttribute('data-prazo')||'',btn.getAttribute('data-tipo')||'proximo');
+            enviarAlerta(btn.getAttribute('data-proc')||'',btn.getAttribute('data-resp')||'',btn.getAttribute('data-prazo')||'',btn.getAttribute('data-tipo')||'proximo',btn.getAttribute('data-parte')||'',btn.getAttribute('data-vara')||'');
         } else if(btn.classList.contains('btn-cumprido')){
             confirmarCumprido(btn.getAttribute('data-proc')||'',btn);
         }
