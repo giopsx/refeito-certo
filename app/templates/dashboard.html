@@ -959,7 +959,7 @@ async function alertarHoje(){
         var num=grupo.resp?contatos[grupo.resp.toUpperCase()]:null;
         if(num){
             var linhas=grupo.processos.map(function(d,i){ return (i+1)+'. *'+(d.proc||'')+'*\n   Parte: '+(d.parte||'-')+'\n   Vara: '+(d.vara||'-')+'\n   Prazo: '+d.prazo; }).join('\n\n');
-            var msg='\uD83DuDFE0 *ALERTA DE PRAZO*\nSubprocuradoria Contenciosa - PGM Porto Velho\n\nOl\u00E1, '+grupo.resp+'!\n\nVoc\u00EA tem *'+grupo.processos.length+' processo(s)* com prazo HOJE:\n\n'+linhas+'\n\n_Esta \u00E9 uma mensagem autom\u00E1tica._';
+            var msg='&#x1F7E0; *ALERTA DE PRAZO*\nSubprocuradoria Contenciosa - PGM Porto Velho\n\nOl\u00E1, '+grupo.resp+'!\n\nVoc\u00EA tem *'+grupo.processos.length+' processo(s)* com prazo HOJE:\n\n'+linhas+'\n\n_Esta \u00E9 uma mensagem autom\u00E1tica._';
             abrirWhatsApp(num,msg); setTimeout(prox,2000);
         } else { if(grupo.resp&&semNumero.indexOf(grupo.resp)<0) semNumero.push(grupo.resp); prox(); }
     }
@@ -979,7 +979,7 @@ async function alertarTodosProximos(){
         var num=grupo.resp?contatos[grupo.resp.toUpperCase()]:null;
         if(num){
             var linhas=grupo.processos.map(function(d,i){ return (i+1)+'. *'+(d.proc||'')+'*\n   Parte: '+(d.parte||'-')+'\n   Vara: '+(d.vara||'-')+'\n   Prazo: '+d.prazo+(d.dias===0?'':' ('+d.dias+'d)'); }).join('\n\n');
-            var msg='\uD83DuDFE0 *ALERTA DE PRAZO*\nSubprocuradoria Contenciosa - PGM Porto Velho\n\nOl\u00E1, '+grupo.resp+'!\n\nVoc\u00EA tem *'+grupo.processos.length+' processo(s)* com prazo A VENCER:\n\n'+linhas+'\n\n_Esta \u00E9 uma mensagem autom\u00E1tica._';
+            var msg='&#x1F7E0; *ALERTA DE PRAZO*\nSubprocuradoria Contenciosa - PGM Porto Velho\n\nOl\u00E1, '+grupo.resp+'!\n\nVoc\u00EA tem *'+grupo.processos.length+' processo(s)* com prazo A VENCER:\n\n'+linhas+'\n\n_Esta \u00E9 uma mensagem autom\u00E1tica._';
             abrirWhatsApp(num,msg); setTimeout(prox,2000);
         } else { if(grupo.resp&&semNumero.indexOf(grupo.resp)<0) semNumero.push(grupo.resp); prox(); }
     }
@@ -999,7 +999,7 @@ async function alertarTodosVencidos(){
         var num=grupo.resp?contatos[grupo.resp.toUpperCase()]:null;
         if(num){
             var linhas=grupo.processos.map(function(d,i){ return (i+1)+'. *'+(d.proc||'')+'*\n   Parte: '+(d.parte||'-')+'\n   Vara: '+(d.vara||'-')+'\n   Prazo: '+d.prazo+' *(VENCIDO)*'; }).join('\n\n');
-            var msg='\uD83DuDD34 *ALERTA DE PRAZO*\nSubprocuradoria Contenciosa - PGM Porto Velho\n\nOl\u00E1, '+grupo.resp+'!\n\nVoc\u00EA tem *'+grupo.processos.length+' processo(s)* com prazo VENCIDO:\n\n'+linhas+'\n\n_Esta \u00E9 uma mensagem autom\u00E1tica._';
+            var msg='&#x1F534; *ALERTA DE PRAZO*\nSubprocuradoria Contenciosa - PGM Porto Velho\n\nOl\u00E1, '+grupo.resp+'!\n\nVoc\u00EA tem *'+grupo.processos.length+' processo(s)* com prazo VENCIDO:\n\n'+linhas+'\n\n_Esta \u00E9 uma mensagem autom\u00E1tica._';
             abrirWhatsApp(num,msg); setTimeout(prox,2000);
         } else { if(grupo.resp&&semNumero.indexOf(grupo.resp)<0) semNumero.push(grupo.resp); prox(); }
     }
