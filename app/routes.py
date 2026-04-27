@@ -124,7 +124,15 @@ def _parse_xlsx(file_obj, inativos=None):
     prox, venc = [], []
     total = venc_nc = prox_count = cumpr = 0
     manuais = cache_get('cumpridos_manuais') or []
-    procs_cumpridos = set()  # processos que ja tiveram SIM em qualquer linha
+
+    # Primeira passagem: coletar todos os processos que tem SIM em qualquer linha
+    procs_cumpridos = set()
+    for row in ws.iter_rows(min_row=2, values_only=True):
+        proc = str(row[4]).strip() if row[4] else ''
+        cumpr_raw = row[13]
+        cumpr_val = ''.join(c for c in str(cumpr_raw).strip().upper() if c.isprintable()).strip() if cumpr_raw is not None else ''
+        if cumpr_val in ('SIM', 'PARCIAL', 'PREJUDICADO') or proc in manuais:
+            procs_cumpridos.add(proc)
 
     cumpridos_lista = []
     for row in ws.iter_rows(min_row=2, values_only=True):
@@ -156,9 +164,6 @@ def _parse_xlsx(file_obj, inativos=None):
         # Se a planilha nao marca como cumprido, remove do manuais (permite "desmarcar")
         if proc in manuais and cumpr_val not in ('SIM', 'PARCIAL', 'PREJUDICADO'):
             manuais.remove(proc)
-        # Registrar processo como cumprido se tiver SIM em qualquer linha
-        if cumpr_val in ('SIM', 'PARCIAL', 'PREJUDICADO'):
-            procs_cumpridos.add(proc)
         ja_cumprido = cumpr_val in ('SIM', 'PARCIAL', 'PREJUDICADO') or proc in manuais or proc in procs_cumpridos
 
         if ja_cumprido:
