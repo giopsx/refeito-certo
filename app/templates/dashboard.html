@@ -996,14 +996,42 @@ async function alertarSelecionados(tipo){
     if(!lista.length){ alert('Nenhum processo selecionado.'); return; }
     if(!confirm('Enviar alerta para '+lista.length+' processo(s)?')) return;
     var contatos=await carregarContatos();
-    var semNumero=[],idx=0;
-    function prox(){
-        if(idx>=lista.length){ if(semNumero.length) alert('Sem numero: '+semNumero.join(', ')); limparSelecao(tipo); return; }
-        var entry=lista[idx++];
+
+    // Agrupar processos por responsavel
+    var porResp={};
+    lista.forEach(function(entry){
         var proc=entry[0],dados=entry[1];
-        var num=dados.resp?contatos[dados.resp.toUpperCase()]:null;
-        if(num){ abrirWhatsApp(num,montarMensagem(proc,dados.resp,dados.prazo,dados.tipo)); setTimeout(prox,2000); }
-        else{ if(dados.resp&&semNumero.indexOf(dados.resp)<0) semNumero.push(dados.resp); prox(); }
+        var resp=(dados.resp||'').toUpperCase();
+        if(!porResp[resp]) porResp[resp]={ resp:dados.resp, processos:[] };
+        porResp[resp].processos.push(dados);
+    });
+
+    var grupos=Object.values(porResp);
+    var semNumero=[],idx=0;
+
+    function prox(){
+        if(idx>=grupos.length){
+            if(semNumero.length) alert('Sem numero cadastrado: '+semNumero.join(', '));
+            limparSelecao(tipo);
+            return;
+        }
+        var grupo=grupos[idx++];
+        var resp=grupo.resp;
+        var num=resp?contatos[resp.toUpperCase()]:null;
+        if(num){
+            // Montar mensagem unica com todos os processos do responsavel
+            var emoji=tipo==='vencido'?'🔴':'🟠';
+            var sit=tipo==='vencido'?'VENCIDO':'A VENCER';
+            var linhas=grupo.processos.map(function(d,i){
+                return (i+1)+'. *'+(d.proc||d.processo||'')+'*\n   Parte: '+(d.parte||'—')+'\n   Vara: '+(d.vara||'—')+'\n   Prazo: '+d.prazo+(tipo==='vencido'?' *(VENCIDO)*':'');
+            }).join('\n\n');
+            var msg=emoji+' *ALERTA DE PRAZO*\nSubprocuradoria Contenciosa - PGM Porto Velho\n\nOlá, '+resp+'!\n\nVocê tem *'+grupo.processos.length+' processo(s)* com prazo '+sit+':\n\n'+linhas+'\n\n_Esta é uma mensagem automática._';
+            abrirWhatsApp(num,msg);
+            setTimeout(prox,2000);
+        } else {
+            if(resp&&semNumero.indexOf(resp)<0) semNumero.push(resp);
+            prox();
+        }
     }
     prox();
 }
